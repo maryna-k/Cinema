@@ -2,6 +2,7 @@ package com.example.android.moviesapp;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -19,6 +20,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -36,6 +38,8 @@ import java.util.HashMap;
 
 public class MovieGridFragment extends Fragment {
 
+    private final String LOG_TAG = MovieGridFragment.class.getSimpleName();
+
     private MovieAdapter adapter;
     private ArrayList<Movie> movieList;
     private DrawerLayout drawerLayout;
@@ -43,13 +47,35 @@ public class MovieGridFragment extends Fragment {
     private ArrayAdapter<String> drawerAdapter;
     private ActionBarDrawerToggle drawerToggle;
 
+    public static final String PREFS_NAME = "pref_general";
+
 
     /*since java has no map literals and searchCategories is a class variable, initialization
       should be done in a static initializer */
     private static final HashMap<String, String> searchCategories = new HashMap<>();
     static {
         searchCategories.put("Popular", "movie/popular");
-        searchCategories.put("Top Rated", "top_rated");
+        searchCategories.put("Top Rated", "movie/top_rated");
+        searchCategories.put("Action", "28");
+        searchCategories.put("Adventure", "12");
+        searchCategories.put("Animation", "16");
+        searchCategories.put("Comedy", "35");
+        searchCategories.put("Crime", "80");
+        searchCategories.put("Documentary", "99");
+        searchCategories.put("Drama", "18");
+        searchCategories.put("Family", "10751");
+        searchCategories.put("Fantasy", "14");
+        searchCategories.put("Foreign", "10769");
+        searchCategories.put("Mystery", "36");
+        searchCategories.put("Horror", "27");
+        searchCategories.put("Music", "10402");
+        searchCategories.put("Mystery", "9648");
+        searchCategories.put("Romance", "10749");
+        searchCategories.put("Science Fiction", "878");
+        searchCategories.put("TV Movie", "10770");
+        searchCategories.put("Thriller", "53");
+        searchCategories.put("War", "10752");
+        searchCategories.put("Western", "37");
     }
 
     public MovieGridFragment() {}
@@ -85,7 +111,7 @@ public class MovieGridFragment extends Fragment {
 
         // Set the adapter for the list view
         drawerAdapter = new ArrayAdapter<String>(getContext(),
-                R.layout.drawer_list_item, R.id.drawer_item, new ArrayList<String>(searchCategories.keySet()));
+                R.layout.drawer_list_item, R.id.drawer_list_item_textview, new ArrayList<String>(searchCategories.keySet()));
         drawerList.setAdapter(drawerAdapter);
         // Set the list's click listener
         drawerList.setOnItemClickListener(new DrawerItemClickListener());
@@ -97,7 +123,14 @@ public class MovieGridFragment extends Fragment {
 
         setupDrawer();
 
-        checkNetworkConnection();
+        DownloadMovieDataTask downloadMovies = new DownloadMovieDataTask();
+
+        //use SharedPreferences to get the default value of movie search
+        SharedPreferences settings = getActivity().getSharedPreferences(PREFS_NAME, 0);
+        String defaultSearch = settings.getString("pref_search_key", "Top Rated");
+        Log.v(LOG_TAG, "SharedPreferences: " + defaultSearch);
+
+        if (checkNetworkConnection()) downloadMovies.execute(defaultSearch);
         return rootView;
     }
 
@@ -106,6 +139,7 @@ public class MovieGridFragment extends Fragment {
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             // Highlight the selected item, update the title, and close the drawer
             drawerList.setItemChecked(position, true);
+            updateMovieList(((TextView) view.findViewById(R.id.drawer_list_item_textview)).getText().toString());
             //getActivity().setTitle(searchCategories.get(drawerAdapter.getItem(position)));
             getActivity().setTitle(drawerAdapter.getItem(position));
             drawerLayout.closeDrawer(drawerList);
@@ -139,17 +173,20 @@ public class MovieGridFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
-    private void checkNetworkConnection() {
+    private boolean checkNetworkConnection() {
         ConnectivityManager connMgr = (ConnectivityManager)
                 getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-        if (networkInfo != null && networkInfo.isConnected()) {
-            // fetch data
-            new DownloadMovieDataTask().execute();
-        } else {
+        if (networkInfo != null && networkInfo.isConnected()) return true;
+        else {
             // display an error as a toast message
             Toast.makeText(getContext(), "No Internet connection", Toast.LENGTH_LONG).show();
+            return false;
         }
+    }
+
+    public void updateMovieList(String searchCriteria){
+        if (checkNetworkConnection()) new DownloadMovieDataTask().execute(searchCriteria);
     }
 
     public class DownloadMovieDataTask extends AsyncTask<String, Void, ArrayList<Movie>> {
@@ -169,6 +206,7 @@ public class MovieGridFragment extends Fragment {
             JSONArray movieArray = movieJson.getJSONArray(RESULTS);
 
             if (movieList == null) movieList = new ArrayList<Movie>();
+            else movieList.clear();
 
             for (int i = 0; i < movieArray.length(); i++) {
 
@@ -187,6 +225,27 @@ public class MovieGridFragment extends Fragment {
             return movieList;
         }
 
+        private String buildMovieUrlHelper(String criteria1, String criteria2) {
+
+            final String BASE_URL = "http://api.themoviedb.org/3/";
+            final String API_KEY = "?api_key=" + BuildConfig.TMDb_API_KEY;
+
+            return new StringBuilder()
+                    .append(BASE_URL)
+                    .append(criteria1)
+                    .append(API_KEY)
+                    .append(criteria2).toString();
+        }
+
+        private String buildMovieUrl(String category){
+            String url;
+            if (category.equals("Popular") || category.equals("Top Rated")) {
+                url = buildMovieUrlHelper(searchCategories.get(category), "");
+            } else {
+                url = buildMovieUrlHelper("discover/movie", "&with_genres=" + searchCategories.get(category));
+            }
+            return url;
+        }
 
         @Override
         protected ArrayList<Movie> doInBackground(String... params) {
@@ -195,7 +254,7 @@ public class MovieGridFragment extends Fragment {
             BufferedReader reader = null;
 
             String movieJsonStr = null;
-            final String urlString = "http://api.themoviedb.org/3/movie/popular?api_key=" + BuildConfig.TMDb_API_KEY;
+            final String urlString = buildMovieUrl(params[0]);
             Log.v(LOG_TAG, "Url: " + urlString);
 
             try {

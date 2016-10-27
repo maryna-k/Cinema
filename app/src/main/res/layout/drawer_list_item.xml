@@ -6,7 +6,7 @@
     android:layout_height="match_parent">
 
     <TextView
-        android:id="@+id/drawer_item"
+        android:id="@+id/drawer_list_item_textview"
         android:textColor="#FAFAFA"
         android:textSize="20sp"
         android:layout_width="match_parent"

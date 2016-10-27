@@ -19,7 +19,7 @@ android {
     }
 
     buildTypes.each {
-        it.buildConfigField 'String', 'TMDb_API_KEY', "\"****\""
+        it.buildConfigField 'String', 'TMDb_API_KEY', "\"***\""
     }
 
     repositories {
