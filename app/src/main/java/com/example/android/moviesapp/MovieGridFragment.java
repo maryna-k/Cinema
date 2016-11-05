@@ -46,9 +46,11 @@ public class MovieGridFragment extends Fragment {
     private ListView drawerList;
     private ArrayAdapter<String> drawerAdapter;
     private ActionBarDrawerToggle drawerToggle;
+    private int gridViewPosition = 0;
+    private String drawerItemTitle;
+    private GridView gv;
 
     public static final String PREFS_NAME = "pref_general";
-
 
     /*since java has no map literals and searchCategories is a class variable, initialization
       should be done in a static initializer */
@@ -94,7 +96,7 @@ public class MovieGridFragment extends Fragment {
 
         adapter = new MovieAdapter(getActivity(), new ArrayList<Movie>());
 
-        GridView gv = (GridView) rootView.findViewById(R.id.gridview);
+        gv = (GridView) rootView.findViewById(R.id.gridview);
         gv.setAdapter(adapter);
 
         gv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -116,6 +118,20 @@ public class MovieGridFragment extends Fragment {
         // Set the list's click listener
         drawerList.setOnItemClickListener(new DrawerItemClickListener());
 
+        //recreate fragment state on rotation
+        if (savedInstanceState == null) {
+            //use SharedPreferences to get the default value of movie search
+            SharedPreferences settings = getActivity().getSharedPreferences(PREFS_NAME, 0);
+            drawerItemTitle = settings.getString("pref_search_key", "Top Rated");
+            Log.v(LOG_TAG, "SharedPreferences: " + drawerItemTitle);
+        } else {
+            drawerItemTitle = savedInstanceState.getString("searchCategory");
+            getActivity().setTitle(drawerItemTitle);
+            gridViewPosition = savedInstanceState.getInt("gridViewPosition");
+            gv.smoothScrollToPosition(gridViewPosition);
+            Log.v(LOG_TAG, Integer.toString(gridViewPosition));
+        }
+
         ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         ((AppCompatActivity) getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
         //change drawer icon
@@ -124,14 +140,16 @@ public class MovieGridFragment extends Fragment {
         setupDrawer();
 
         DownloadMovieDataTask downloadMovies = new DownloadMovieDataTask();
-
-        //use SharedPreferences to get the default value of movie search
-        SharedPreferences settings = getActivity().getSharedPreferences(PREFS_NAME, 0);
-        String defaultSearch = settings.getString("pref_search_key", "Top Rated");
-        Log.v(LOG_TAG, "SharedPreferences: " + defaultSearch);
-
-        if (checkNetworkConnection()) downloadMovies.execute(defaultSearch);
+        if (checkNetworkConnection()) downloadMovies.execute(drawerItemTitle);
         return rootView;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState){
+        super.onSaveInstanceState(outState);
+        outState.putString("searchCategory", drawerItemTitle);
+        gridViewPosition = gv.getFirstVisiblePosition();
+        outState.putInt("gridViewPosition", gridViewPosition);
     }
 
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
@@ -141,7 +159,8 @@ public class MovieGridFragment extends Fragment {
             drawerList.setItemChecked(position, true);
             updateMovieList(((TextView) view.findViewById(R.id.drawer_list_item_textview)).getText().toString());
             //getActivity().setTitle(searchCategories.get(drawerAdapter.getItem(position)));
-            getActivity().setTitle(drawerAdapter.getItem(position));
+            drawerItemTitle = drawerAdapter.getItem(position);
+            getActivity().setTitle(drawerItemTitle);
             drawerLayout.closeDrawer(drawerList);
         }
     }
@@ -150,13 +169,13 @@ public class MovieGridFragment extends Fragment {
         drawerToggle = new ActionBarDrawerToggle(getActivity(), drawerLayout,
                 R.string.drawer_open, R.string.drawer_close) {
 
-            /** Called when a drawer has settled in a completely closed state. */
+            //Called when a drawer has settled in a completely closed state
             public void onDrawerClosed(View view) {
                 super.onDrawerClosed(view);
                 getActivity().invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
             }
 
-            /** Called when a drawer has settled in a completely open state. */
+            //Called when a drawer has settled in a completely open state
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
                 getActivity().invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
