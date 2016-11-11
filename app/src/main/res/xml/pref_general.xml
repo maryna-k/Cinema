@@ -3,5 +3,8 @@
 
     <ListPreference
         android:key="@string/pref_search_key"
-        android:defaultValue="@string/pref_search_default"/>
+        android:defaultValue="@string/pref_search_default"
+        android:title="@string/pref_search_topic_title"
+        android:entries="@array/pref_search_entries"
+        android:entryValues="@array/pref_search_entries"/>
 </PreferenceScreen>

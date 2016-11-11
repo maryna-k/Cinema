@@ -1,11 +1,14 @@
 <resources>
     <string name="app_name">Movies App</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
-    <string name="pref_search_key">searchValue</string>
+
+    <string name="pref_search_key">search_value</string>
 
     <string name="pref_search_default" translatable="false">Popular</string>
+    <string name="pref_search_topic_title">Choose a default search criteria</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_refresh">Refresh</string>
 </resources>

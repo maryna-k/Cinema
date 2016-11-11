@@ -7,12 +7,15 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,7 +53,7 @@ public class MovieGridFragment extends Fragment {
     private String drawerItemTitle;
     private GridView gv;
 
-    public static final String PREFS_NAME = "pref_general";
+    //public static final String SEARCH_PREFS = "search_value";
 
     /*since java has no map literals and searchCategories is a class variable, initialization
       should be done in a static initializer */
@@ -68,7 +71,6 @@ public class MovieGridFragment extends Fragment {
         searchCategories.put("Family", "10751");
         searchCategories.put("Fantasy", "14");
         searchCategories.put("Foreign", "10769");
-        searchCategories.put("Mystery", "36");
         searchCategories.put("Horror", "27");
         searchCategories.put("Music", "10402");
         searchCategories.put("Mystery", "9648");
@@ -121,8 +123,9 @@ public class MovieGridFragment extends Fragment {
         //recreate fragment state on rotation
         if (savedInstanceState == null) {
             //use SharedPreferences to get the default value of movie search
-            SharedPreferences settings = getActivity().getSharedPreferences(PREFS_NAME, 0);
-            drawerItemTitle = settings.getString("pref_search_key", "Top Rated");
+            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            drawerItemTitle = settings.getString(getString(R.string.pref_search_key),
+                                                getString(R.string.pref_search_default));
             Log.v(LOG_TAG, "SharedPreferences: " + drawerItemTitle);
         } else {
             drawerItemTitle = savedInstanceState.getString("searchCategory");
@@ -135,7 +138,7 @@ public class MovieGridFragment extends Fragment {
         ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         ((AppCompatActivity) getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
         //change drawer icon
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_drawer);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_action_drawer);
 
         setupDrawer();
 
@@ -183,13 +186,6 @@ public class MovieGridFragment extends Fragment {
         };
         drawerToggle.setDrawerIndicatorEnabled(true);
         drawerLayout.addDrawerListener(drawerToggle);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Activate the navigation drawer toggle
-        if (drawerToggle.onOptionsItemSelected(item)) return true;
-        return super.onOptionsItemSelected(item);
     }
 
     private boolean checkNetworkConnection() {
@@ -338,5 +334,22 @@ public class MovieGridFragment extends Fragment {
                 }
             }
         }
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater){
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.menu_main_fragment, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+        // Activate the navigation drawer toggle
+        if (drawerToggle.onOptionsItemSelected(item)) return true;
+        else if(item.getItemId() == R.id.action_refresh){
+            updateMovieList(drawerItemTitle);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
