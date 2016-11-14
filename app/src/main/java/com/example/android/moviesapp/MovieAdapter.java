@@ -36,3 +36,17 @@ public class MovieAdapter extends ArrayAdapter<Movie>{
     }
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
