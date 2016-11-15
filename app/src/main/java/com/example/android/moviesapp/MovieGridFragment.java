@@ -116,6 +116,12 @@ public class MovieGridFragment extends Fragment {
         // Set the list's click listener
         drawerList.setOnItemClickListener(new DrawerItemClickListener());
 
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
+        //change drawer icon
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_action_drawer);
+        setupDrawer();
+
         //recreate fragment state on rotation
         if (savedInstanceState == null) {
             //use SharedPreferences to get the default value of movie search
@@ -131,13 +137,6 @@ public class MovieGridFragment extends Fragment {
             gv.smoothScrollToPosition(gridViewPosition);
             Log.v(LOG_TAG, Integer.toString(gridViewPosition));
         }
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
-        //change drawer icon
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_action_drawer);
-
-        setupDrawer();
-
         DownloadMovieDataTask downloadMovies = new DownloadMovieDataTask();
         if (checkNetworkConnection()) downloadMovies.execute(drawerItemTitle);
         return rootView;
