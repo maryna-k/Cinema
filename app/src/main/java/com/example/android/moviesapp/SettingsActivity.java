@@ -30,7 +30,6 @@ public class SettingsActivity extends AppCompatActivity {
 
         private void bindPreferenceSummaryToValue(Preference pref){
             pref.setOnPreferenceChangeListener(this);
-
             onPreferenceChange(pref, PreferenceManager.getDefaultSharedPreferences(pref.getContext())
                                                         .getString(pref.getKey(),""));
         }
@@ -38,7 +37,6 @@ public class SettingsActivity extends AppCompatActivity {
         @Override
         public boolean onPreferenceChange(Preference pref, Object value){
             String stringValue = value.toString();
-
             ListPreference listPreference = (ListPreference) pref;
             int prefIndex = listPreference.findIndexOfValue(stringValue);
             if (prefIndex >= 0)

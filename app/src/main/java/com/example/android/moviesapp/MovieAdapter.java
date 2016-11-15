@@ -34,7 +34,6 @@ public class MovieAdapter extends ArrayAdapter<Movie>{
         Picasso.with(getContext()).load(address).into(imageView);
         return convertView;
     }
-
 }
 
 

@@ -53,8 +53,6 @@ public class MovieGridFragment extends Fragment {
     private String drawerItemTitle;
     private GridView gv;
 
-    //public static final String SEARCH_PREFS = "search_value";
-
     /*since java has no map literals and searchCategories is a class variable, initialization
       should be done in a static initializer */
     private static final HashMap<String, String> searchCategories = new HashMap<>();
@@ -100,7 +98,6 @@ public class MovieGridFragment extends Fragment {
 
         gv = (GridView) rootView.findViewById(R.id.gridview);
         gv.setAdapter(adapter);
-
         gv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -112,7 +109,6 @@ public class MovieGridFragment extends Fragment {
 
         drawerLayout = (DrawerLayout) rootView.findViewById(R.id.drawer_layout);
         drawerList = (ListView) rootView.findViewById(R.id.left_drawer);
-
         // Set the adapter for the list view
         drawerAdapter = new ArrayAdapter<String>(getContext(),
                 R.layout.drawer_list_item, R.id.drawer_list_item_textview, new ArrayList<String>(searchCategories.keySet()));
@@ -126,15 +122,15 @@ public class MovieGridFragment extends Fragment {
             SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getActivity());
             drawerItemTitle = settings.getString(getString(R.string.pref_search_key),
                                                 getString(R.string.pref_search_default));
+            getActivity().setTitle(getString(R.string.app_name) + ": " + drawerItemTitle);
             Log.v(LOG_TAG, "SharedPreferences: " + drawerItemTitle);
         } else {
             drawerItemTitle = savedInstanceState.getString("searchCategory");
-            getActivity().setTitle(drawerItemTitle);
+            getActivity().setTitle(getString(R.string.app_name) + ": " + drawerItemTitle);
             gridViewPosition = savedInstanceState.getInt("gridViewPosition");
             gv.smoothScrollToPosition(gridViewPosition);
             Log.v(LOG_TAG, Integer.toString(gridViewPosition));
         }
-
         ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         ((AppCompatActivity) getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
         //change drawer icon
@@ -163,7 +159,7 @@ public class MovieGridFragment extends Fragment {
             updateMovieList(((TextView) view.findViewById(R.id.drawer_list_item_textview)).getText().toString());
             //getActivity().setTitle(searchCategories.get(drawerAdapter.getItem(position)));
             drawerItemTitle = drawerAdapter.getItem(position);
-            getActivity().setTitle(drawerItemTitle);
+            getActivity().setTitle(getString(R.string.app_name) + ": " + drawerItemTitle);
             drawerLayout.closeDrawer(drawerList);
         }
     }

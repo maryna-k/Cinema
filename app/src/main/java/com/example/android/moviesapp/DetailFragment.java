@@ -14,9 +14,7 @@ import com.squareup.picasso.Picasso;
 
 public class DetailFragment extends Fragment {
 
-    public DetailFragment() {
-        // Required empty public constructor
-    }
+    public DetailFragment() {}
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

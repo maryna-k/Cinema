@@ -1,12 +1,9 @@
 <resources>
-    <string name="app_name">Movies App</string>
-
+    <string name="app_name">Cinema</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
-
     <string name="pref_search_key">search_value</string>
-
     <string name="pref_search_default" translatable="false">Popular</string>
     <string name="pref_search_topic_title">Search movie by</string>
     <string name="action_settings">Settings</string>
