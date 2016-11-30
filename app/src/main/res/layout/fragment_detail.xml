@@ -1,87 +1,168 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <ImageView
-            android:id="@+id/header"
-            android:layout_width="match_parent"
-            android:layout_height="170dp"
-            android:scaleType="centerCrop" />
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
         <RelativeLayout
-            android:id="@+id/body"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@id/header"
-            android:paddingLeft="15dp"
-            android:paddingRight="15dp"
-            android:paddingTop="25dp">
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/header"
+                android:layout_width="match_parent"
+                android:layout_height="170dp"
+                android:scaleType="centerCrop" />
+
+            <!--Rating layout-->
+            <LinearLayout
+                android:id="@+id/rating_layout"
+                android:orientation="horizontal"
+                android:gravity="right"
+                style="@style/details_margins"
+                android:layout_below="@id/header">
+                <ImageView
+                    android:id="@+id/icon_rating"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/ic_rating"/>
+                <TextView
+                    android:id="@+id/rating"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:textSize="@dimen/detail_text_size"
+                    android:gravity="center"
+                    tools:text="10/10"/>
+            </LinearLayout>
 
             <ImageView
                 android:id="@+id/small_poster"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
-                android:scaleType="centerCrop" />
-
-            <TextView
-                android:id="@+id/title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignTop="@id/small_poster"
-                android:layout_marginLeft="20dp"
-                android:layout_toRightOf="@id/small_poster"
-                android:textSize="20sp"
-                android:textStyle="bold" />
-
-            <LinearLayout
-                style="@style/details_linear_layouts"
-                android:layout_width="wrap_content"
-                android:layout_alignBottom="@id/small_poster"
-                android:layout_toRightOf="@id/small_poster">
-
-
-                <TextView
-                    android:id="@+id/release_date_title"
-                    style="@style/release_rating"
-                    android:text="Release date" />
-
-                <TextView
-                    android:id="@+id/release_date"
-                    style="@style/release_rating" />
-
-                <TextView
-                    android:id="@+id/rating_title"
-                    style="@style/release_rating"
-                    android:text="Rating" />
-
-                <TextView
-                    android:id="@+id/rating"
-                    style="@style/release_rating" />
-            </LinearLayout>
+                android:scaleType="centerCrop"
+                android:layout_alignBottom="@id/rating_layout"
+                android:layout_marginBottom="-32dp"
+                android:layout_marginLeft="@dimen/details_activity_margin_left"/>
         </RelativeLayout>
 
         <TextView
+            android:id="@+id/title"
+            style="@style/title"
+            tools:text="This is a title"/>
+
+        <!--Genre layout-->
+        <RelativeLayout
+            android:id="@+id/layout_genre"
+            style="@style/details_margins">
+            <ImageView
+                android:id="@+id/ic_genre"
+                style="@style/details_icon"
+                android:src="@drawable/ic_genre" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:layout_toRightOf="@id/ic_genre">
+                <TextView
+                    android:id="@+id/title_genre"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/genre"/>
+                <TextView
+                    android:id="@+id/genre"
+                    style="@style/details_text"
+                    tools:text="Some genre"/>
+            </LinearLayout>
+        </RelativeLayout>
+
+        <View style="@style/Divider"/>
+
+        <!--Release layout-->
+        <RelativeLayout
+            android:id="@+id/layout_release"
+            style="@style/details_margins">
+            <ImageView
+                android:id="@+id/ic_release"
+                style="@style/details_icon"
+                android:src="@drawable/ic_release_date"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:layout_toRightOf="@id/ic_release">
+                <TextView
+                    android:id="@+id/title_release_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/release_date"/>
+                <TextView
+                    android:id="@+id/release_date"
+                    style="@style/details_text"
+                    tools:text="01/01/01"/>
+            </LinearLayout>
+        </RelativeLayout>
+
+        <View style="@style/Divider"/>
+
+        <!--Country layout-->
+        <RelativeLayout
+            android:id="@+id/layout_country"
+            style="@style/details_margins">
+            <ImageView
+                android:id="@+id/ic_country"
+                style="@style/details_icon"
+                android:src="@drawable/ic_country"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:layout_toRightOf="@id/ic_country">
+                <TextView
+                    android:id="@+id/title_country"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/country"/>
+                <TextView
+                    android:id="@+id/country"
+                    style="@style/details_text"
+                    tools:text="Some country"/>
+            </LinearLayout>
+        </RelativeLayout>
+
+        <View style="@style/Divider"/>
+
+        <!--Layout overview-->
+        <LinearLayout
+            android:id="@+id/layout_overview_title"
+            android:orientation="horizontal"
+            style="@style/details_margins">
+            <ImageView
+                android:id="@+id/ic_overview"
+                style="@style/details_icon"
+                android:src="@drawable/ic_overview"/>
+            <TextView
+                android:id="@+id/title_overview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@string/overview"/>
+        </LinearLayout>
+        <!--Overview text-->
+        <TextView
             android:id="@+id/overview"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/body"
-            android:padding="20dp"
-            android:textSize="17sp" />
+            style="@style/details_margins"
+            android:textSize="@dimen/detail_text_size"
+            tools:text="Some example text"/>
 
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/fab"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBottom="@id/header"
-            android:layout_alignParentRight="true"
-            android:layout_marginBottom="-32dp"
-            android:layout_marginRight="20dp" />
+        <View style="@style/Divider"/>
 
-    </RelativeLayout>
+        <!--Trailer layout-->
+
+       </LinearLayout>
 </ScrollView>

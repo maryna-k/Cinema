@@ -44,7 +44,7 @@ public class DetailFragment extends Fragment {
             release.setText(movie.getReleaseDate());
 
             TextView rating = (TextView) rootView.findViewById(R.id.rating);
-            rating.setText(Double.toString(movie.getRating()));
+            rating.setText(Double.toString(movie.getRating()) + "/10");
 
             TextView overview = (TextView) rootView.findViewById(R.id.overview);
             overview.setText(movie.getOverview());

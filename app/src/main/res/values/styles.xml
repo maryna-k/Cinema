@@ -1,24 +1,48 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
+       <!-- <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorAccent">@color/colorAccent</item>-->
     </style>
 
-    <style name="release_rating">
+    <style name="details_margins">
+        <item name="android:layout_marginLeft">@dimen/details_activity_margin_left</item>
+        <item name="android:layout_marginRight">@dimen/details_activity_margin_right</item>
+        <item name="android:layout_marginTop">@dimen/details_activity_margin_top</item>
+        <item name="android:layout_marginBottom">@dimen/details_activity_margin_bottom</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="details_icon">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:textSize">17sp</item>
+        <item name="android:layout_alignParentLeft">true</item>
+        <item name="android:layout_centerVertical">true</item>
+        <item name="android:layout_marginRight">@dimen/details_activity_margin_left</item>
     </style>
 
-    <style name="details_linear_layouts">
+    <style name="title" parent="details_margins">
+        <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:orientation">vertical</item>
-        <item name="android:layout_marginLeft">25dp</item>
-        <item name="android:layout_marginRight">25dp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">@dimen/movie_title_size</item>
     </style>
 
+    <style name="details_text">
+        <item name="android:textSize">@dimen/detail_text_size</item>
+        <item name="android:layout_marginTop">5dp</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+    <style name="Divider">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">1dp</item>
+        <item name="android:layout_marginLeft">@dimen/details_activity_margin_left</item>
+        <item name="android:layout_marginRight">@dimen/details_activity_margin_right</item>
+        <item name="android:background">?android:attr/listDivider</item>
+    </style>
 </resources>
