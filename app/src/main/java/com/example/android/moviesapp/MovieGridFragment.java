@@ -53,7 +53,7 @@ public class MovieGridFragment extends Fragment {
     private ActionBarDrawerToggle drawerToggle;
     private int gridViewPosition = 0;
     private String drawerItemTitle;
-    private int gridColumnsNum = 2;
+    private int GRID_COLUMNS_NUM;
     private View rootView;
 
     /*since java has no map literals and searchCategories is a class variable, initialization
@@ -98,7 +98,8 @@ public class MovieGridFragment extends Fragment {
         rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
-        layoutManager = new GridLayoutManager(getContext(), gridColumnsNum);
+        GRID_COLUMNS_NUM = getResources().getInteger(R.integer.grid_columns);
+        layoutManager = new GridLayoutManager(getContext(), GRID_COLUMNS_NUM);
         mRecyclerView.setLayoutManager(layoutManager);
 
         /*gv.setOnItemClickListener(new AdapterView.OnItemClickListener() {

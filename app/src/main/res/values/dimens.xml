@@ -9,4 +9,6 @@
 
     <dimen name="movie_title_size">24sp</dimen>
     <dimen name="detail_text_size">18sp</dimen>
+
+    <integer name="grid_columns">2</integer>
 </resources>
