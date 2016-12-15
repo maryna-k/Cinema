@@ -16,6 +16,11 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder>{
     private ArrayList<Movie> mList;
     private final String LOG_TAG = MovieAdapter.class.getSimpleName();
     private Context context;
+    private OnItemClickListener listener;
+
+    public interface OnItemClickListener{
+        void onItemClick(Movie movie);
+    }
 
     public static  class ViewHolder extends RecyclerView.ViewHolder{
         public ImageView imageViewItem;
@@ -24,10 +29,26 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder>{
             super(view);
             imageViewItem = (ImageView) view.findViewById(R.id.grid_poster);
         }
+
+        public void bind(final Movie movie, final OnItemClickListener listener){
+            String address = "http://image.tmdb.org/t/p/w780/" + movie.getImageAddress();
+            Picasso.with(itemView.getContext()).load(address).into(imageViewItem);
+            itemView.setOnClickListener(new View.OnClickListener(){
+                @Override
+                public void onClick(View v){
+                    listener.onItemClick(movie);
+                }
+            });
+        }
     }
 
-    public MovieAdapter(ArrayList<Movie> mList){
+    public MovieAdapter(ArrayList<Movie> mList, OnItemClickListener listener){
         this.mList = mList;
+        this.listener = listener;
+    }
+
+    public Movie getItem(int position){
+        return mList.get(position);
     }
 
     @Override
@@ -40,9 +61,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder>{
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position){
-        Movie movie = mList.get(position);
-        String address = "http://image.tmdb.org/t/p/w780/" + movie.getImageAddress();
-        Picasso.with(context).load(address).into(holder.imageViewItem);
+        holder.bind(mList.get(position), listener);
     }
 
     @Override
@@ -50,17 +69,3 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder>{
         return mList.size();
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

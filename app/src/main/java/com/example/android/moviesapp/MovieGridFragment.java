@@ -1,6 +1,7 @@
 package com.example.android.moviesapp;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -327,7 +328,14 @@ public class MovieGridFragment extends Fragment {
         @Override
         protected void onPostExecute(ArrayList<Movie> result) {
             if (result != null) {
-                adapter = new MovieAdapter(result);
+                adapter = new MovieAdapter(result, new MovieAdapter.OnItemClickListener(){
+                    @Override
+                    public void onItemClick(Movie movie){
+                        Intent intent = new Intent(getActivity(), DetailActivity.class)
+                                .putExtra("movie", movie);
+                        startActivity(intent);
+                    }
+                });
                 mRecyclerView.setAdapter(adapter);
             }
         }
