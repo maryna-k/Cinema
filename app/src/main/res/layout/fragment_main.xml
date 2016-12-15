@@ -7,7 +7,12 @@
     android:layout_height="match_parent">
 
     <!-- Main content view -->
-    <GridView xmlns:android="http://schemas.android.com/apk/res/android"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <!--<GridView xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/gridview"
         android:layout_width="fill_parent"
@@ -19,7 +24,7 @@
         android:numColumns="auto_fit"
         android:stretchMode="columnWidth"
         tools:context="com.example.android.moviesapp.MovieGridFragment"></GridView>
-
+-->
     <!-- The navigation drawer -->
     <ListView
         android:id="@+id/left_drawer"

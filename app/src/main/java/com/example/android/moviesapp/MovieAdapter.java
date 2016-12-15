@@ -42,7 +42,7 @@ public class MovieAdapter extends ArrayAdapter<Movie>{
 
     /*ViewHolder pattern allows to find the view id only once
     * instead of looking for it each time when user scrolls the list*/
-    public static  class ViewHolder {
+    private static  class ViewHolder {
         ImageView imageViewItem;
     }
 }
