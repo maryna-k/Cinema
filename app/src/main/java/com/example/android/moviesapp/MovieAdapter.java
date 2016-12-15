@@ -1,18 +1,27 @@
 package com.example.android.moviesapp;
 
 import android.content.Context;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
-public class MovieAdapter extends ArrayAdapter<Movie>{
+public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder>{
+    
+    public static  class ViewHolder extends RecyclerView.ViewHolder{
+        public ImageView imageViewItem;
+
+        public ViewHolder(View view){
+            super(view);
+            imageViewItem = (ImageView) view.findViewById(R.id.grid_poster);
+        }
+    }
 
     private ViewHolder holder;
     private final String LOG_TAG = MovieAdapter.class.getSimpleName();
@@ -38,12 +47,6 @@ public class MovieAdapter extends ArrayAdapter<Movie>{
         //ImageView imageView = (ImageView) convertView.findViewById(R.id.grid_poster);
         Picasso.with(getContext()).load(address).into(holder.imageViewItem);
         return convertView;
-    }
-
-    /*ViewHolder pattern allows to find the view id only once
-    * instead of looking for it each time when user scrolls the list*/
-    private static  class ViewHolder {
-        ImageView imageViewItem;
     }
 }
 
