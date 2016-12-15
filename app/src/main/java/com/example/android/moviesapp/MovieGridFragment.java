@@ -1,7 +1,6 @@
 package com.example.android.moviesapp;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -12,6 +11,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -21,7 +22,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -43,7 +43,9 @@ public class MovieGridFragment extends Fragment {
 
     private final String LOG_TAG = MovieGridFragment.class.getSimpleName();
 
-    private MovieAdapter adapter;
+    private RecyclerView.Adapter adapter;
+    private RecyclerView mRecyclerView;
+    private RecyclerView.LayoutManager layoutManager;
     private ArrayList<Movie> movieList;
     private DrawerLayout drawerLayout;
     private ListView drawerList;
@@ -51,7 +53,8 @@ public class MovieGridFragment extends Fragment {
     private ActionBarDrawerToggle drawerToggle;
     private int gridViewPosition = 0;
     private String drawerItemTitle;
-    private GridView gv;
+    private int gridColumnsNum = 2;
+    private View rootView;
 
     /*since java has no map literals and searchCategories is a class variable, initialization
       should be done in a static initializer */
@@ -92,20 +95,20 @@ public class MovieGridFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+        rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
-        adapter = new MovieAdapter(getActivity(), new ArrayList<Movie>());
+        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
+        layoutManager = new GridLayoutManager(getContext(), gridColumnsNum);
+        mRecyclerView.setLayoutManager(layoutManager);
 
-        gv = (GridView) rootView.findViewById(R.id.gridview);
-        gv.setAdapter(adapter);
-        gv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        /*gv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Intent intent = new Intent(getActivity(), DetailActivity.class)
                         .putExtra("movie", adapter.getItem(i));
                 startActivity(intent);
             }
-        });
+        });*/
 
         drawerLayout = (DrawerLayout) rootView.findViewById(R.id.drawer_layout);
         drawerList = (ListView) rootView.findViewById(R.id.left_drawer);
@@ -133,9 +136,9 @@ public class MovieGridFragment extends Fragment {
         } else {
             drawerItemTitle = savedInstanceState.getString("searchCategory");
             getActivity().setTitle(getString(R.string.app_name) + ": " + drawerItemTitle);
-            gridViewPosition = savedInstanceState.getInt("gridViewPosition");
+            /*gridViewPosition = savedInstanceState.getInt("gridViewPosition");
             gv.smoothScrollToPosition(gridViewPosition);
-            Log.v(LOG_TAG, Integer.toString(gridViewPosition));
+            Log.v(LOG_TAG, Integer.toString(gridViewPosition));*/
         }
         DownloadMovieDataTask downloadMovies = new DownloadMovieDataTask();
         if (checkNetworkConnection()) downloadMovies.execute(drawerItemTitle);
@@ -146,8 +149,8 @@ public class MovieGridFragment extends Fragment {
     public void onSaveInstanceState(Bundle outState){
         super.onSaveInstanceState(outState);
         outState.putString("searchCategory", drawerItemTitle);
-        gridViewPosition = gv.getFirstVisiblePosition();
-        outState.putInt("gridViewPosition", gridViewPosition);
+        /*gridViewPosition = gv.getFirstVisiblePosition();
+        outState.putInt("gridViewPosition", gridViewPosition);*/
     }
 
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
@@ -323,10 +326,8 @@ public class MovieGridFragment extends Fragment {
         @Override
         protected void onPostExecute(ArrayList<Movie> result) {
             if (result != null) {
-                adapter.clear();
-                for (int i = 0; i < result.size(); i++) {
-                    adapter.insert(result.get(i), i);
-                }
+                adapter = new MovieAdapter(result);
+                mRecyclerView.setAdapter(adapter);
             }
         }
     }

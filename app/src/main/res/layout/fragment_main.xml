@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?><!-- In order to replace one fragment with another, the activity's layout
      includes an empty FrameLayout that acts as the fragment container -->
 <android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -13,19 +12,6 @@
         android:layout_height="match_parent"
         android:scrollbars="vertical"/>
 
-    <!--<GridView xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/gridview"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:columnWidth="150dp"
-        android:gravity="center"
-        android:horizontalSpacing="3dp"
-        android:verticalSpacing="3dp"
-        android:numColumns="auto_fit"
-        android:stretchMode="columnWidth"
-        tools:context="com.example.android.moviesapp.MovieGridFragment"></GridView>
--->
     <!-- The navigation drawer -->
     <ListView
         android:id="@+id/left_drawer"
