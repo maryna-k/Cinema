@@ -47,10 +47,6 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder>{
         this.listener = listener;
     }
 
-    public Movie getItem(int position){
-        return mList.get(position);
-    }
-
     @Override
     public MovieAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
         context = parent.getContext();

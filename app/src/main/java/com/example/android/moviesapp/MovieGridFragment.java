@@ -52,7 +52,6 @@ public class MovieGridFragment extends Fragment {
     private ListView drawerList;
     private ArrayAdapter<String> drawerAdapter;
     private ActionBarDrawerToggle drawerToggle;
-    private int gridViewPosition = 0;
     private String drawerItemTitle;
     private int GRID_COLUMNS_NUM;
     private View rootView;
@@ -103,15 +102,6 @@ public class MovieGridFragment extends Fragment {
         layoutManager = new GridLayoutManager(getContext(), GRID_COLUMNS_NUM);
         mRecyclerView.setLayoutManager(layoutManager);
 
-        /*gv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Intent intent = new Intent(getActivity(), DetailActivity.class)
-                        .putExtra("movie", adapter.getItem(i));
-                startActivity(intent);
-            }
-        });*/
-
         drawerLayout = (DrawerLayout) rootView.findViewById(R.id.drawer_layout);
         drawerList = (ListView) rootView.findViewById(R.id.left_drawer);
         // Set the adapter for the list view
@@ -138,9 +128,6 @@ public class MovieGridFragment extends Fragment {
         } else {
             drawerItemTitle = savedInstanceState.getString("searchCategory");
             getActivity().setTitle(getString(R.string.app_name) + ": " + drawerItemTitle);
-            /*gridViewPosition = savedInstanceState.getInt("gridViewPosition");
-            gv.smoothScrollToPosition(gridViewPosition);
-            Log.v(LOG_TAG, Integer.toString(gridViewPosition));*/
         }
         DownloadMovieDataTask downloadMovies = new DownloadMovieDataTask();
         if (checkNetworkConnection()) downloadMovies.execute(drawerItemTitle);
@@ -151,8 +138,6 @@ public class MovieGridFragment extends Fragment {
     public void onSaveInstanceState(Bundle outState){
         super.onSaveInstanceState(outState);
         outState.putString("searchCategory", drawerItemTitle);
-        /*gridViewPosition = gv.getFirstVisiblePosition();
-        outState.putInt("gridViewPosition", gridViewPosition);*/
     }
 
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
@@ -161,7 +146,6 @@ public class MovieGridFragment extends Fragment {
             // Highlight the selected item, update the title, and close the drawer
             drawerList.setItemChecked(position, true);
             updateMovieList(((TextView) view.findViewById(R.id.drawer_list_item_textview)).getText().toString());
-            //getActivity().setTitle(searchCategories.get(drawerAdapter.getItem(position)));
             drawerItemTitle = drawerAdapter.getItem(position);
             getActivity().setTitle(getString(R.string.app_name) + ": " + drawerItemTitle);
             drawerLayout.closeDrawer(drawerList);
