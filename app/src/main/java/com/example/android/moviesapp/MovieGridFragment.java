@@ -5,10 +5,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -27,38 +28,29 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class MovieGridFragment extends Fragment {
+public class MovieGridFragment extends Fragment
+        implements LoaderManager.LoaderCallbacks<ArrayList<Movie>>{
 
     private final String LOG_TAG = MovieGridFragment.class.getSimpleName();
 
     private RecyclerView.Adapter adapter;
     private RecyclerView mRecyclerView;
     private RecyclerView.LayoutManager layoutManager;
-    private ArrayList<Movie> movieList;
     private DrawerLayout drawerLayout;
     private ListView drawerList;
     private ArrayAdapter<String> drawerAdapter;
     private ActionBarDrawerToggle drawerToggle;
     private String drawerItemTitle;
+    private static String moviesToSearch;
     private int GRID_COLUMNS_NUM;
     private View rootView;
 
     /*since java has no map literals and searchCategories is a class variable, initialization
       should be done in a static initializer */
-    private static final HashMap<String, String> searchCategories = new HashMap<>();
+    public static final HashMap<String, String> searchCategories = new HashMap<>();
     static {
         searchCategories.put("Popular", "movie/popular");
         searchCategories.put("Top Rated", "movie/top_rated");
@@ -121,23 +113,58 @@ public class MovieGridFragment extends Fragment {
         if (savedInstanceState == null) {
             //use SharedPreferences to get the default value of movie search
             SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getActivity());
-            drawerItemTitle = settings.getString(getString(R.string.pref_search_key),
+            moviesToSearch = settings.getString(getString(R.string.pref_search_key),
                                                 getString(R.string.pref_search_default));
-            getActivity().setTitle(getString(R.string.app_name) + ": " + drawerItemTitle);
-            Log.v(LOG_TAG, "SharedPreferences: " + drawerItemTitle);
+            getActivity().setTitle(getString(R.string.app_name) + ": " + moviesToSearch);
+            Log.v(LOG_TAG, "SharedPreferences: " + moviesToSearch);
         } else {
-            drawerItemTitle = savedInstanceState.getString("searchCategory");
-            getActivity().setTitle(getString(R.string.app_name) + ": " + drawerItemTitle);
+            moviesToSearch = savedInstanceState.getString("searchCategory");
+            getActivity().setTitle(getString(R.string.app_name) + ": " + moviesToSearch);
         }
-        DownloadMovieDataTask downloadMovies = new DownloadMovieDataTask();
-        if (checkNetworkConnection()) downloadMovies.execute(drawerItemTitle);
+        /*DownloadMovieDataTask downloadMovies = new DownloadMovieDataTask();
+        if (checkNetworkConnection()) downloadMovies.execute(drawerItemTitle);*/
+
+        getLoaderManager().initLoader(0, null, this);
         return rootView;
+    }
+
+    @Override
+    public Loader<ArrayList<Movie>> onCreateLoader(int id, Bundle args){
+        return new MovieLoader(getContext());
+    }
+
+    @Override
+    public void onLoadFinished(Loader<ArrayList<Movie>> loader, ArrayList<Movie> result) {
+        if (result != null) {
+            adapter = new MovieAdapter(result, new MovieAdapter.OnItemClickListener(){
+                @Override
+                public void onItemClick(Movie movie){
+                    Intent intent = new Intent(getActivity(), DetailActivity.class)
+                            .putExtra("movie", movie);
+                    startActivity(intent);
+                }
+            });
+            mRecyclerView.setAdapter(adapter);
+        }
+    }
+
+    @Override
+    public void onLoaderReset(Loader<ArrayList<Movie>> loader) {
+        adapter = new MovieAdapter(new ArrayList<Movie>(), new MovieAdapter.OnItemClickListener(){
+            @Override
+            public void onItemClick(Movie movie){
+                Intent intent = new Intent(getActivity(), DetailActivity.class)
+                        .putExtra("movie", movie);
+                startActivity(intent);
+            }
+        });
+        mRecyclerView.setAdapter(adapter);
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState){
         super.onSaveInstanceState(outState);
-        outState.putString("searchCategory", drawerItemTitle);
+        outState.putString("searchCategory", moviesToSearch);
     }
 
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
@@ -146,7 +173,10 @@ public class MovieGridFragment extends Fragment {
             // Highlight the selected item, update the title, and close the drawer
             drawerList.setItemChecked(position, true);
             updateMovieList(((TextView) view.findViewById(R.id.drawer_list_item_textview)).getText().toString());
+            Log.v(LOG_TAG, "TextView: " + ((TextView) view.findViewById(R.id.drawer_list_item_textview)).getText().toString());
             drawerItemTitle = drawerAdapter.getItem(position);
+            Log.v(LOG_TAG, "drawerItemTitle: " + drawerItemTitle);
+            moviesToSearch = drawerItemTitle;
             getActivity().setTitle(getString(R.string.app_name) + ": " + drawerItemTitle);
             drawerLayout.closeDrawer(drawerList);
         }
@@ -184,15 +214,19 @@ public class MovieGridFragment extends Fragment {
         }
     }
 
-    public void updateMovieList(String searchCriteria){
-        if (checkNetworkConnection()) new DownloadMovieDataTask().execute(searchCriteria);
+    public static String getMoviesToSearch() {
+        return moviesToSearch;
     }
 
-    public class DownloadMovieDataTask extends AsyncTask<String, Void, ArrayList<Movie>> {
+    public void updateMovieList(String searchCriteria){
+        //if (checkNetworkConnection()) new DownloadMovieDataTask().execute(searchCriteria);
+    }
 
-        private final String LOG_TAG = DownloadMovieDataTask.class.getSimpleName();
+   /* public class DownloadMovieDataTask extends AsyncTask<String, Void, ArrayList<Movie>> {
 
-        private ArrayList<Movie> getMovieDataFromJson(String movieJsonStr) throws JSONException {
+        private final String LOG_TAG = DownloadMovieDataTask.class.getSimpleName();*/
+
+        /*private ArrayList<Movie> getMovieDataFromJson(String movieJsonStr) throws JSONException {
 
             final String RESULTS = "results";
             final String TITLE = "title";
@@ -222,9 +256,9 @@ public class MovieGridFragment extends Fragment {
                 Log.v(LOG_TAG, movie.toString());
             }
             return movieList;
-        }
+        }*/
 
-        private String buildMovieUrlHelper(String criteria1, String criteria2) {
+        /*private String buildMovieUrlHelper(String criteria1, String criteria2) {
 
             final String BASE_URL = "http://api.themoviedb.org/3/";
             final String API_KEY = "?api_key=" + BuildConfig.TMDb_API_KEY;
@@ -244,9 +278,9 @@ public class MovieGridFragment extends Fragment {
                 url = buildMovieUrlHelper("discover/movie", "&with_genres=" + searchCategories.get(category));
             }
             return url;
-        }
+        }*/
 
-        @Override
+        /*@Override
         protected ArrayList<Movie> doInBackground(String... params) {
 
             HttpURLConnection urlConnection = null;
@@ -307,9 +341,9 @@ public class MovieGridFragment extends Fragment {
                 e.printStackTrace();
             }
             return null;
-        }
+        }*/
 
-        @Override
+        /*@Override
         protected void onPostExecute(ArrayList<Movie> result) {
             if (result != null) {
                 adapter = new MovieAdapter(result, new MovieAdapter.OnItemClickListener(){
@@ -322,8 +356,7 @@ public class MovieGridFragment extends Fragment {
                 });
                 mRecyclerView.setAdapter(adapter);
             }
-        }
-    }
+        }*/
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater){
