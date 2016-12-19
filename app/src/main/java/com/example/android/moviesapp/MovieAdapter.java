@@ -64,4 +64,11 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder>{
     public int getItemCount(){
         return mList.size();
     }
+
+    public void clearData() {
+        if (getItemCount() > 0) {
+            mList.clear();
+        }
+        notifyDataSetChanged();
+    }
 }

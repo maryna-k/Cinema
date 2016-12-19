@@ -36,7 +36,7 @@ public class MovieGridFragment extends Fragment
 
     private final String LOG_TAG = MovieGridFragment.class.getSimpleName();
 
-    private RecyclerView.Adapter adapter;
+    private MovieAdapter adapter;
     private RecyclerView mRecyclerView;
     private RecyclerView.LayoutManager layoutManager;
     private DrawerLayout drawerLayout;
@@ -47,6 +47,7 @@ public class MovieGridFragment extends Fragment
     private static String moviesToSearch;
     private int GRID_COLUMNS_NUM;
     private View rootView;
+    private MovieLoader loader;
 
     /*since java has no map literals and searchCategories is a class variable, initialization
       should be done in a static initializer */
@@ -130,7 +131,7 @@ public class MovieGridFragment extends Fragment
 
     @Override
     public Loader<ArrayList<Movie>> onCreateLoader(int id, Bundle args){
-        return new MovieLoader(getContext());
+        return loader = new MovieLoader(getContext());
     }
 
     @Override
@@ -150,15 +151,7 @@ public class MovieGridFragment extends Fragment
 
     @Override
     public void onLoaderReset(Loader<ArrayList<Movie>> loader) {
-        adapter = new MovieAdapter(new ArrayList<Movie>(), new MovieAdapter.OnItemClickListener(){
-            @Override
-            public void onItemClick(Movie movie){
-                Intent intent = new Intent(getActivity(), DetailActivity.class)
-                        .putExtra("movie", movie);
-                startActivity(intent);
-            }
-        });
-        mRecyclerView.setAdapter(adapter);
+        adapter.clearData();
     }
 
     @Override
@@ -172,7 +165,8 @@ public class MovieGridFragment extends Fragment
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             // Highlight the selected item, update the title, and close the drawer
             drawerList.setItemChecked(position, true);
-            updateMovieList(((TextView) view.findViewById(R.id.drawer_list_item_textview)).getText().toString());
+            //((TextView) view.findViewById(R.id.drawer_list_item_textview)).getText().toString()
+            updateMovieList();
             Log.v(LOG_TAG, "TextView: " + ((TextView) view.findViewById(R.id.drawer_list_item_textview)).getText().toString());
             drawerItemTitle = drawerAdapter.getItem(position);
             Log.v(LOG_TAG, "drawerItemTitle: " + drawerItemTitle);
@@ -218,145 +212,9 @@ public class MovieGridFragment extends Fragment
         return moviesToSearch;
     }
 
-    public void updateMovieList(String searchCriteria){
-        //if (checkNetworkConnection()) new DownloadMovieDataTask().execute(searchCriteria);
+    public void updateMovieList(){
+        getLoaderManager().restartLoader(0, null, this);
     }
-
-   /* public class DownloadMovieDataTask extends AsyncTask<String, Void, ArrayList<Movie>> {
-
-        private final String LOG_TAG = DownloadMovieDataTask.class.getSimpleName();*/
-
-        /*private ArrayList<Movie> getMovieDataFromJson(String movieJsonStr) throws JSONException {
-
-            final String RESULTS = "results";
-            final String TITLE = "title";
-            final String OVERVIEW = "overview";
-            final String RATING = "vote_average";
-            final String RELEASE_DATE = "release_date";
-            final String IMAGE_ADDRESS = "poster_path";
-
-            JSONObject movieJson = new JSONObject(movieJsonStr);
-            JSONArray movieArray = movieJson.getJSONArray(RESULTS);
-
-            if (movieList == null) movieList = new ArrayList<Movie>();
-            else movieList.clear();
-
-            for (int i = 0; i < movieArray.length(); i++) {
-
-                Movie movie = new Movie();
-                JSONObject movieObject = movieArray.getJSONObject(i);
-
-                movie.setTitle(movieObject.getString(TITLE));
-                movie.setOverview(movieObject.getString(OVERVIEW));
-                movie.setRating(movieObject.getDouble(RATING));
-                movie.setReleaseDate(movieObject.getString(RELEASE_DATE));
-                movie.setImageAddress(movieObject.getString(IMAGE_ADDRESS));
-
-                movieList.add(i, movie);
-                Log.v(LOG_TAG, movie.toString());
-            }
-            return movieList;
-        }*/
-
-        /*private String buildMovieUrlHelper(String criteria1, String criteria2) {
-
-            final String BASE_URL = "http://api.themoviedb.org/3/";
-            final String API_KEY = "?api_key=" + BuildConfig.TMDb_API_KEY;
-
-            return new StringBuilder()
-                    .append(BASE_URL)
-                    .append(criteria1)
-                    .append(API_KEY)
-                    .append(criteria2).toString();
-        }
-
-        private String buildMovieUrl(String category){
-            String url;
-            if (category.equals("Popular") || category.equals("Top Rated")) {
-                url = buildMovieUrlHelper(searchCategories.get(category), "");
-            } else {
-                url = buildMovieUrlHelper("discover/movie", "&with_genres=" + searchCategories.get(category));
-            }
-            return url;
-        }*/
-
-        /*@Override
-        protected ArrayList<Movie> doInBackground(String... params) {
-
-            HttpURLConnection urlConnection = null;
-            BufferedReader reader = null;
-
-            String movieJsonStr = null;
-            final String urlString = buildMovieUrl(params[0]);
-            Log.v(LOG_TAG, "Url: " + urlString);
-
-            try {
-                URL url = new URL(urlString);
-
-                // Create the request to TMDb, and open the connection
-                urlConnection = (HttpURLConnection) url.openConnection();
-                urlConnection.setRequestMethod("GET");
-                urlConnection.connect();
-
-                // Read the input stream into a String
-                InputStream inputStream = urlConnection.getInputStream();
-                StringBuffer buffer = new StringBuffer();
-                if (inputStream == null) {
-                    return null;
-                }
-                reader = new BufferedReader(new InputStreamReader(inputStream));
-
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    buffer.append(line + "\n");
-                }
-
-                if (buffer.length() == 0) {
-                    return null;
-                }
-                movieJsonStr = buffer.toString();
-                Log.v(LOG_TAG, "TMDb JSON string: " + movieJsonStr);
-
-            } catch (IOException e) {
-                Log.e(LOG_TAG, "Error ", e);
-                return null;
-
-            } finally {
-                if (urlConnection != null) {
-                    urlConnection.disconnect();
-                }
-                if (reader != null) {
-                    try {
-                        reader.close();
-                    } catch (final IOException e) {
-                        Log.e(LOG_TAG, "Error closing stream", e);
-                    }
-                }
-            }
-
-            try {
-                return getMovieDataFromJson(movieJsonStr);
-            } catch (JSONException e) {
-                Log.e(LOG_TAG, e.getMessage(), e);
-                e.printStackTrace();
-            }
-            return null;
-        }*/
-
-        /*@Override
-        protected void onPostExecute(ArrayList<Movie> result) {
-            if (result != null) {
-                adapter = new MovieAdapter(result, new MovieAdapter.OnItemClickListener(){
-                    @Override
-                    public void onItemClick(Movie movie){
-                        Intent intent = new Intent(getActivity(), DetailActivity.class)
-                                .putExtra("movie", movie);
-                        startActivity(intent);
-                    }
-                });
-                mRecyclerView.setAdapter(adapter);
-            }
-        }*/
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater){
@@ -369,7 +227,7 @@ public class MovieGridFragment extends Fragment
         // Activate the navigation drawer toggle
         if (drawerToggle.onOptionsItemSelected(item)) return true;
         else if(item.getItemId() == R.id.action_refresh){
-            updateMovieList(drawerItemTitle);
+            updateMovieList();
             return true;
         }
         return super.onOptionsItemSelected(item);
