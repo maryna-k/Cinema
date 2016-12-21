@@ -36,9 +36,9 @@ public class MovieGridFragment extends Fragment
 
     private final String LOG_TAG = MovieGridFragment.class.getSimpleName();
 
-    private MovieAdapter adapter;
+    private MovieAdapter mAdapter;
     private RecyclerView mRecyclerView;
-    private RecyclerView.LayoutManager layoutManager;
+    private GridLayoutManager mLayoutManager;
     private DrawerLayout drawerLayout;
     private ListView drawerList;
     private ArrayAdapter<String> drawerAdapter;
@@ -48,6 +48,9 @@ public class MovieGridFragment extends Fragment
     private int GRID_COLUMNS_NUM;
     private View rootView;
     private MovieLoader loader;
+    private EndlessRecyclerViewScrollListener mScrollListener;
+    private final int PRIMARY_LOADER_ID = 0;
+    private final int SECONDARY_LOADER_ID = 1;
 
     /*since java has no map literals and searchCategories is a class variable, initialization
       should be done in a static initializer */
@@ -92,8 +95,17 @@ public class MovieGridFragment extends Fragment
 
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
         GRID_COLUMNS_NUM = getResources().getInteger(R.integer.grid_columns);
-        layoutManager = new GridLayoutManager(getContext(), GRID_COLUMNS_NUM);
-        mRecyclerView.setLayoutManager(layoutManager);
+        mLayoutManager = new GridLayoutManager(getContext(), GRID_COLUMNS_NUM);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+
+        mScrollListener = new EndlessRecyclerViewScrollListener(mLayoutManager) {
+            @Override
+            public void onLoadMore() {
+                loadNextDataFromApi();
+            }
+        };
+        // Adds the scroll listener to RecyclerView
+        mRecyclerView.addOnScrollListener(mScrollListener);
 
         drawerLayout = (DrawerLayout) rootView.findViewById(R.id.drawer_layout);
         drawerList = (ListView) rootView.findViewById(R.id.left_drawer);
@@ -125,33 +137,51 @@ public class MovieGridFragment extends Fragment
         /*DownloadMovieDataTask downloadMovies = new DownloadMovieDataTask();
         if (checkNetworkConnection()) downloadMovies.execute(drawerItemTitle);*/
 
-        getLoaderManager().initLoader(0, null, this);
+        getLoaderManager().initLoader(PRIMARY_LOADER_ID, null, this);
         return rootView;
+    }
+
+    private void loadNextDataFromApi(){
+        getLoaderManager().initLoader(SECONDARY_LOADER_ID, null, this);
     }
 
     @Override
     public Loader<ArrayList<Movie>> onCreateLoader(int id, Bundle args){
-        return loader = new MovieLoader(getContext());
+        if (id == PRIMARY_LOADER_ID ) {
+            mScrollListener.resetState();
+        }
+        loader = new MovieLoader(getContext());
+        return loader;
     }
 
     @Override
     public void onLoadFinished(Loader<ArrayList<Movie>> loader, ArrayList<Movie> result) {
-        if (result != null) {
-            adapter = new MovieAdapter(result, new MovieAdapter.OnItemClickListener(){
-                @Override
-                public void onItemClick(Movie movie){
-                    Intent intent = new Intent(getActivity(), DetailActivity.class)
-                            .putExtra("movie", movie);
-                    startActivity(intent);
-                }
-            });
-            mRecyclerView.setAdapter(adapter);
+        if (result != null){
+            switch(loader.getId()){
+                case PRIMARY_LOADER_ID:
+                        if (mAdapter == null){
+                            mAdapter = new MovieAdapter(result, new MovieAdapter.OnItemClickListener(){
+                                @Override
+                                public void onItemClick(Movie movie){
+                                    Intent intent = new Intent(getActivity(), DetailActivity.class)
+                                            .putExtra("movie", movie);
+                                    startActivity(intent);
+                                }
+                            });
+                            mRecyclerView.setAdapter(mAdapter);
+                        } else
+                            mAdapter.addData(result);
+                    break;
+                case SECONDARY_LOADER_ID:
+                    mAdapter.addData(result);
+                    getLoaderManager().destroyLoader(SECONDARY_LOADER_ID);
+            }
         }
     }
 
     @Override
     public void onLoaderReset(Loader<ArrayList<Movie>> loader) {
-        adapter.clearData();
+        mScrollListener.resetState();
     }
 
     @Override
@@ -213,7 +243,8 @@ public class MovieGridFragment extends Fragment
     }
 
     public void updateMovieList(){
-        getLoaderManager().restartLoader(0, null, this);
+        mAdapter.clearData();
+        getLoaderManager().restartLoader(PRIMARY_LOADER_ID, null, this);
     }
 
     @Override

@@ -134,7 +134,7 @@ public class MovieLoader extends AsyncTaskLoader<ArrayList<Movie>> {
         return movieList;
     }
 
-    private String buildMovieUrlHelper(String criteria1, String criteria2) {
+    private String buildMovieUrlHelper(String criteria1, String criteria2, String page) {
 
         final String BASE_URL = "http://api.themoviedb.org/3/";
         final String API_KEY = "?api_key=" + BuildConfig.TMDb_API_KEY;
@@ -143,15 +143,18 @@ public class MovieLoader extends AsyncTaskLoader<ArrayList<Movie>> {
                 .append(BASE_URL)
                 .append(criteria1)
                 .append(API_KEY)
-                .append(criteria2).toString();
+                .append(criteria2)
+                .append(page).toString();
     }
 
     private String buildMovieUrl(String category){
         String url;
         if (category.equals("Popular") || category.equals("Top Rated")) {
-            url = buildMovieUrlHelper(searchCategories.get(category), "");
+            url = buildMovieUrlHelper(searchCategories.get(category), "",
+                    "&page=" + EndlessRecyclerViewScrollListener.setPageIndex());
         } else {
-            url = buildMovieUrlHelper("discover/movie", "&with_genres=" + searchCategories.get(category));
+            url = buildMovieUrlHelper("discover/movie", "&with_genres=" + searchCategories.get(category),
+                    "&page=" + EndlessRecyclerViewScrollListener.setPageIndex());
         }
         return url;
     }

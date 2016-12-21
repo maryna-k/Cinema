@@ -2,6 +2,7 @@ package com.example.android.moviesapp;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -70,5 +71,14 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder>{
             mList.clear();
         }
         notifyDataSetChanged();
+    }
+
+    public void addData(ArrayList<Movie> data){
+        mList.addAll(data);
+        for(int i = 0; i < mList.size(); i++){
+            Log.v(LOG_TAG, mList.get(i).getTitle());
+        }
+        this.notifyItemRangeChanged(mList.size()+1, data.size());
+        this.notifyDataSetChanged();
     }
 }
