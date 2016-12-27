@@ -9,6 +9,7 @@ public class Movie implements Serializable{
     private double rating;
     private String releaseDate;
     private String imageAddress;
+    private long mdb_id;
 
     public Movie() {
     }
@@ -59,6 +60,14 @@ public class Movie implements Serializable{
 
     public void setImageAddress(String imageAddress) {
         this.imageAddress = imageAddress;
+    }
+
+    public long getMdb_id() {
+        return mdb_id;
+    }
+
+    public void setMdb_id(long mdb_id) {
+        this.mdb_id = mdb_id;
     }
 
     @Override

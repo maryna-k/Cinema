@@ -16,6 +16,7 @@ public final class MovieContract {
         public static final String COLUMN_NAME_RELEASE = "release_date";
         public static final String COLUMN_NAME_COUNTRY = "country";
         public static final String COLUMN_NAME_OVERVIEW = "overview";
-        public static final String COLUMN_NAME_IMAGE = "image";
+        public static final String COLUMN_NAME_IMAGE_ADDRESS = "image_address";
+        public static final String COLUMN_NAME_MDB_ID = "mdb_id"; //movie database id
     }
 }
