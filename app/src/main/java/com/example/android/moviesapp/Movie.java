@@ -7,6 +7,7 @@ public class Movie implements Serializable{
     private String title;
     private String overview; //string for synopsis
     private double rating;
+    private int vote_count;
     private String releaseDate;
     private String imageAddress;
     private long mdb_id;
@@ -44,6 +45,14 @@ public class Movie implements Serializable{
 
     public void setRating(double rating) {
         this.rating = rating;
+    }
+
+    public int getVote_count() {
+        return vote_count;
+    }
+
+    public void setVote_count(int vote_count) {
+        this.vote_count = vote_count;
     }
 
     public String getReleaseDate() {
