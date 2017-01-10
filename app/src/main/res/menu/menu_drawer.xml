@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_favorite_fragment"
+            android:icon="@drawable/ic_in_favorite"
+            android:title="@string/nav_favorite" />
+
+        <item
+            android:id="@+id/nav_popular"
+            android:icon="@drawable/ic_drawer_item_popular"
+            android:title="@string/nav_popular" />
+
+        <item
+            android:id="@+id/nav_top_rated"
+            android:icon="@drawable/ic_drawer_item_popular"
+            android:title="@string/nav_top_rated" />
+
+        <item android:title="Genres">
+            <menu>
+                <group android:checkableBehavior="single">
+
+                    <item
+                        android:id="@+id/nav_action"
+                        android:icon="@drawable/ic_drawer_item"
+                        android:title="@string/nav_action" />
+                    <item
+                        android:id="@+id/nav_adventure"
+                        android:icon="@drawable/ic_drawer_item"
+                        android:title="@string/nav_adventure" />
+                    <item
+                        android:id="@+id/nav_animation"
+                        android:icon="@drawable/ic_drawer_item"
+                        android:title="@string/nav_animation" />
+                    <item
+                        android:id="@+id/nav_comedy"
+                        android:icon="@drawable/ic_drawer_item"
+                        android:title="@string/nav_comedy" />
+                    <item
+                        android:id="@+id/nav_crime"
+                        android:icon="@drawable/ic_drawer_item"
+                        android:title="@string/nav_crime" />
+                    <item
+                        android:id="@+id/nav_documentary"
+                        android:icon="@drawable/ic_drawer_item"
+                        android:title="@string/nav_documentary" />
+                    <item
+                        android:id="@+id/nav_drama"
+                        android:icon="@drawable/ic_drawer_item"
+                        android:title="@string/nav_drama" />
+                    <item
+                        android:id="@+id/nav_family"
+                        android:icon="@drawable/ic_drawer_item"
+                        android:title="@string/nav_family" />
+                    <item
+                        android:id="@+id/nav_fantasy"
+                        android:icon="@drawable/ic_drawer_item"
+                        android:title="@string/nav_fantasy" />
+                    <item
+                        android:id="@+id/nav_foreign"
+                        android:icon="@drawable/ic_drawer_item"
+                        android:title="@string/nav_foreign" />
+                    <item
+                        android:id="@+id/nav_horror"
+                        android:icon="@drawable/ic_drawer_item"
+                        android:title="@string/nav_horror" />
+                    <item
+                        android:id="@+id/nav_music"
+                        android:icon="@drawable/ic_drawer_item"
+                        android:title="@string/nav_music" />
+                    <item
+                        android:id="@+id/nav_mystery"
+                        android:icon="@drawable/ic_drawer_item"
+                        android:title="@string/nav_mystery" />
+                    <item
+                        android:id="@+id/nav_romance"
+                        android:icon="@drawable/ic_drawer_item"
+                        android:title="@string/nav_romance" />
+                    <item
+                        android:id="@+id/nav_science_fiction"
+                        android:icon="@drawable/ic_drawer_item"
+                        android:title="@string/nav_science_fiction" />
+                    <item
+                        android:id="@+id/nav_tv_movie"
+                        android:icon="@drawable/ic_drawer_item"
+                        android:title="@string/nav_tv_movie" />
+                    <item
+                        android:id="@+id/nav_thriller"
+                        android:icon="@drawable/ic_drawer_item"
+                        android:title="@string/nav_thriller" />
+                    <item
+                        android:id="@+id/nav_war"
+                        android:icon="@drawable/ic_drawer_item"
+                        android:title="@string/nav_war" />
+                    <item
+                        android:id="@+id/nav_western"
+                        android:icon="@drawable/ic_drawer_item"
+                        android:title="@string/nav_western" />
+                </group>
+            </menu>
+        </item>
+
+    </group>
+</menu>

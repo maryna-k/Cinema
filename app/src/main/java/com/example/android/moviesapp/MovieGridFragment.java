@@ -10,9 +10,6 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -22,10 +19,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -39,12 +32,7 @@ public class MovieGridFragment extends Fragment
     private MovieAdapter mAdapter;
     private RecyclerView mRecyclerView;
     private GridLayoutManager mLayoutManager;
-    private DrawerLayout drawerLayout;
-    private ListView drawerList;
-    private ArrayAdapter<String> drawerAdapter;
-    private ActionBarDrawerToggle drawerToggle;
-    private String drawerItemTitle;
-    private static String moviesToSearch;
+    public static String moviesToSearch;
     private int GRID_COLUMNS_NUM;
     private View rootView;
     private MovieLoader loader;
@@ -106,21 +94,6 @@ public class MovieGridFragment extends Fragment
         };
         // Adds the scroll listener to RecyclerView
         mRecyclerView.addOnScrollListener(mScrollListener);
-
-        drawerLayout = (DrawerLayout) rootView.findViewById(R.id.drawer_layout);
-        drawerList = (ListView) rootView.findViewById(R.id.left_drawer);
-        // Set the adapter for the list view
-        drawerAdapter = new ArrayAdapter<String>(getContext(),
-                R.layout.drawer_list_item, R.id.drawer_list_item_textview, new ArrayList<String>(searchCategories.keySet()));
-        drawerList.setAdapter(drawerAdapter);
-        // Set the list's click listener
-        drawerList.setOnItemClickListener(new DrawerItemClickListener());
-
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
-        //change drawer icon
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_action_drawer);
-        setupDrawer();
 
         //recreate fragment state on rotation
         if (savedInstanceState == null) {
@@ -190,42 +163,6 @@ public class MovieGridFragment extends Fragment
         outState.putString("searchCategory", moviesToSearch);
     }
 
-    private class DrawerItemClickListener implements ListView.OnItemClickListener {
-        @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            // Highlight the selected item, update the title, and close the drawer
-            drawerList.setItemChecked(position, true);
-            //((TextView) view.findViewById(R.id.drawer_list_item_textview)).getText().toString()
-            updateMovieList();
-            Log.v(LOG_TAG, "TextView: " + ((TextView) view.findViewById(R.id.drawer_list_item_textview)).getText().toString());
-            drawerItemTitle = drawerAdapter.getItem(position);
-            Log.v(LOG_TAG, "drawerItemTitle: " + drawerItemTitle);
-            moviesToSearch = drawerItemTitle;
-            getActivity().setTitle(getString(R.string.app_name) + ": " + drawerItemTitle);
-            drawerLayout.closeDrawer(drawerList);
-        }
-    }
-
-    private void setupDrawer() {
-        drawerToggle = new ActionBarDrawerToggle(getActivity(), drawerLayout,
-                R.string.drawer_open, R.string.drawer_close) {
-
-            //Called when a drawer has settled in a completely closed state
-            public void onDrawerClosed(View view) {
-                super.onDrawerClosed(view);
-                getActivity().invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
-            }
-
-            //Called when a drawer has settled in a completely open state
-            public void onDrawerOpened(View drawerView) {
-                super.onDrawerOpened(drawerView);
-                getActivity().invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
-            }
-        };
-        drawerToggle.setDrawerIndicatorEnabled(true);
-        drawerLayout.addDrawerListener(drawerToggle);
-    }
-
     private boolean checkNetworkConnection() {
         ConnectivityManager connMgr = (ConnectivityManager)
                 getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -256,8 +193,8 @@ public class MovieGridFragment extends Fragment
     @Override
     public boolean onOptionsItemSelected(MenuItem item){
         // Activate the navigation drawer toggle
-        if (drawerToggle.onOptionsItemSelected(item)) return true;
-        else if(item.getItemId() == R.id.action_refresh){
+        /*if (drawerToggle.onOptionsItemSelected(item)) return true;
+        else*/ if(item.getItemId() == R.id.action_refresh){
             updateMovieList();
             return true;
         }
