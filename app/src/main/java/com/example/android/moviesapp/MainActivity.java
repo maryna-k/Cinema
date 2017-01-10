@@ -11,16 +11,21 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import java.util.HashMap;
+
+import static com.example.android.moviesapp.database.MovieProvider.LOG_TAG;
 
 public class MainActivity extends AppCompatActivity {
     private DrawerLayout mDrawerLayout;
     private NavigationView mNavigationViewDrawer;
     private ActionBarDrawerToggle mDrawerToggle;
     private Toolbar toolbar;
+    private static String preferenceMoviesToSearch;
+    private static String moviesToSearch;
 
     /**Api for adding fragments at run-time:
     https://developer.android.com/training/basics/fragments/fragment-ui.html */
@@ -46,15 +51,38 @@ public class MainActivity extends AppCompatActivity {
         mNavigationViewDrawer = (NavigationView) findViewById(R.id.navigation_view);
         setupDrawerContent(mNavigationViewDrawer);
 
+        /* ensures that application is properly initialized with default settings.
+           Third boolean parameters allows setting values not to be overwritten each
+           time activity is created */
+        PreferenceManager.setDefaultValues(this, R.xml.pref_general, false);
+
+        //get preferenceMoviesToSearch from shared preferences
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+        preferenceMoviesToSearch = settings.getString(getString(R.string.pref_search_key),
+                getString(R.string.pref_search_default));
+
+        //recreate fragment state on rotation
+        if (savedInstanceState == null) {
+            //get search category from the MainActivity
+            moviesToSearch = preferenceMoviesToSearch;
+            Log.v(LOG_TAG, "SharedPreferences: " + moviesToSearch);
+        } else {
+            moviesToSearch = savedInstanceState.getString("searchCategory");
+        }
+
+        this.setTitle(getString(R.string.app_name) + ": " + moviesToSearch);
+
         //if the activity is restored, no need to create new fragment
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.main_container, new MovieGridFragment()).commit();
         }
-        /* ensures that application is properly initialized with default settings.
-           Third boolean parameters allows setting values not to be overwritten each
-           time activity is created */
-        PreferenceManager.setDefaultValues(this, R.xml.pref_general, false);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState){
+        super.onSaveInstanceState(outState);
+        outState.putString("searchCategory", moviesToSearch);
     }
 
     @Override
@@ -111,8 +139,8 @@ public class MainActivity extends AppCompatActivity {
         } else {
             //get title from the drawer and update moviesToSearch variable
             String title = menuItem.getTitle().toString();
-            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-            settings.edit().putString(getString(R.string.pref_search_key), title).commit();
+            moviesToSearch = title;
+
             //MovieGridFragment.moviesToSearch = title;
             fragmentClass = MovieGridFragment.class;
         }
@@ -134,6 +162,10 @@ public class MainActivity extends AppCompatActivity {
     private ActionBarDrawerToggle setupDrawerToggle(){
         return new ActionBarDrawerToggle(
                 this, mDrawerLayout, toolbar, R.string.drawer_open, R.string.drawer_close);
+    }
+
+    public static String getMoviesToSearch() {
+        return moviesToSearch;
     }
 
     /*since java has no map literals and categoriesKeyValuePairs is a class variable, initialization

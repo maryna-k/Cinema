@@ -2,11 +2,9 @@ package com.example.android.moviesapp;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
@@ -22,7 +20,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+
 
 public class MovieGridFragment extends Fragment
         implements LoaderManager.LoaderCallbacks<ArrayList<Movie>>{
@@ -32,40 +30,13 @@ public class MovieGridFragment extends Fragment
     private MovieAdapter mAdapter;
     private RecyclerView mRecyclerView;
     private GridLayoutManager mLayoutManager;
-    public static String moviesToSearch;
+    private String moviesToSearch;
     private int GRID_COLUMNS_NUM;
     private View rootView;
     private MovieLoader loader;
     private EndlessRecyclerViewScrollListener mScrollListener;
     private final int PRIMARY_LOADER_ID = 0;
     private final int SECONDARY_LOADER_ID = 1;
-
-    /*since java has no map literals and searchCategories is a class variable, initialization
-      should be done in a static initializer */
-    public static final HashMap<String, String> searchCategories = new HashMap<>();
-    static {
-        searchCategories.put("Popular", "movie/popular");
-        searchCategories.put("Top Rated", "movie/top_rated");
-        searchCategories.put("Action", "28");
-        searchCategories.put("Adventure", "12");
-        searchCategories.put("Animation", "16");
-        searchCategories.put("Comedy", "35");
-        searchCategories.put("Crime", "80");
-        searchCategories.put("Documentary", "99");
-        searchCategories.put("Drama", "18");
-        searchCategories.put("Family", "10751");
-        searchCategories.put("Fantasy", "14");
-        searchCategories.put("Foreign", "10769");
-        searchCategories.put("Horror", "27");
-        searchCategories.put("Music", "10402");
-        searchCategories.put("Mystery", "9648");
-        searchCategories.put("Romance", "10749");
-        searchCategories.put("Science Fiction", "878");
-        searchCategories.put("TV Movie", "10770");
-        searchCategories.put("Thriller", "53");
-        searchCategories.put("War", "10752");
-        searchCategories.put("Western", "37");
-    }
 
     public MovieGridFragment() {}
 
@@ -95,18 +66,9 @@ public class MovieGridFragment extends Fragment
         // Adds the scroll listener to RecyclerView
         mRecyclerView.addOnScrollListener(mScrollListener);
 
-        //recreate fragment state on rotation
-        if (savedInstanceState == null) {
-            //use SharedPreferences to get the default value of movie search
-            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getActivity());
-            moviesToSearch = settings.getString(getString(R.string.pref_search_key),
-                                                getString(R.string.pref_search_default));
-            getActivity().setTitle(getString(R.string.app_name) + ": " + moviesToSearch);
-            Log.v(LOG_TAG, "SharedPreferences: " + moviesToSearch);
-        } else {
-            moviesToSearch = savedInstanceState.getString("searchCategory");
-            getActivity().setTitle(getString(R.string.app_name) + ": " + moviesToSearch);
-        }
+        moviesToSearch = MainActivity.getMoviesToSearch();
+        Log.v(LOG_TAG, "SharedPreferences: " + moviesToSearch);
+
         /*DownloadMovieDataTask downloadMovies = new DownloadMovieDataTask();
         if (checkNetworkConnection()) downloadMovies.execute(drawerItemTitle);*/
 
@@ -160,7 +122,6 @@ public class MovieGridFragment extends Fragment
     @Override
     public void onSaveInstanceState(Bundle outState){
         super.onSaveInstanceState(outState);
-        outState.putString("searchCategory", moviesToSearch);
     }
 
     private boolean checkNetworkConnection() {
@@ -173,10 +134,6 @@ public class MovieGridFragment extends Fragment
             Toast.makeText(getContext(), "No Internet connection", Toast.LENGTH_LONG).show();
             return false;
         }
-    }
-
-    public static String getMoviesToSearch() {
-        return moviesToSearch;
     }
 
     public void updateMovieList(){
@@ -193,8 +150,7 @@ public class MovieGridFragment extends Fragment
     @Override
     public boolean onOptionsItemSelected(MenuItem item){
         // Activate the navigation drawer toggle
-        /*if (drawerToggle.onOptionsItemSelected(item)) return true;
-        else*/ if(item.getItemId() == R.id.action_refresh){
+        if(item.getItemId() == R.id.action_refresh){
             updateMovieList();
             return true;
         }
