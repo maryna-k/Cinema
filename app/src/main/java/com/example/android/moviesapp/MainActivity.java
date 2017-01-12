@@ -15,10 +15,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import java.util.HashMap;
-
-import static com.example.android.moviesapp.database.MovieProvider.LOG_TAG;
-
 public class MainActivity extends AppCompatActivity {
     private DrawerLayout mDrawerLayout;
     private NavigationView mNavigationViewDrawer;
@@ -26,6 +22,8 @@ public class MainActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private static String preferenceMoviesToSearch;
     private static String moviesToSearch;
+
+    private final String LOG_TAG = MainActivity.class.getSimpleName();
 
     /**Api for adding fragments at run-time:
     https://developer.android.com/training/basics/fragments/fragment-ui.html */
@@ -166,32 +164,5 @@ public class MainActivity extends AppCompatActivity {
 
     public static String getMoviesToSearch() {
         return moviesToSearch;
-    }
-
-    /*since java has no map literals and categoriesKeyValuePairs is a class variable, initialization
-      should be done in a static initializer */
-    public static final HashMap<String, String> categoriesKeyValuePairs = new HashMap<>();
-    static {
-        categoriesKeyValuePairs.put("Popular", "movie/popular");
-        categoriesKeyValuePairs.put("Top Rated", "movie/top_rated");
-        categoriesKeyValuePairs.put("Action", "28");
-        categoriesKeyValuePairs.put("Adventure", "12");
-        categoriesKeyValuePairs.put("Animation", "16");
-        categoriesKeyValuePairs.put("Comedy", "35");
-        categoriesKeyValuePairs.put("Crime", "80");
-        categoriesKeyValuePairs.put("Documentary", "99");
-        categoriesKeyValuePairs.put("Drama", "18");
-        categoriesKeyValuePairs.put("Family", "10751");
-        categoriesKeyValuePairs.put("Fantasy", "14");
-        categoriesKeyValuePairs.put("Foreign", "10769");
-        categoriesKeyValuePairs.put("Horror", "27");
-        categoriesKeyValuePairs.put("Music", "10402");
-        categoriesKeyValuePairs.put("Mystery", "9648");
-        categoriesKeyValuePairs.put("Romance", "10749");
-        categoriesKeyValuePairs.put("Science Fiction", "878");
-        categoriesKeyValuePairs.put("TV Movie", "10770");
-        categoriesKeyValuePairs.put("Thriller", "53");
-        categoriesKeyValuePairs.put("War", "10752");
-        categoriesKeyValuePairs.put("Western", "37");
     }
 }
