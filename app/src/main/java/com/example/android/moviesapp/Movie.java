@@ -11,6 +11,7 @@ public class Movie implements Serializable{
     private String releaseDate;
     private String imageAddress;
     private long mdb_id;
+    private boolean favorite;
 
     public Movie() {
     }
@@ -77,6 +78,14 @@ public class Movie implements Serializable{
 
     public void setMdb_id(long mdb_id) {
         this.mdb_id = mdb_id;
+    }
+
+    public boolean isFavorite() {
+        return favorite;
+    }
+
+    public void setFavorite(boolean favorite) {
+        this.favorite = favorite;
     }
 
     @Override

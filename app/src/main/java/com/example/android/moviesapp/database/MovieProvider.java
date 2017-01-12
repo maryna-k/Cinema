@@ -8,8 +8,13 @@ import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.util.Log;
-import android.widget.Toast;
+
+import static com.example.android.moviesapp.database.MovieContract.CONTENT_AUTHORITY;
+import static com.example.android.moviesapp.database.MovieContract.FavoriteMovieEntry;
+import static com.example.android.moviesapp.database.MovieContract.PATH_FAVORITE_MOVIES;
+
 
 public class MovieProvider extends ContentProvider {
 
@@ -17,16 +22,27 @@ public class MovieProvider extends ContentProvider {
 
     //Database helper object
     private MovieDbHelper mDbHelper;
+    public static UriMatcher sUriMatcher = buildUriMatcher();
 
     //URI matcher code for the content URI for the favorites table
     private static final int FAVORITE_MOVIES = 100;
 
-    //UriMatcher object to match a content URI to a corresponding code
-    private static final UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
+    //URI matcher code of the content URI for a single row in a favorite table
+    private static final int FAVORITE_ID = 101;
 
     //static initializer
     static{
-        sUriMatcher.addURI(MovieContract.CONTENT_AUTHORITY, MovieContract.PATH_FAVORITE_MOVIES, FAVORITE_MOVIES);
+
+    }
+
+    public static UriMatcher buildUriMatcher(){
+        //UriMatcher object to match a content URI to a corresponding code
+        UriMatcher uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
+
+        uriMatcher.addURI(CONTENT_AUTHORITY, PATH_FAVORITE_MOVIES, FAVORITE_MOVIES);
+        uriMatcher.addURI(CONTENT_AUTHORITY, PATH_FAVORITE_MOVIES + "/#", FAVORITE_ID);
+
+        return uriMatcher;
     }
 
     @Override
@@ -35,56 +51,74 @@ public class MovieProvider extends ContentProvider {
         return true;
     }
 
+    //query the whole database or query by the database _ID
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder){
-        Cursor cursor;
+        Cursor returnCursor;
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
         int match = sUriMatcher.match(uri);
-        if(match == FAVORITE_MOVIES) {
-            cursor = db.query
-                    (MovieContract.FavoriteMovieEntry.TABLE_NAME, projection, selection, selectionArgs, null, null, sortOrder);
-        } else throw new IllegalArgumentException("Cannot query unknown URI " + uri);
 
-        cursor.setNotificationUri(getContext().getContentResolver(), uri);
-        return cursor;
+        switch (match){
+            case FAVORITE_MOVIES:
+                returnCursor = db.query(
+                                FavoriteMovieEntry.TABLE_NAME,
+                                projection,
+                                selection,
+                                selectionArgs,
+                                null,
+                                null,
+                                sortOrder);
+                break;
+            case FAVORITE_ID:
+                String id = uri.getPathSegments().get(1);
+                String Selection = FavoriteMovieEntry._ID + "=?";
+                String[] SelectionArgs = new String[]{id};
+                returnCursor = db.query(
+                        FavoriteMovieEntry.TABLE_NAME,
+                        projection,
+                        Selection,
+                        SelectionArgs,
+                        null,
+                        null,
+                        sortOrder);
+                break;
+            default:
+                throw new IllegalArgumentException("Cannot query unknown URI " + uri);
+        }
+
+        returnCursor.setNotificationUri(getContext().getContentResolver(), uri);
+        return returnCursor;
     }
 
     @Override
-    public Uri insert(Uri uri, ContentValues values) {
-        final int match = sUriMatcher.match(uri);
-        if(match == FAVORITE_MOVIES){
-            return insertFavoriteMovie(uri, values);
-        } else{
-            throw new IllegalArgumentException("Insertion is not supported for uri " + uri);
-        }
-    }
-
-    private Uri insertFavoriteMovie(Uri uri, ContentValues values){
-        String title = values.getAsString(MovieContract.FavoriteMovieEntry.COLUMN_NAME_TITLE);
-        /*String genre = values.getAsString(MovieContract.FavoriteMovieEntry.COLUMN_NAME_GENRE);
-        String imageAddress = values.getAsString(MovieContract.FavoriteMovieEntry.COLUMN_NAME_IMAGE_ADDRESS);
-        Double rating = values.getAsDouble(MovieContract.FavoriteMovieEntry.COLUMN_NAME_RATING);
-        String releaseDate = values.getAsString(MovieContract.FavoriteMovieEntry.COLUMN_NAME_RELEASE);
-        String overview = values.getAsString(MovieContract.FavoriteMovieEntry.COLUMN_NAME_RELEASE);*/
-        Long mdbId = values.getAsLong(MovieContract.FavoriteMovieEntry.COLUMN_NAME_MDB_ID);
-
-        if(title == null || title.equals("")) throw new IllegalArgumentException("Movie has no title");
-
-        /**TODO: Check if mdbId is not null */
+    public Uri insert(@NonNull Uri uri, ContentValues values) {
+        Uri returnedUri;
 
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
-        long id = db.insert(MovieContract.FavoriteMovieEntry.TABLE_NAME, null, values);
 
-        if(id == -1) {
-            Log.v(LOG_TAG, "Failed to insert row for uri " + uri);
-            Toast.makeText(getContext(), "Movie was not saved to Favorites", Toast.LENGTH_SHORT).show();
-            return null;
+        final int match = sUriMatcher.match(uri);
+
+        switch (match){
+            case FAVORITE_MOVIES:
+                String title = values.getAsString(MovieContract.FavoriteMovieEntry.COLUMN_NAME_TITLE);
+                if(title == null || title.equals("")) throw new IllegalArgumentException("Movie has no title");
+
+                long id = db.insert(MovieContract.FavoriteMovieEntry.TABLE_NAME, null, values);
+
+                if(id > 0) {
+                    returnedUri = ContentUris.withAppendedId(FavoriteMovieEntry.CONTENT_URI, id);
+                } else {
+                    Log.v(LOG_TAG, "Failed to insert a row for the uri " + uri);
+                    throw new android.database.SQLException("Failed to insert row for the uri " + uri);
+                }
+                break;
+            default:
+                throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
 
-        Toast.makeText(getContext(), "Movie was succesfully saved", Toast.LENGTH_SHORT).show();
-        Uri itemUri = ContentUris.withAppendedId(uri, id);
+        // Notify the resolver if the uri has been changed, and return the newly inserted URI
         getContext().getContentResolver().notifyChange(uri, null);
-        return itemUri;
+        return returnedUri;
     }
 
     @Override
