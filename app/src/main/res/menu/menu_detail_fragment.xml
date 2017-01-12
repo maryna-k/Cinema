@@ -5,5 +5,14 @@
         android:id="@+id/action_add_to_favorite"
         android:icon="@drawable/ic_action_add_to_favorite"
         android:title="@string/action_favorite"
+        android:visible="true"
         app:showAsAction="always"/>
+
+    <item
+        android:id="@+id/state_favorite"
+        android:icon="@drawable/ic_in_favorite"
+        android:title="@string/action_favorite"
+        android:visible="false"
+        app:showAsAction="always"/>
+
 </menu>
