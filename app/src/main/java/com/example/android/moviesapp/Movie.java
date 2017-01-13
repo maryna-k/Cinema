@@ -16,12 +16,13 @@ public class Movie implements Serializable{
     public Movie() {
     }
 
-    public Movie(String title, String overview, double rating, String releaseDate, String imageAddress) {
+    public Movie(String title, String overview, double rating, String releaseDate, String imageAddress, Long mdb_id) {
         this.title = title;
         this.overview = overview;
         this.rating = rating;
         this.releaseDate = releaseDate;
         this.imageAddress = imageAddress;
+        this.mdb_id = mdb_id;
     }
 
     public String getTitle() {

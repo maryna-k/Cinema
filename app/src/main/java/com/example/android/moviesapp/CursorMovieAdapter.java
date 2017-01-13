@@ -45,7 +45,9 @@ public class CursorMovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHo
                 mCursor.getColumnIndex(FavoriteMovieEntry.COLUMN_NAME_RELEASE));
         double rating = mCursor.getDouble(
                 mCursor.getColumnIndex(FavoriteMovieEntry.COLUMN_NAME_RATING));
-        Movie movie = new Movie(title, overview, rating, releaseDay, imageAddress);
+        long tmdb_id = mCursor.getLong(
+                mCursor.getColumnIndex(FavoriteMovieEntry.COLUMN_NAME_MDB_ID));
+        Movie movie = new Movie(title, overview, rating, releaseDay, imageAddress, tmdb_id);
         holder.bind(movie, listener);
     }
 
@@ -61,7 +63,7 @@ public class CursorMovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHo
     public Cursor swapCursor(Cursor c) {
         // check if this cursor is the same as the previous cursor (mCursor)
         if (mCursor == c) {
-            return null; // bc nothing has changed
+            return null; //nothing has changed
         }
         Cursor temp = mCursor;
         this.mCursor = c; // new cursor value assigned

@@ -57,9 +57,9 @@ public class MovieProvider extends ContentProvider {
         return true;
     }
 
-    //query the whole database or query by the database _ID
+    //query the whole database, query by the database _ID or tmdb_id
     @Override
-    public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder){
+    public Cursor query(@NonNull Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder){
         Cursor returnCursor;
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
         int match = sUriMatcher.match(uri);
@@ -141,17 +141,46 @@ public class MovieProvider extends ContentProvider {
     }
 
     @Override
-    public int update(Uri uri, ContentValues contentValues, String selection, String[] selectionArgs){
+    public int update(@NonNull Uri uri, ContentValues contentValues, String selection, String[] selectionArgs){
         return 0;
     }
 
     @Override
-    public int delete(Uri uri, String selection, String[] selectionArgs){
-        return 0;
+    public int delete(@NonNull Uri uri, String selection, String[] selectionArgs){
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        int match = sUriMatcher.match(uri);
+        int moviesDeleted;
+
+        switch (match){
+            case FAVORITE_ID:
+                String id = uri.getPathSegments().get(1);
+                String idSelection = FavoriteMovieEntry._ID + "=?";
+                String[] idSelectionArgs = new String[]{id};
+                moviesDeleted = db.delete(FavoriteMovieEntry.TABLE_NAME,
+                        idSelection,
+                        idSelectionArgs);
+                break;
+
+            case FAVORITE_MOVIE_TMDB_ID:
+                String tmdb_id = uri.getPathSegments().get(2);
+                String tmdb_Selection = FavoriteMovieEntry.COLUMN_NAME_MDB_ID + "=?";
+                String[] tmdb_SelectionArgs = new String[]{tmdb_id};
+                moviesDeleted = db.delete(FavoriteMovieEntry.TABLE_NAME,
+                        tmdb_Selection,
+                        tmdb_SelectionArgs);
+                break;
+
+            default:
+                throw new UnsupportedOperationException("Unknown uri: " + uri);
+        }
+        if (moviesDeleted > 0){
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
+        return moviesDeleted;
     }
 
     @Override
-    public String getType(Uri uri) {
+    public String getType(@NonNull Uri uri) {
         return " ";
     }
 }

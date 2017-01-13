@@ -32,6 +32,7 @@ public class DetailFragment extends Fragment {
     private String mImageAddress;
     private boolean favorite;
     private long mTMDB_ID;
+    private int db_id;
 
     public DetailFragment() {}
 
@@ -93,12 +94,18 @@ public class DetailFragment extends Fragment {
         inflater.inflate(R.menu.menu_detail_fragment, menu);
     }
 
+    //change the icon of the favorite button depending on if the Movie object is favorite or not
     @Override
     public void onPrepareOptionsMenu(Menu menu){
+        MenuItem removeFromFavorite = menu.findItem(R.id.action_remove_from_favorite);
+        MenuItem addToFavorite = menu.findItem(R.id.action_add_to_favorite);
+
         if(favorite){
-            //menu.getItem(R.id.action_add_to_favorite).setIcon(R.drawable.ic_in_favorite);
-            menu.findItem(R.id.action_remove_from_favorite).setVisible(true);
-            menu.findItem(R.id.action_add_to_favorite).setVisible(false);
+            addToFavorite.setVisible(false);
+            removeFromFavorite.setVisible(true);
+        } else {
+            addToFavorite.setVisible(true);
+            removeFromFavorite.setVisible(false);
         }
     }
 
@@ -109,15 +116,26 @@ public class DetailFragment extends Fragment {
             case R.id.action_add_to_favorite:
                 boolean inserted = insertMovie();
                 if (inserted) {
-                    item.setIcon(R.drawable.ic_in_favorite);
+                    getActivity().invalidateOptionsMenu();
                 }
                 break;
+
             case R.id.action_remove_from_favorite:
+                Uri uri = FavoriteMovieEntry.CONTENT_URI.buildUpon()
+                        .appendPath(FavoriteMovieEntry.PATH_FAVORITE_MOVIES_TMDB_ID).appendPath(Long.toString(mTMDB_ID)).build();
+                int removedNum = getContext().getContentResolver().delete(uri, null, null);
+                if(removedNum > 0){
+                    favorite = false;
+                    getActivity().invalidateOptionsMenu();
+                    Toast.makeText(getContext(), "Movie was removed from Favorite", Toast.LENGTH_LONG)
+                            .show();
+                }
                 break;
         }
         return super.onOptionsItemSelected(item);
     }
 
+    //insert Movie object to favorite_movies table
     public boolean insertMovie() {
 
         ContentValues values = new ContentValues();
@@ -131,7 +149,10 @@ public class DetailFragment extends Fragment {
         Uri uri = getContext().getContentResolver().insert(FavoriteMovieEntry.CONTENT_URI, values);
         if (uri != null){
             favorite = true;
-            Toast.makeText(getContext(), "Movie was saved into Favorite with uri: " + uri, Toast.LENGTH_LONG)
+            //set db_id from the uri, in case if user wants to remove item right away
+            db_id = Integer.parseInt(uri.getPathSegments().get(1));
+            Toast.makeText(getContext(), "Movie was saved into Favorite with uri: " + uri + " and id " + db_id,
+                    Toast.LENGTH_LONG)
                     .show();
             return true;
         } else {
@@ -140,7 +161,7 @@ public class DetailFragment extends Fragment {
         }
     }
 
-    //checks if the movie with particular tmdb_id is already in favorite
+    //uses mdb_id to check if the Movie object downloaded from remote database is already saved to favorite_movies table
     private boolean movieIsInFavorite(long tmdb_id){
         Uri uri = FavoriteMovieEntry.CONTENT_URI.buildUpon()
                 .appendPath(FavoriteMovieEntry.PATH_FAVORITE_MOVIES_TMDB_ID).appendPath(Long.toString(tmdb_id)).build();
@@ -149,6 +170,8 @@ public class DetailFragment extends Fragment {
         if (cursor.getCount() == 0){
             return false;
         }
+        cursor.moveToFirst();
+        db_id = cursor.getInt(cursor.getColumnIndex(FavoriteMovieEntry._ID));
         return true;
     }
 }
