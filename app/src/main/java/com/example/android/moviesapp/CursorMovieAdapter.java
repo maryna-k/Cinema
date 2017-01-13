@@ -48,6 +48,10 @@ public class CursorMovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHo
         long tmdb_id = mCursor.getLong(
                 mCursor.getColumnIndex(FavoriteMovieEntry.COLUMN_NAME_MDB_ID));
         Movie movie = new Movie(title, overview, rating, releaseDay, imageAddress, tmdb_id);
+
+        //set tag for tmdb_id (it will be used in FavoriteGridFragment to delete Movie object)
+        holder.itemView.setTag(tmdb_id);
+
         holder.bind(movie, listener);
     }
 

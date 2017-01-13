@@ -2,6 +2,7 @@ package com.example.android.moviesapp;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -9,6 +10,7 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -60,6 +62,31 @@ public class FavoriteGridFragment extends Fragment
         if (savedInstanceState == null) {
             getLoaderManager().initLoader(PRIMARY_LOADER_ID, null, this);
         }
+
+        //Touch helper recognizes when a user swipes to delete an item.
+        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback
+                (0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            // Called when a user swipes left or right on a ViewHolder
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
+                long tmdb_id = (long) viewHolder.itemView.getTag();
+                Uri uri = MovieContract.FavoriteMovieEntry.CONTENT_URI.buildUpon()
+                        .appendPath(MovieContract.FavoriteMovieEntry.PATH_FAVORITE_MOVIES_TMDB_ID)
+                        .appendPath(Long.toString(tmdb_id))
+                        .build();
+
+                getActivity().getContentResolver().delete(uri, null, null);
+
+                // Restart the loader to re-query for all tasks after a deletion
+                getLoaderManager().restartLoader(PRIMARY_LOADER_ID, null, FavoriteGridFragment.this);
+            }
+        }).attachToRecyclerView(mRecyclerView);
+
         return rootView;
     }
 
