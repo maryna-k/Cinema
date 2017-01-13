@@ -78,10 +78,10 @@ public class FavoriteGridFragment extends Fragment
 
         @Override
         public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-            CursorLoader cursorLoader = new CursorLoader(getActivity(),
+            //CursorLoader is a loader that queries the ContentResolver and returns a Cursor.
+            return new CursorLoader(getActivity(),
                     MovieContract.FavoriteMovieEntry.CONTENT_URI,
                     null, null, null, null);
-            return cursorLoader;
         }
 
         @Override
@@ -92,7 +92,8 @@ public class FavoriteGridFragment extends Fragment
                     @Override
                     public void onItemClick(Movie movie) {
                         Intent intent = new Intent(getActivity(), DetailActivity.class)
-                                .putExtra("movie", movie);
+                                .putExtra("movie", movie)
+                                .putExtra("favorite", true);
                         startActivity(intent);
                     }
                 });

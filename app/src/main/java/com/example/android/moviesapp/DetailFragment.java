@@ -2,6 +2,7 @@ package com.example.android.moviesapp;
 
 import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -30,6 +31,7 @@ public class DetailFragment extends Fragment {
     private int mVoteCount;
     private String mImageAddress;
     private boolean favorite;
+    private long mTMDB_ID;
 
     public DetailFragment() {}
 
@@ -43,12 +45,20 @@ public class DetailFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
+        //get Movie Object from the intent
         Intent intent = getActivity().getIntent();
         if (intent != null && intent.hasExtra("movie")) {
             movie = (Movie)intent.getSerializableExtra("movie");
+            mTMDB_ID = movie.getMdb_id();
 
-            favorite = false;
-
+            /*intent.hasExtra("favorite") is true if this intent was sent from FavoriteGridFragment
+            * and therefore this movie is in database. Otherwise, fragment should check if the tmdb_id of this
+            * Movie object is already in database */
+            if(intent.hasExtra("favorite")){
+                favorite = intent.getExtras().getBoolean("favorite");
+            } else {
+                favorite = movieIsInFavorite(mTMDB_ID);
+            }
             mImageAddress = movie.getImageAddress();
             ImageView header = (ImageView) rootView.findViewById(R.id.header);
             String headerImageAddress = "http://image.tmdb.org/t/p/w780/" + mImageAddress;
@@ -84,15 +94,26 @@ public class DetailFragment extends Fragment {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item){
+    public void onPrepareOptionsMenu(Menu menu){
+        if(favorite){
+            //menu.getItem(R.id.action_add_to_favorite).setIcon(R.drawable.ic_in_favorite);
+            menu.findItem(R.id.action_remove_from_favorite).setVisible(true);
+            menu.findItem(R.id.action_add_to_favorite).setVisible(false);
+        }
+    }
 
-        switch(item.getItemId()){
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
             case R.id.action_add_to_favorite:
                 boolean inserted = insertMovie();
-                if(inserted && !favorite){
+                if (inserted) {
                     item.setIcon(R.drawable.ic_in_favorite);
                 }
-                return true;
+                break;
+            case R.id.action_remove_from_favorite:
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -105,9 +126,11 @@ public class DetailFragment extends Fragment {
         values.put(FavoriteMovieEntry.COLUMN_NAME_RATING, mRating);
         values.put(FavoriteMovieEntry.COLUMN_NAME_RELEASE, mReleaseDate);
         values.put(FavoriteMovieEntry.COLUMN_NAME_IMAGE_ADDRESS, mImageAddress);
+        values.put(FavoriteMovieEntry.COLUMN_NAME_MDB_ID, mTMDB_ID);
 
         Uri uri = getContext().getContentResolver().insert(FavoriteMovieEntry.CONTENT_URI, values);
         if (uri != null){
+            favorite = true;
             Toast.makeText(getContext(), "Movie was saved into Favorite with uri: " + uri, Toast.LENGTH_LONG)
                     .show();
             return true;
@@ -115,5 +138,17 @@ public class DetailFragment extends Fragment {
             Toast.makeText(getContext(), "Movie was not saved", Toast.LENGTH_LONG).show();
             return false;
         }
+    }
+
+    //checks if the movie with particular tmdb_id is already in favorite
+    private boolean movieIsInFavorite(long tmdb_id){
+        Uri uri = FavoriteMovieEntry.CONTENT_URI.buildUpon()
+                .appendPath(FavoriteMovieEntry.PATH_FAVORITE_MOVIES_TMDB_ID).appendPath(Long.toString(tmdb_id)).build();
+        Cursor cursor = getContext().getContentResolver().query(uri, null,null,null,null);
+
+        if (cursor.getCount() == 0){
+            return false;
+        }
+        return true;
     }
 }

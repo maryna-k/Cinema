@@ -9,7 +9,7 @@
         app:showAsAction="always"/>
 
     <item
-        android:id="@+id/state_favorite"
+        android:id="@+id/action_remove_from_favorite"
         android:icon="@drawable/ic_in_favorite"
         android:title="@string/action_favorite"
         android:visible="false"
