@@ -30,6 +30,9 @@ public class MovieProvider extends ContentProvider {
     //URI matcher code of the content URI for a single row in a favorite table
     private static final int FAVORITE_ID = 101;
 
+    //URI matcher code of the content URI for a single row with a specific TMDb_id
+    private static final int FAVORITE_MOVIE_TMDB_ID = 103;
+
     //static initializer
     static{
 
@@ -41,6 +44,9 @@ public class MovieProvider extends ContentProvider {
 
         uriMatcher.addURI(CONTENT_AUTHORITY, PATH_FAVORITE_MOVIES, FAVORITE_MOVIES);
         uriMatcher.addURI(CONTENT_AUTHORITY, PATH_FAVORITE_MOVIES + "/#", FAVORITE_ID);
+        uriMatcher.addURI(CONTENT_AUTHORITY,
+                PATH_FAVORITE_MOVIES + "/" + FavoriteMovieEntry.PATH_FAVORITE_MOVIES_TMDB_ID + "/#",
+                FAVORITE_MOVIE_TMDB_ID);
 
         return uriMatcher;
     }
@@ -78,6 +84,19 @@ public class MovieProvider extends ContentProvider {
                         projection,
                         Selection,
                         SelectionArgs,
+                        null,
+                        null,
+                        sortOrder);
+                break;
+            case FAVORITE_MOVIE_TMDB_ID:
+                String tmdb_id = uri.getPathSegments().get(2);
+                String tmdb_selection = FavoriteMovieEntry.COLUMN_NAME_MDB_ID + "=?";
+                String[] tmdb_selectionArgs = new String[]{tmdb_id};
+                returnCursor = db.query(
+                        FavoriteMovieEntry.TABLE_NAME,
+                        projection,
+                        tmdb_selection,
+                        tmdb_selectionArgs,
                         null,
                         null,
                         sortOrder);

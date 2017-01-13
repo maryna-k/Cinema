@@ -18,9 +18,8 @@ public class MovieDbHelper extends SQLiteOpenHelper {
         final String SQL_CREATE_FAVORITES_TABLE =
                 "CREATE TABLE " + MovieContract.FavoriteMovieEntry.TABLE_NAME + " (" +
                 MovieContract.FavoriteMovieEntry._ID + " INTEGER PRIMARY KEY," +
-                //MovieContract.FavoriteMovieEntry.COLUMN_NAME_MDB_ID + " LONG NOT NULL," +
+                MovieContract.FavoriteMovieEntry.COLUMN_NAME_MDB_ID + " LONG NOT NULL," +
                 MovieContract.FavoriteMovieEntry.COLUMN_NAME_TITLE + " TEXT NOT NULL," +
-                //MovieContract.FavoriteMovieEntry.COLUMN_NAME_COUNTRY + " TEXT," +
                 MovieContract.FavoriteMovieEntry.COLUMN_NAME_GENRE + " TEXT," +
                 MovieContract.FavoriteMovieEntry.COLUMN_NAME_RELEASE + " TEXT," +
                 MovieContract.FavoriteMovieEntry.COLUMN_NAME_RATING + " DOUBLE," +

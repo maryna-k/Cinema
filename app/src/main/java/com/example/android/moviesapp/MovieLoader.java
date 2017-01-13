@@ -110,6 +110,7 @@ public class MovieLoader extends AsyncTaskLoader<ArrayList<Movie>> {
         final String RATING = "vote_average";
         final String RELEASE_DATE = "release_date";
         final String IMAGE_ADDRESS = "poster_path";
+        final String TMDB_ID = "id";
 
         JSONObject movieJson = new JSONObject(movieJsonStr);
         JSONArray movieArray = movieJson.getJSONArray(RESULTS);
@@ -127,6 +128,7 @@ public class MovieLoader extends AsyncTaskLoader<ArrayList<Movie>> {
             movie.setRating(movieObject.getDouble(RATING));
             movie.setReleaseDate(movieObject.getString(RELEASE_DATE));
             movie.setImageAddress(movieObject.getString(IMAGE_ADDRESS));
+            movie.setMdb_id(movieObject.getLong(TMDB_ID));
 
             movieList.add(i, movie);
             Log.v(LOG_TAG, movie.toString());

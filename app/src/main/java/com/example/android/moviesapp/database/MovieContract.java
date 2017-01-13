@@ -36,5 +36,7 @@ public final class MovieContract {
         public static final String COLUMN_NAME_OVERVIEW = "overview";
         public static final String COLUMN_NAME_IMAGE_ADDRESS = "image_address";
         public static final String COLUMN_NAME_MDB_ID = "mdb_id"; //movie database id
+
+        public static final String PATH_FAVORITE_MOVIES_TMDB_ID = COLUMN_NAME_MDB_ID;
     }
 }
