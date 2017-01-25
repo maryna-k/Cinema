@@ -10,6 +10,7 @@
     <string name="overview">Overview</string>
     <string name="reviews">Reviews</string>
     <string name="more_reviews">More reviews</string>
+    <string name="trailers">Trailers</string>
     <!---->
 
     <string name="pref_search_key">search_value</string>

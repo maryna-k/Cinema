@@ -45,4 +45,10 @@
         <item name="android:layout_marginRight">@dimen/details_activity_margin_right</item>
         <item name="android:background">?android:attr/listDivider</item>
     </style>
+
+    <style name="CircularProgress" parent="Theme.AppCompat.Light">
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:gravity">center</item>
+    </style>
+
 </resources>

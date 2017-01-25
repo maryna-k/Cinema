@@ -111,7 +111,7 @@
         <View style="@style/Divider"/>
 
         <!--Country layout-->
-        <RelativeLayout
+        <!--<RelativeLayout
             android:id="@+id/layout_country"
             style="@style/details_margins">
             <ImageView
@@ -134,7 +134,7 @@
                     tools:text="Some country"/>
             </LinearLayout>
         </RelativeLayout>
-
+-->
         <View style="@style/Divider"/>
 
         <!--Layout overview-->
@@ -164,5 +164,38 @@
 
         <!--Trailer layout-->
 
-       </LinearLayout>
+        <LinearLayout
+            android:id="@+id/layout_trailers_title"
+            android:orientation="horizontal"
+            style="@style/details_margins">
+            <ImageView
+                android:id="@+id/ic_trailers"
+                style="@style/details_icon"
+                android:src="@drawable/ic_trailers"/>
+            <TextView
+                android:id="@+id/title_trailers"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@string/trailers"/>
+        </LinearLayout>
+        <!-- RecyclerView to display trailers -->
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/trailers_recycler_view"
+            android:scrollbars="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            style="@style/Widget.AppCompat.ProgressBar"
+            android:theme="@style/CircularProgress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <View style="@style/Divider"/>
+
+        <!--Reviews layout-->
+
+    </LinearLayout>
 </ScrollView>

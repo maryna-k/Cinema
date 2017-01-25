@@ -65,7 +65,7 @@ public class FavoriteGridFragment extends Fragment
 
         //Touch helper recognizes when a user swipes to delete an item.
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback
-                (0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+                (0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT | ItemTouchHelper.DOWN | ItemTouchHelper.UP) {
             @Override
             public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
                 return false;
