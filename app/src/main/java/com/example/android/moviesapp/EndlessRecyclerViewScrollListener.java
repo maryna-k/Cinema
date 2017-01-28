@@ -3,7 +3,7 @@ package com.example.android.moviesapp;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
-/*Base on the interface from https://gist.github.com/nesquena/d09dc68ff07e845cc622 as a part of the
+/*Based on the interface from https://gist.github.com/nesquena/d09dc68ff07e845cc622 as a part of the
 tutorial Endless Scrolling with AdapterViews and RecyclerView
 (https://guides.codepath.com/android/Endless-Scrolling-with-AdapterViews-and-RecyclerView)*/
 
