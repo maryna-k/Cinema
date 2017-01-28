@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--Tags explanation: https://developer.android.com/reference/android/view/View.html#setTag(int,%20java.lang.Object)-->
+<resources>
+    <item type="id" name="initialize" />
+    <item type="id" name="trailer_key"/>
+    <item type="id" name="thumbnail_loader"/>
+</resources>
