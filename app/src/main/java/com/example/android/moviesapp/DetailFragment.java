@@ -6,6 +6,10 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -13,16 +17,28 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.android.moviesapp.database.MovieContract.FavoriteMovieEntry;
+import com.example.android.moviesapp.trailer.TrailerAdapter;
+import com.example.android.moviesapp.trailer.TrailerInfoLoader;
+import com.example.android.moviesapp.trailer.YouTubeTrailer;
+import com.google.android.youtube.player.YouTubeStandalonePlayer;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 
-public class DetailFragment extends Fragment {
+
+public class DetailFragment extends Fragment
+        implements LoaderManager.LoaderCallbacks<ArrayList<YouTubeTrailer>>{
 
     private final String LOG_TAG = DetailFragment.class.getSimpleName();
+    private TrailerAdapter mAdapter;
+    private RecyclerView mRecyclerView;
+    private LinearLayoutManager mLayoutManager;
     private Movie movie;
     private String mTitle;
     private String mOverview;
@@ -31,8 +47,13 @@ public class DetailFragment extends Fragment {
     private int mVoteCount;
     private String mImageAddress;
     private boolean favorite;
-    private long mTMDB_ID;
+    private static long mTMDB_ID;
     private int db_id;
+    private final int LOADER_ID = 1;
+    private TrailerInfoLoader loader;
+    private View rootView;
+    private ProgressBar mProgressBar;
+    private LinearLayout trailerView;
 
     public DetailFragment() {}
 
@@ -45,7 +66,7 @@ public class DetailFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
+        rootView = inflater.inflate(R.layout.fragment_detail, container, false);
         //get Movie Object from the intent
         Intent intent = getActivity().getIntent();
         if (intent != null && intent.hasExtra("movie")) {
@@ -84,6 +105,15 @@ public class DetailFragment extends Fragment {
             mOverview = movie.getOverview();
             TextView overview = (TextView) rootView.findViewById(R.id.overview);
             overview.setText(mOverview);
+
+            mRecyclerView = (RecyclerView) rootView.findViewById(R.id.trailers_recycler_view);
+            mLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+            mRecyclerView.setLayoutManager(mLayoutManager);
+
+            mProgressBar = (ProgressBar) rootView.findViewById(R.id.progress_bar);
+            trailerView = (LinearLayout) rootView.findViewById(R.id.layout_trailers_title);
+
+            getLoaderManager().initLoader(LOADER_ID, null, this);
         }
         return rootView;
     }
@@ -173,5 +203,41 @@ public class DetailFragment extends Fragment {
         cursor.moveToFirst();
         db_id = cursor.getInt(cursor.getColumnIndex(FavoriteMovieEntry._ID));
         return true;
+    }
+
+    @Override
+    public Loader<ArrayList<YouTubeTrailer>> onCreateLoader(int id, Bundle args) {
+        if (id == LOADER_ID ) {
+            return new TrailerInfoLoader(getContext());
+        } else return null;
+    }
+
+    @Override
+    public void onLoadFinished(Loader<ArrayList<YouTubeTrailer>> loader, ArrayList<YouTubeTrailer> data) {
+        int numElements = data.size();
+        if (numElements != 0){
+            mAdapter = new TrailerAdapter(data, new TrailerAdapter.OnItemClickListener(){
+                @Override
+                public void onItemClick(String keyStr){
+                    startActivity(YouTubeStandalonePlayer.createVideoIntent(getActivity(),
+                            BuildConfig.YOUTUBE_API_KEY, keyStr, 0, true, true));
+                }
+            });
+            mAdapter.setProgressBar(mProgressBar);
+            mRecyclerView.setAdapter(mAdapter);
+        } else {
+            mRecyclerView.setVisibility(View.INVISIBLE);
+            mProgressBar.setVisibility(View.INVISIBLE);
+            trailerView.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    @Override
+    public void onLoaderReset(Loader<ArrayList<YouTubeTrailer>> loader) {
+
+    }
+
+    public static long getmTMDB_ID(){
+        return mTMDB_ID;
     }
 }
