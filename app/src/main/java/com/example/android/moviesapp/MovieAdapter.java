@@ -76,7 +76,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder>{
     public void addData(ArrayList<Movie> data){
         mList.addAll(data);
         for(int i = 0; i < mList.size(); i++){
-            Log.v(LOG_TAG, mList.get(i).getTitle());
+            Log.v(LOG_TAG, i+ ". " + mList.get(i).getTitle());
         }
         this.notifyItemRangeChanged(mList.size()+1, data.size());
         this.notifyDataSetChanged();
