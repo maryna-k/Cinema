@@ -124,7 +124,7 @@
         <View style="@style/Divider" />
 
         <!--Layout overview-->
-
+        <!--Layout header-->
         <LinearLayout
             android:id="@+id/layout_overview_title"
             style="@style/details_margins"
@@ -152,7 +152,7 @@
         <View style="@style/Divider" />
 
         <!--Trailer layout-->
-
+        <!--Layout header-->
         <LinearLayout
             android:id="@+id/layout_trailers_title"
             style="@style/details_margins"
@@ -193,7 +193,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-
+            <!--Layout header-->
             <LinearLayout
                 android:id="@+id/layout_reviews_title"
                 style="@style/details_margins"
@@ -211,7 +211,7 @@
                     android:layout_gravity="center"
                     android:text="@string/reviews" />
             </LinearLayout>
-
+            <!--Layout body: contains actual reviews and author names-->
             <LinearLayout
                 android:id="@+id/layout_reviews_text"
                 style="@style/details_margins"
@@ -242,17 +242,34 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         style="@style/details_text"
+                        android:layout_marginBottom="5dp"
                         tools:text="Some Review" />
                 </LinearLayout>
             </LinearLayout>
+
+            <ImageView
+                android:id="@+id/expand_review"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_action_expand_review"
+                android:layout_marginBottom="10dp"/>
+
+            <ImageView
+                android:id="@+id/hide_review"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_action_hide_review"
+                android:layout_marginBottom="10dp"
+                android:visibility="gone"/>
 
             <Button
                 android:id="@+id/review_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/review_button"
-                android:layout_gravity="center"
-                android:layout_marginTop="10dp"/>
+                android:layout_gravity="center"/>
 
         </LinearLayout>
 
