@@ -40,10 +40,10 @@ public class MDBConnection {
                 urlString = buildMovieUrl(getMoviesToSearch());
                 break;
             case LOAD_TRAILER_INFO:
-                urlString = buildTrailerInfoUrl(DetailFragment.getmTMDB_ID());
+                urlString = buildTrailerReviewUrl(DetailFragment.getmTMDB_ID(), LOAD_TRAILER_INFO);
                 break;
             case LOAD_REVIEWS:
-                urlString = buildMovieUrl(getMoviesToSearch());
+                urlString = buildTrailerReviewUrl(DetailFragment.getmTMDB_ID(), LOAD_REVIEWS);
                 break;
             default: return null;
         }
@@ -118,13 +118,19 @@ public class MDBConnection {
                 .append(page).toString();
     }
 
-    private static String buildTrailerInfoUrl(long movieId){
+    private static String buildTrailerReviewUrl(long movieId, int infoType){
+        String type = "";
+        if(infoType == LOAD_TRAILER_INFO) {
+            type = "/videos";
+        } else if (infoType == LOAD_REVIEWS) {
+            type = "/reviews";
+        }
 
         return new StringBuilder()
                 .append(BASE_URL)
                 .append("movie/")
                 .append(movieId)
-                .append("/videos")
+                .append(type)
                 .append(API_KEY)
                 .toString();
     }
