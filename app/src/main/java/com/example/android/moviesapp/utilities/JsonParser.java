@@ -3,6 +3,7 @@ package com.example.android.moviesapp.utilities;
 import android.util.Log;
 
 import com.example.android.moviesapp.Movie;
+import com.example.android.moviesapp.review.Review;
 import com.example.android.moviesapp.trailer.YouTubeTrailer;
 
 import org.json.JSONArray;
@@ -70,5 +71,30 @@ public class JsonParser {
             }
         }
         return trailerList;
+    }
+
+    public static ArrayList<Review> getReviewDataFromJson(String reviewJsonStr) throws JSONException{
+
+        ArrayList<Review> reviewList = new ArrayList<>();
+        final String RESULTS = "results";
+        final String ID = "id";
+        final String AUTHOR = "author";
+        final String CONTENT = "content";
+
+        JSONObject reviewJson = new JSONObject(reviewJsonStr);
+        JSONArray reviewArray = reviewJson.getJSONArray(RESULTS);
+
+        for (int i = 0; i < reviewArray.length(); i++) {
+
+            JSONObject reviewObject = reviewArray.getJSONObject(i);
+
+            String id = reviewObject.getString(ID);
+            String author = reviewObject.getString(AUTHOR);
+            String content = reviewObject.getString(CONTENT);
+            Review review = new Review(id, author, content);
+            reviewList.add(review);
+            Log.v(LOG_TAG, review.toString());
+        }
+        return reviewList;
     }
 }
