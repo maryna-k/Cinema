@@ -3,7 +3,7 @@ package com.example.android.moviesapp.trailer;
 
 public class YouTubeTrailer {
 
-    public String key;
+    private String key;
 
     public YouTubeTrailer(String key) {
         this.key = key;
