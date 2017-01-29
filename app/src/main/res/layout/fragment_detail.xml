@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    xmlns:tools="http://schemas.android.com/tools">
+    android:layout_height="wrap_content">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -20,183 +20,243 @@
                 android:scaleType="centerCrop" />
 
             <!--Rating layout-->
+
             <LinearLayout
                 android:id="@+id/rating_layout"
-                android:orientation="horizontal"
-                android:gravity="right"
                 style="@style/details_margins"
-                android:layout_below="@id/header">
+                android:layout_below="@id/header"
+                android:gravity="right"
+                android:orientation="horizontal">
+
                 <ImageView
                     android:id="@+id/icon_rating"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:src="@drawable/ic_rating"/>
+                    android:src="@drawable/ic_rating" />
+
                 <TextView
                     android:id="@+id/rating"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:textSize="@dimen/detail_text_size"
                     android:gravity="center"
-                    tools:text="10/10"/>
+                    android:textSize="@dimen/detail_text_size"
+                    tools:text="10/10" />
             </LinearLayout>
 
             <ImageView
                 android:id="@+id/small_poster"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:scaleType="centerCrop"
                 android:layout_alignBottom="@id/rating_layout"
+                android:layout_alignParentLeft="true"
                 android:layout_marginBottom="-32dp"
-                android:layout_marginLeft="@dimen/details_activity_margin_left"/>
+                android:layout_marginLeft="@dimen/details_activity_margin_left"
+                android:scaleType="centerCrop" />
         </RelativeLayout>
 
         <TextView
             android:id="@+id/title"
             style="@style/title"
-            tools:text="This is a title"/>
+            tools:text="This is a title" />
 
         <!--Genre layout-->
+
         <RelativeLayout
             android:id="@+id/layout_genre"
             style="@style/details_margins">
+
             <ImageView
                 android:id="@+id/ic_genre"
                 style="@style/details_icon"
                 android:src="@drawable/ic_genre" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:layout_toRightOf="@id/ic_genre">
+                android:layout_toRightOf="@id/ic_genre"
+                android:orientation="vertical">
+
                 <TextView
                     android:id="@+id/title_genre"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/genre"/>
+                    android:text="@string/genre" />
+
                 <TextView
                     android:id="@+id/genre"
                     style="@style/details_text"
-                    tools:text="Some genre"/>
+                    tools:text="Some genre" />
             </LinearLayout>
         </RelativeLayout>
 
-        <View style="@style/Divider"/>
+        <View style="@style/Divider" />
 
         <!--Release layout-->
+
         <RelativeLayout
             android:id="@+id/layout_release"
             style="@style/details_margins">
+
             <ImageView
                 android:id="@+id/ic_release"
                 style="@style/details_icon"
-                android:src="@drawable/ic_release_date"/>
+                android:src="@drawable/ic_release_date" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:layout_toRightOf="@id/ic_release">
+                android:layout_toRightOf="@id/ic_release"
+                android:orientation="vertical">
+
                 <TextView
                     android:id="@+id/title_release_date"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/release_date"/>
+                    android:text="@string/release_date" />
+
                 <TextView
                     android:id="@+id/release_date"
                     style="@style/details_text"
-                    tools:text="01/01/01"/>
+                    tools:text="01/01/01" />
             </LinearLayout>
         </RelativeLayout>
 
-        <View style="@style/Divider"/>
-
-        <!--Country layout-->
-        <!--<RelativeLayout
-            android:id="@+id/layout_country"
-            style="@style/details_margins">
-            <ImageView
-                android:id="@+id/ic_country"
-                style="@style/details_icon"
-                android:src="@drawable/ic_country"/>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:layout_toRightOf="@id/ic_country">
-                <TextView
-                    android:id="@+id/title_country"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/country"/>
-                <TextView
-                    android:id="@+id/country"
-                    style="@style/details_text"
-                    tools:text="Some country"/>
-            </LinearLayout>
-        </RelativeLayout>
--->
-        <View style="@style/Divider"/>
+        <View style="@style/Divider" />
 
         <!--Layout overview-->
+
         <LinearLayout
             android:id="@+id/layout_overview_title"
-            android:orientation="horizontal"
-            style="@style/details_margins">
+            style="@style/details_margins"
+            android:orientation="horizontal">
+
             <ImageView
                 android:id="@+id/ic_overview"
                 style="@style/details_icon"
-                android:src="@drawable/ic_overview"/>
+                android:src="@drawable/ic_overview" />
+
             <TextView
                 android:id="@+id/title_overview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="@string/overview"/>
+                android:text="@string/overview" />
         </LinearLayout>
         <!--Overview text-->
         <TextView
             android:id="@+id/overview"
             style="@style/details_margins"
             android:textSize="@dimen/detail_text_size"
-            tools:text="Some example text"/>
+            tools:text="Some example text" />
 
-        <View style="@style/Divider"/>
+        <View style="@style/Divider" />
 
         <!--Trailer layout-->
 
         <LinearLayout
             android:id="@+id/layout_trailers_title"
-            android:orientation="horizontal"
-            style="@style/details_margins">
+            style="@style/details_margins"
+            android:orientation="horizontal">
+
             <ImageView
                 android:id="@+id/ic_trailers"
                 style="@style/details_icon"
-                android:src="@drawable/ic_trailers"/>
+                android:src="@drawable/ic_trailers" />
+
             <TextView
                 android:id="@+id/title_trailers"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="@string/trailers"/>
+                android:text="@string/trailers" />
         </LinearLayout>
         <!-- RecyclerView to display trailers -->
-
         <android.support.v7.widget.RecyclerView
             android:id="@+id/trailers_recycler_view"
-            android:orientation="horizontal"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" />
 
         <ProgressBar
             android:id="@+id/progress_bar"
             style="@style/Widget.AppCompat.ProgressBar"
-            android:theme="@style/CircularProgress"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:theme="@style/CircularProgress" />
 
-        <View style="@style/Divider"/>
+        <View style="@style/Divider" />
 
         <!--Reviews layout-->
+
+        <LinearLayout
+            android:id="@+id/layout_reviews"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/layout_reviews_title"
+                style="@style/details_margins"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/ic_reviews"
+                    style="@style/details_icon"
+                    android:src="@drawable/ic_reviews" />
+
+                <TextView
+                    android:id="@+id/title_reviews"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="@string/reviews" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layout_reviews_text"
+                style="@style/details_margins"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginRight="15dp"
+                    android:src="@drawable/ic_review" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/reviewer_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        tools:text="reviewer name" />
+
+                    <TextView
+                        android:id="@+id/review_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        style="@style/details_text"
+                        tools:text="Some Review" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/review_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/review_button"
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp"/>
+
+        </LinearLayout>
+
+        <!-- Reviews layout end -->
 
     </LinearLayout>
 </ScrollView>
