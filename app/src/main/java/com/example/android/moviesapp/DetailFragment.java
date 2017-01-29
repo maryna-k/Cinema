@@ -32,8 +32,7 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 
 
-public class DetailFragment extends Fragment
-        implements LoaderManager.LoaderCallbacks<ArrayList<YouTubeTrailer>>{
+public class DetailFragment extends Fragment {
 
     private final String LOG_TAG = DetailFragment.class.getSimpleName();
     private TrailerAdapter mAdapter;
@@ -55,7 +54,8 @@ public class DetailFragment extends Fragment
     private ProgressBar mProgressBar;
     private LinearLayout trailerView;
 
-    public DetailFragment() {}
+    public DetailFragment() {
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -70,13 +70,13 @@ public class DetailFragment extends Fragment
         //get Movie Object from the intent
         Intent intent = getActivity().getIntent();
         if (intent != null && intent.hasExtra("movie")) {
-            movie = (Movie)intent.getSerializableExtra("movie");
+            movie = (Movie) intent.getSerializableExtra("movie");
             mTMDB_ID = movie.getMdb_id();
 
             /*intent.hasExtra("favorite") is true if this intent was sent from FavoriteGridFragment
             * and therefore this movie is in database. Otherwise, fragment should check if the tmdb_id of this
             * Movie object is already in database */
-            if(intent.hasExtra("favorite")){
+            if (intent.hasExtra("favorite")) {
                 favorite = intent.getExtras().getBoolean("favorite");
             } else {
                 favorite = movieIsInFavorite(mTMDB_ID);
@@ -113,24 +113,24 @@ public class DetailFragment extends Fragment
             mProgressBar = (ProgressBar) rootView.findViewById(R.id.progress_bar);
             trailerView = (LinearLayout) rootView.findViewById(R.id.layout_trailers_title);
 
-            getLoaderManager().initLoader(LOADER_ID, null, this);
+            getLoaderManager().initLoader(LOADER_ID, null, trailerResultLoaderListener);
         }
         return rootView;
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater){
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.menu_detail_fragment, menu);
     }
 
     //change the icon of the favorite button depending on if the Movie object is favorite or not
     @Override
-    public void onPrepareOptionsMenu(Menu menu){
+    public void onPrepareOptionsMenu(Menu menu) {
         MenuItem removeFromFavorite = menu.findItem(R.id.action_remove_from_favorite);
         MenuItem addToFavorite = menu.findItem(R.id.action_add_to_favorite);
 
-        if(favorite){
+        if (favorite) {
             addToFavorite.setVisible(false);
             removeFromFavorite.setVisible(true);
         } else {
@@ -154,7 +154,7 @@ public class DetailFragment extends Fragment
                 Uri uri = FavoriteMovieEntry.CONTENT_URI.buildUpon()
                         .appendPath(FavoriteMovieEntry.PATH_FAVORITE_MOVIES_TMDB_ID).appendPath(Long.toString(mTMDB_ID)).build();
                 int removedNum = getContext().getContentResolver().delete(uri, null, null);
-                if(removedNum > 0){
+                if (removedNum > 0) {
                     favorite = false;
                     getActivity().invalidateOptionsMenu();
                     Toast.makeText(getContext(), "Movie was removed from Favorite", Toast.LENGTH_LONG)
@@ -177,7 +177,7 @@ public class DetailFragment extends Fragment
         values.put(FavoriteMovieEntry.COLUMN_NAME_MDB_ID, mTMDB_ID);
 
         Uri uri = getContext().getContentResolver().insert(FavoriteMovieEntry.CONTENT_URI, values);
-        if (uri != null){
+        if (uri != null) {
             favorite = true;
             //set db_id from the uri, in case if user wants to remove item right away
             db_id = Integer.parseInt(uri.getPathSegments().get(1));
@@ -192,12 +192,12 @@ public class DetailFragment extends Fragment
     }
 
     //uses mdb_id to check if the Movie object downloaded from remote database is already saved to favorite_movies table
-    private boolean movieIsInFavorite(long tmdb_id){
+    private boolean movieIsInFavorite(long tmdb_id) {
         Uri uri = FavoriteMovieEntry.CONTENT_URI.buildUpon()
                 .appendPath(FavoriteMovieEntry.PATH_FAVORITE_MOVIES_TMDB_ID).appendPath(Long.toString(tmdb_id)).build();
-        Cursor cursor = getContext().getContentResolver().query(uri, null,null,null,null);
+        Cursor cursor = getContext().getContentResolver().query(uri, null, null, null, null);
 
-        if (cursor.getCount() == 0){
+        if (cursor.getCount() == 0) {
             return false;
         }
         cursor.moveToFirst();
@@ -205,39 +205,45 @@ public class DetailFragment extends Fragment
         return true;
     }
 
-    @Override
-    public Loader<ArrayList<YouTubeTrailer>> onCreateLoader(int id, Bundle args) {
-        if (id == LOADER_ID ) {
-            return new TrailerInfoLoader(getContext());
-        } else return null;
-    }
+    //inner anonymous class that implements LoaderCallbacks
+    private LoaderManager.LoaderCallbacks<ArrayList<YouTubeTrailer>> trailerResultLoaderListener
+            = new LoaderManager.LoaderCallbacks<ArrayList<YouTubeTrailer>>() {
 
-    @Override
-    public void onLoadFinished(Loader<ArrayList<YouTubeTrailer>> loader, ArrayList<YouTubeTrailer> data) {
-        int numElements = data.size();
-        if (numElements != 0){
-            mAdapter = new TrailerAdapter(data, new TrailerAdapter.OnItemClickListener(){
-                @Override
-                public void onItemClick(String keyStr){
-                    startActivity(YouTubeStandalonePlayer.createVideoIntent(getActivity(),
-                            BuildConfig.YOUTUBE_API_KEY, keyStr, 0, true, true));
-                }
-            });
-            mAdapter.setProgressBar(mProgressBar);
-            mRecyclerView.setAdapter(mAdapter);
-        } else {
-            mRecyclerView.setVisibility(View.INVISIBLE);
-            mProgressBar.setVisibility(View.INVISIBLE);
-            trailerView.setVisibility(View.INVISIBLE);
+        @Override
+        public Loader<ArrayList<YouTubeTrailer>> onCreateLoader(int id, Bundle args) {
+            if (id == LOADER_ID) {
+                return new TrailerInfoLoader(getContext());
+            } else return null;
         }
-    }
 
-    @Override
-    public void onLoaderReset(Loader<ArrayList<YouTubeTrailer>> loader) {
+        @Override
+        public void onLoadFinished(Loader<ArrayList<YouTubeTrailer>> loader, ArrayList<YouTubeTrailer> data) {
+            int numElements = data.size();
+            if (numElements != 0) {
+                mAdapter = new TrailerAdapter(data, new TrailerAdapter.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(String keyStr) {
+                        startActivity(YouTubeStandalonePlayer.createVideoIntent(getActivity(),
+                                BuildConfig.YOUTUBE_API_KEY, keyStr, 0, true, true));
+                    }
+                });
+                mAdapter.setProgressBar(mProgressBar);
+                mRecyclerView.setAdapter(mAdapter);
+            } else {
+                mRecyclerView.setVisibility(View.INVISIBLE);
+                mProgressBar.setVisibility(View.INVISIBLE);
+                trailerView.setVisibility(View.INVISIBLE);
+            }
+        }
 
-    }
+        @Override
+        public void onLoaderReset(Loader<ArrayList<YouTubeTrailer>> loader) {
 
-    public static long getmTMDB_ID(){
+        }
+    };
+
+
+    public static long getmTMDB_ID() {
         return mTMDB_ID;
     }
 }
