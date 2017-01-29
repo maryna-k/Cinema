@@ -16,6 +16,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -23,6 +24,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.android.moviesapp.database.MovieContract.FavoriteMovieEntry;
+import com.example.android.moviesapp.review.Review;
+import com.example.android.moviesapp.review.ReviewLoader;
 import com.example.android.moviesapp.trailer.TrailerAdapter;
 import com.example.android.moviesapp.trailer.TrailerInfoLoader;
 import com.example.android.moviesapp.trailer.YouTubeTrailer;
@@ -48,7 +51,8 @@ public class DetailFragment extends Fragment {
     private boolean favorite;
     private static long mTMDB_ID;
     private int db_id;
-    private final int LOADER_ID = 1;
+    private final int TRAILER_LOADER_ID = 1;
+    private final int REVIEW_LOADER_ID = 2;
     private TrailerInfoLoader loader;
     private View rootView;
     private ProgressBar mProgressBar;
@@ -113,7 +117,8 @@ public class DetailFragment extends Fragment {
             mProgressBar = (ProgressBar) rootView.findViewById(R.id.progress_bar);
             trailerView = (LinearLayout) rootView.findViewById(R.id.layout_trailers_title);
 
-            getLoaderManager().initLoader(LOADER_ID, null, trailerResultLoaderListener);
+            getLoaderManager().initLoader(TRAILER_LOADER_ID, null, trailerResultLoaderListener);
+            getLoaderManager().initLoader(REVIEW_LOADER_ID, null, reviewResultLoaderListener);
         }
         return rootView;
     }
@@ -205,13 +210,13 @@ public class DetailFragment extends Fragment {
         return true;
     }
 
-    //inner anonymous class that implements LoaderCallbacks
+    //inner anonymous class that implements LoaderCallbacks and loads trailers
     private LoaderManager.LoaderCallbacks<ArrayList<YouTubeTrailer>> trailerResultLoaderListener
             = new LoaderManager.LoaderCallbacks<ArrayList<YouTubeTrailer>>() {
 
         @Override
         public Loader<ArrayList<YouTubeTrailer>> onCreateLoader(int id, Bundle args) {
-            if (id == LOADER_ID) {
+            if (id == TRAILER_LOADER_ID) {
                 return new TrailerInfoLoader(getContext());
             } else return null;
         }
@@ -238,6 +243,67 @@ public class DetailFragment extends Fragment {
 
         @Override
         public void onLoaderReset(Loader<ArrayList<YouTubeTrailer>> loader) {
+
+        }
+    };
+
+    //inner anonymous class that implements LoaderCallbacks and loads reviews
+    private LoaderManager.LoaderCallbacks<ArrayList<Review>> reviewResultLoaderListener
+            = new LoaderManager.LoaderCallbacks<ArrayList<Review>>() {
+
+        @Override
+        public Loader<ArrayList<Review>> onCreateLoader(int id, Bundle args) {
+            if (id == REVIEW_LOADER_ID) {
+                return new ReviewLoader(getContext());
+            } else return null;
+        }
+
+        @Override
+        public void onLoadFinished(Loader<ArrayList<Review>> loader, ArrayList<Review> data) {
+            final String contentStr;
+            int numElements = data.size();
+            if (numElements > 0) {
+                TextView author = (TextView) rootView.findViewById(R.id.reviewer_name);
+                final TextView reviewContent = (TextView) rootView.findViewById(R.id.review_text);
+                Button reviewButton = (Button) rootView.findViewById(R.id.review_button);
+                final ImageView expandReview = (ImageView) rootView.findViewById(R.id.expand_review);
+                final ImageView hideReview = (ImageView) rootView.findViewById(R.id.hide_review);
+
+                contentStr = data.get(0).getReviewContent();
+                author.setText(data.get(0).getAuthor());
+                reviewContent.setText(contentStr.substring(0, 150) + "...");
+                expandReview.setVisibility(View.VISIBLE);
+                expandReview.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        reviewContent.setText(contentStr);
+                        expandReview.setVisibility(View.GONE);
+                        hideReview.setVisibility(View.VISIBLE);
+                    }
+                });
+
+                hideReview.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        reviewContent.setText(contentStr.substring(0, 150) + "...");
+                        expandReview.setVisibility(View.VISIBLE);
+                        hideReview.setVisibility(View.GONE);
+                    }
+                });
+                if(numElements == 1) {
+                    reviewButton.setVisibility(View.GONE);
+                } else {
+
+                }
+            }
+            else {
+                LinearLayout layout_reviews = (LinearLayout) rootView.findViewById(R.id.layout_reviews);
+                layout_reviews.setVisibility(View.GONE);
+            }
+        }
+
+        @Override
+        public void onLoaderReset(Loader<ArrayList<Review>> loader) {
 
         }
     };
