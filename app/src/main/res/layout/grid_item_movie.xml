@@ -8,6 +8,7 @@
         android:id="@+id/grid_poster"
         android:layout_width="wrap_content"
         android:layout_height="300dp"
-        android:scaleType="centerCrop"/>
+        android:scaleType="centerCrop"
+        android:layout_margin="2dp"/>
 
 </FrameLayout>
