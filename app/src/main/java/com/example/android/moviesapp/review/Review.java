@@ -1,7 +1,9 @@
 package com.example.android.moviesapp.review;
 
 
-public class Review {
+import java.io.Serializable;
+
+public class Review implements Serializable{
 
     private String reviewId;
     private String author;

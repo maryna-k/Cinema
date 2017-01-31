@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+<LinearLayout
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:id="@+id/layout_reviews_text_activity"
+        style="@style/details_margins"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="15dp"
+            android:src="@drawable/ic_review" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/reviewer_name_activity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="reviewer name" />
+
+            <TextView
+                android:id="@+id/review_content_substring"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/details_text"
+                android:layout_marginBottom="5dp"
+                tools:text="Some Review"
+                android:visibility="visible"/>
+
+            <TextView
+                android:id="@+id/review_content_full"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/details_text"
+                android:layout_marginBottom="5dp"
+                android:visibility="gone"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/expand_review_activity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:src="@drawable/ic_action_expand_review"
+        android:layout_marginBottom="10dp"/>
+
+    <ImageView
+        android:id="@+id/collapse_review_activity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:src="@drawable/ic_action_hide_review"
+        android:layout_marginBottom="10dp"
+        android:visibility="gone"/>
+
+    <View style="@style/Divider" />
+
+</LinearLayout>
+</ScrollView>
