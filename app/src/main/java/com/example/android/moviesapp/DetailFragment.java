@@ -236,9 +236,9 @@ public class DetailFragment extends Fragment {
                 mAdapter.setProgressBar(mProgressBar);
                 mRecyclerView.setAdapter(mAdapter);
             } else {
-                mRecyclerView.setVisibility(View.INVISIBLE);
-                mProgressBar.setVisibility(View.INVISIBLE);
-                trailerView.setVisibility(View.INVISIBLE);
+                mRecyclerView.setVisibility(View.GONE);
+                mProgressBar.setVisibility(View.GONE);
+                trailerView.setVisibility(View.GONE);
             }
         }
 
@@ -272,25 +272,30 @@ public class DetailFragment extends Fragment {
 
                 contentStr = data.get(0).getReviewContent();
                 author.setText(data.get(0).getAuthor());
-                reviewContent.setText(contentStr.substring(0, 150) + "...");
-                expandReview.setVisibility(View.VISIBLE);
-                expandReview.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        reviewContent.setText(contentStr);
-                        expandReview.setVisibility(View.GONE);
-                        hideReview.setVisibility(View.VISIBLE);
-                    }
-                });
-
-                hideReview.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        reviewContent.setText(contentStr.substring(0, 150) + "...");
-                        expandReview.setVisibility(View.VISIBLE);
-                        hideReview.setVisibility(View.GONE);
-                    }
-                });
+                if(contentStr.length() > 150) {
+                    reviewContent.setText(contentStr.substring(0, 150) + "...");
+                    expandReview.setVisibility(View.VISIBLE);
+                    expandReview.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            reviewContent.setText(contentStr);
+                            expandReview.setVisibility(View.GONE);
+                            hideReview.setVisibility(View.VISIBLE);
+                        }
+                    });
+                    hideReview.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            reviewContent.setText(contentStr.substring(0, 150) + "...");
+                            expandReview.setVisibility(View.VISIBLE);
+                            hideReview.setVisibility(View.GONE);
+                        }
+                    });
+                } else {
+                    reviewContent.setText(contentStr);
+                    expandReview.setVisibility(View.GONE);
+                    hideReview.setVisibility(View.GONE);
+                }
                 if(numElements == 1) {
                     reviewButton.setVisibility(View.GONE);
                 } else {
