@@ -24,7 +24,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder>{
     }
 
     public static  class ViewHolder extends RecyclerView.ViewHolder{
-        public ImageView imageViewItem;
+        private ImageView imageViewItem;
 
         public ViewHolder(View view){
             super(view);

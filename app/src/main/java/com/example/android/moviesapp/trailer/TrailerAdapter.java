@@ -34,7 +34,7 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.ViewHold
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
-        public YouTubeThumbnailView thumbView;
+        private YouTubeThumbnailView thumbView;
 
         public ViewHolder(View view, Context context) {
             super(view);
