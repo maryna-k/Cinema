@@ -25,6 +25,7 @@ import android.widget.Toast;
 
 import com.example.android.moviesapp.database.MovieContract.FavoriteMovieEntry;
 import com.example.android.moviesapp.review.Review;
+import com.example.android.moviesapp.review.ReviewActivity;
 import com.example.android.moviesapp.review.ReviewLoader;
 import com.example.android.moviesapp.trailer.TrailerAdapter;
 import com.example.android.moviesapp.trailer.TrailerInfoLoader;
@@ -259,7 +260,7 @@ public class DetailFragment extends Fragment {
         }
 
         @Override
-        public void onLoadFinished(Loader<ArrayList<Review>> loader, ArrayList<Review> data) {
+        public void onLoadFinished(Loader<ArrayList<Review>> loader, final ArrayList<Review> data) {
             final String contentStr;
             int numElements = data.size();
             if (numElements > 0) {
@@ -293,7 +294,15 @@ public class DetailFragment extends Fragment {
                 if(numElements == 1) {
                     reviewButton.setVisibility(View.GONE);
                 } else {
-
+                    reviewButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Intent intent = new Intent(getContext(), ReviewActivity.class);
+                            intent.putExtra("reviews", data);
+                            intent.putExtra("title", mTitle);
+                            startActivity(intent);
+                        }
+                    });
                 }
             }
             else {
