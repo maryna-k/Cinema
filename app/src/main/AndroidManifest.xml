@@ -11,18 +11,28 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
+        <!-- https://developer.android.com/training/implementing-navigation/ancestral.html
+    If the parent activity has launch mode <singleTop>, or the up intent contains FLAG_ACTIVITY_CLEAR_TOP,
+    the parent activity is brought to the top of the stack, and receives the intent through its onNewIntent() method.
+    If the parent activity has launch mode <standard>, and the up intent does not contain FLAG_ACTIVITY_CLEAR_TOP,
+    the parent activity is popped off the stack, and a new instance of that activity is created on top of the stack to
+    receive the intent.-->
         <activity android:name=".MainActivity" android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".DetailActivity" android:launchMode="singleTop">
+        <activity android:name=".DetailActivity"
+            android:launchMode="singleTop"
+            android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
-        <activity android:name=".review.ReviewActivity">
+        <activity android:name=".review.ReviewActivity"
+            android:parentActivityName=".DetailActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".DetailActivity" />
