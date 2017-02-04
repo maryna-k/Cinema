@@ -16,7 +16,7 @@ public class MovieLoader extends AsyncTaskLoader<ArrayList<Movie>> {
 
     //private ArrayList<Movie> movieList;
 
-    private final String LOG_TAG = MovieLoader.class.getSimpleName();
+    private final String LOG_TAG = MovieLoader.class.getSimpleName() + "LOG";
 
     public MovieLoader(Context context){
         super(context);
@@ -25,11 +25,12 @@ public class MovieLoader extends AsyncTaskLoader<ArrayList<Movie>> {
     @Override
     public void onStartLoading(){
         forceLoad();
+        Log.v(LOG_TAG, "Loader: onStartLoading");
     }
 
     @Override
     public ArrayList<Movie> loadInBackground(){
-
+        Log.v(LOG_TAG, "Loader: loadInBackground");
         String movieJsonStr = getJsonResponse(LOAD_MOVIES);
 
         try {

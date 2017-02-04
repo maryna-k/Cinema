@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
@@ -25,7 +26,7 @@ import java.util.ArrayList;
 public class MovieGridFragment extends Fragment
         implements LoaderManager.LoaderCallbacks<ArrayList<Movie>>{
 
-    private final String LOG_TAG = MovieGridFragment.class.getSimpleName();
+    private final String LOG_TAG = MovieGridFragment.class.getSimpleName() + " LOG";
 
     private MovieAdapter mAdapter;
     private RecyclerView mRecyclerView;
@@ -35,6 +36,10 @@ public class MovieGridFragment extends Fragment
     private View rootView;
     private MovieLoader loader;
     private EndlessRecyclerViewScrollListener mScrollListener;
+    private Parcelable mAdapterState;
+    private final String ADAPTER_STATE = "adapter_state";
+    private final String ADAPTER_DATA = "adapter_data";
+    private ArrayList<Movie> mAdapterList;
     private final int PRIMARY_LOADER_ID = 0;
     private final int SECONDARY_LOADER_ID = 1;
 
@@ -44,6 +49,7 @@ public class MovieGridFragment extends Fragment
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        Log.v(LOG_TAG, "OnCreate");
     }
 
     @Override
@@ -67,12 +73,22 @@ public class MovieGridFragment extends Fragment
         mRecyclerView.addOnScrollListener(mScrollListener);
 
         moviesToSearch = MainActivity.getMoviesToSearch();
-        Log.v(LOG_TAG, "SharedPreferences: " + moviesToSearch);
+        //Log.v(LOG_TAG, "SharedPreferences: " + moviesToSearch);
 
         /*DownloadMovieDataTask downloadMovies = new DownloadMovieDataTask();
         if (checkNetworkConnection()) downloadMovies.execute(drawerItemTitle);*/
 
-        getLoaderManager().initLoader(PRIMARY_LOADER_ID, null, this);
+        if(savedInstanceState == null){
+            getLoaderManager().initLoader(PRIMARY_LOADER_ID, null, this);
+        }else{
+            mAdapterList = (ArrayList<Movie>) savedInstanceState.getSerializable(ADAPTER_DATA);
+            createAdapter(mAdapterList);
+            mRecyclerView.setAdapter(mAdapter);
+            mAdapterState = savedInstanceState.getParcelable(ADAPTER_STATE);
+            mLayoutManager.onRestoreInstanceState(mAdapterState);
+        }
+
+        Log.v(LOG_TAG, "OnCreateView");
         return rootView;
     }
 
@@ -82,6 +98,7 @@ public class MovieGridFragment extends Fragment
 
     @Override
     public Loader<ArrayList<Movie>> onCreateLoader(int id, Bundle args){
+        Log.v(LOG_TAG, "Loader: OnCreateLoader, ID " + id);
         if (id == PRIMARY_LOADER_ID ) {
             mScrollListener.resetState();
         }
@@ -91,21 +108,14 @@ public class MovieGridFragment extends Fragment
 
     @Override
     public void onLoadFinished(Loader<ArrayList<Movie>> loader, ArrayList<Movie> result) {
+        Log.v(LOG_TAG, "Loader: OnLoadFinished, ID " + loader.getId());
         if (result != null){
             switch(loader.getId()){
                 case PRIMARY_LOADER_ID:
                         if (mAdapter == null){
-                            mAdapter = new MovieAdapter(result, new MovieAdapter.OnItemClickListener(){
-                                @Override
-                                public void onItemClick(Movie movie){
-                                    Intent intent = new Intent(getActivity(), DetailActivity.class)
-                                            .putExtra("movie", movie);
-                                    startActivity(intent);
-                                }
-                            });
+                            createAdapter(result);
                             mRecyclerView.setAdapter(mAdapter);
-                        } else
-                            mAdapter.addData(result);
+                        }
                     break;
                 case SECONDARY_LOADER_ID:
                     mAdapter.addData(result);
@@ -114,14 +124,31 @@ public class MovieGridFragment extends Fragment
         }
     }
 
+    private void createAdapter(ArrayList<Movie> data){
+        mAdapter = new MovieAdapter(data, new MovieAdapter.OnItemClickListener(){
+            @Override
+            public void onItemClick(Movie movie){
+                Intent intent = new Intent(getActivity(), DetailActivity.class)
+                        .putExtra("movie", movie);
+                startActivity(intent);
+            }
+        });
+    }
+
     @Override
     public void onLoaderReset(Loader<ArrayList<Movie>> loader) {
+        Log.v(LOG_TAG, "Loader: OnLoaderReset");
         mScrollListener.resetState();
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState){
         super.onSaveInstanceState(outState);
+        mAdapterList = mAdapter.getAdapterData();
+        outState.putSerializable(ADAPTER_DATA, mAdapterList);
+        mAdapterState = mLayoutManager.onSaveInstanceState();
+        outState.putParcelable(ADAPTER_STATE, mAdapterState);
+        Log.v(LOG_TAG, "onSaveInstanceState");
     }
 
     private boolean checkNetworkConnection() {
@@ -145,6 +172,7 @@ public class MovieGridFragment extends Fragment
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater){
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.menu_main_fragment, menu);
+        Log.v(LOG_TAG, "OnCreateOptionsMenu");
     }
 
     @Override
