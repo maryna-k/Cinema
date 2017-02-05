@@ -2,7 +2,6 @@ package com.example.android.moviesapp;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +14,7 @@ import java.util.ArrayList;
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder>{
 
     private ArrayList<Movie> mList;
-    private final String LOG_TAG = MovieAdapter.class.getSimpleName();
+    private final String LOG_TAG = MovieAdapter.class.getSimpleName() + "LOG";
     private Context context;
     private OnItemClickListener listener;
 
@@ -75,10 +74,18 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder>{
 
     public void addData(ArrayList<Movie> data){
         mList.addAll(data);
-        for(int i = 0; i < mList.size(); i++){
+        /*for(int i = 0; i < mList.size(); i++){
             Log.v(LOG_TAG, i+ ". " + mList.get(i).getTitle());
-        }
+        }*/
         this.notifyItemRangeChanged(mList.size()+1, data.size());
         this.notifyDataSetChanged();
+    }
+
+    public ArrayList<Movie> getAdapterData(){
+        ArrayList<Movie> adapterList = new ArrayList<>(mList.size());
+        for(int i = 0; i < mList.size(); i++){
+            adapterList.add(i, new Movie(mList.get(i)));
+        }
+        return adapterList;
     }
 }

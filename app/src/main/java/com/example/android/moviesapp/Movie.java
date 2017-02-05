@@ -2,7 +2,7 @@ package com.example.android.moviesapp;
 
 import java.io.Serializable;
 
-public class Movie implements Serializable{
+public class Movie implements Serializable {
 
     private String title;
     private String overview; //string for synopsis
@@ -23,6 +23,15 @@ public class Movie implements Serializable{
         this.releaseDate = releaseDate;
         this.imageAddress = imageAddress;
         this.mdb_id = mdb_id;
+    }
+
+    public Movie(Movie original){
+        title = original.title;
+        overview = original.overview;
+        rating = original.rating;
+        releaseDate = original.releaseDate;
+        imageAddress = original.imageAddress;
+        mdb_id = original.mdb_id;
     }
 
     public String getTitle() {
