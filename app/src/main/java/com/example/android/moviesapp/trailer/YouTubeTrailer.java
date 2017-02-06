@@ -9,6 +9,10 @@ public class YouTubeTrailer {
         this.key = key;
     }
 
+    public YouTubeTrailer(YouTubeTrailer original){
+        key = original.key;
+    }
+
     public void setKey(String key) {
         this.key = key;
     }

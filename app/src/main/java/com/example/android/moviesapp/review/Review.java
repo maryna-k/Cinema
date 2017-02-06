@@ -15,6 +15,12 @@ public class Review implements Serializable{
         this.reviewContent = reviewContent;
     }
 
+    public Review(Review original){
+        reviewId = original.reviewId;
+        author = original.author;
+        reviewContent = original.reviewContent;
+    }
+
     public String getAuthor() {
         return author;
     }
