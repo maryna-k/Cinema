@@ -11,6 +11,7 @@ import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -39,10 +40,9 @@ import java.util.ArrayList;
 
 public class DetailFragment extends Fragment {
 
-    private final String LOG_TAG = DetailFragment.class.getSimpleName();
-    private TrailerAdapter mAdapter;
-    private RecyclerView mRecyclerView;
-    private LinearLayoutManager mLayoutManager;
+    private final String LOG_TAG = DetailFragment.class.getSimpleName() + "LOG";
+
+    //variables that represent movie object
     private Movie movie;
     private String mTitle;
     private String mOverview;
@@ -53,12 +53,21 @@ public class DetailFragment extends Fragment {
     private boolean favorite;
     private static long mTMDB_ID;
     private int db_id;
-    private final int TRAILER_LOADER_ID = 1;
-    private final int REVIEW_LOADER_ID = 2;
+
+    //RecyclerView variables
+    private TrailerAdapter mTrailerAdapter;
+    private RecyclerView mRecyclerView;
+    private LinearLayoutManager mLayoutManager;
+
     private TrailerInfoLoader loader;
     private View rootView;
     private ProgressBar mProgressBar;
     private LinearLayout trailerView;
+
+    private final int COLLAPSED_REVIEW_SIZE = 150;
+
+    private final int TRAILER_LOADER_ID = 1;
+    private final int REVIEW_LOADER_ID = 2;
 
     public DetailFragment() {
     }
@@ -67,6 +76,7 @@ public class DetailFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        Log.v(LOG_TAG, "onCreate");
     }
 
     @Override
@@ -121,8 +131,9 @@ public class DetailFragment extends Fragment {
             mProgressBar = (ProgressBar) rootView.findViewById(R.id.progress_bar);
             trailerView = (LinearLayout) rootView.findViewById(R.id.layout_trailers_title);
 
-            getLoaderManager().initLoader(TRAILER_LOADER_ID, null, trailerResultLoaderListener);
             getLoaderManager().initLoader(REVIEW_LOADER_ID, null, reviewResultLoaderListener);
+            getLoaderManager().initLoader(TRAILER_LOADER_ID, null, trailerResultLoaderListener);
+            Log.v(LOG_TAG, "onCreateView");
         }
         return rootView;
     }
@@ -131,6 +142,7 @@ public class DetailFragment extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.menu_detail_fragment, menu);
+        Log.v(LOG_TAG, "onCreateOptionsMenu");
     }
 
     //change the icon of the favorite button depending on if the Movie object is favorite or not
@@ -174,6 +186,11 @@ public class DetailFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState){
+        super.onSaveInstanceState(outState);
+    }
+
     //insert Movie object to favorite_movies table
     public boolean insertMovie() {
 
@@ -214,7 +231,7 @@ public class DetailFragment extends Fragment {
         return true;
     }
 
-    //inner anonymous class that implements LoaderCallbacks and loads trailers
+    //anonymous class that implements LoaderCallbacks and loads trailers
     private LoaderManager.LoaderCallbacks<ArrayList<YouTubeTrailer>> trailerResultLoaderListener
             = new LoaderManager.LoaderCallbacks<ArrayList<YouTubeTrailer>>() {
 
@@ -226,18 +243,18 @@ public class DetailFragment extends Fragment {
         }
 
         @Override
-        public void onLoadFinished(Loader<ArrayList<YouTubeTrailer>> loader, ArrayList<YouTubeTrailer> data) {
-            int numElements = data.size();
+        public void onLoadFinished(Loader<ArrayList<YouTubeTrailer>> loader, ArrayList<YouTubeTrailer> trailerData) {
+            int numElements = trailerData.size();
             if (numElements != 0) {
-                mAdapter = new TrailerAdapter(data, new TrailerAdapter.OnItemClickListener() {
+                mTrailerAdapter = new TrailerAdapter(trailerData, new TrailerAdapter.OnItemClickListener() {
                     @Override
                     public void onItemClick(String keyStr) {
                         startActivity(YouTubeStandalonePlayer.createVideoIntent(getActivity(),
                                 BuildConfig.YOUTUBE_API_KEY, keyStr, 0, true, true));
                     }
                 });
-                mAdapter.setProgressBar(mProgressBar);
-                mRecyclerView.setAdapter(mAdapter);
+                mTrailerAdapter.setProgressBar(mProgressBar);
+                mRecyclerView.setAdapter(mTrailerAdapter);
             } else {
                 mRecyclerView.setVisibility(View.GONE);
                 mProgressBar.setVisibility(View.GONE);
@@ -247,84 +264,90 @@ public class DetailFragment extends Fragment {
 
         @Override
         public void onLoaderReset(Loader<ArrayList<YouTubeTrailer>> loader) {
-
+            Log.v(LOG_TAG, "Loader: onLoaderReset " + TRAILER_LOADER_ID);
         }
     };
 
-    //inner anonymous class that implements LoaderCallbacks and loads reviews
+    //anonymous class that implements LoaderCallbacks and loads reviews
     private LoaderManager.LoaderCallbacks<ArrayList<Review>> reviewResultLoaderListener
             = new LoaderManager.LoaderCallbacks<ArrayList<Review>>() {
 
         @Override
         public Loader<ArrayList<Review>> onCreateLoader(int id, Bundle args) {
+            Log.v(LOG_TAG, "Loader: onCreateLoader");
             if (id == REVIEW_LOADER_ID) {
                 return new ReviewLoader(getContext());
             } else return null;
         }
 
         @Override
-        public void onLoadFinished(Loader<ArrayList<Review>> loader, final ArrayList<Review> data) {
-            final String contentStr;
-            int numElements = data.size();
-            if (numElements > 0) {
-                TextView author = (TextView) rootView.findViewById(R.id.reviewer_name);
-                final TextView reviewContent = (TextView) rootView.findViewById(R.id.review_text);
-                Button reviewButton = (Button) rootView.findViewById(R.id.review_button);
-                final ImageView expandReview = (ImageView) rootView.findViewById(R.id.expand_review);
-                final ImageView hideReview = (ImageView) rootView.findViewById(R.id.hide_review);
-
-                contentStr = data.get(0).getReviewContent();
-                author.setText(data.get(0).getAuthor());
-                if(contentStr.length() > 150) {
-                    reviewContent.setText(contentStr.substring(0, 150) + "...");
-                    expandReview.setVisibility(View.VISIBLE);
-                    expandReview.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            reviewContent.setText(contentStr);
-                            expandReview.setVisibility(View.GONE);
-                            hideReview.setVisibility(View.VISIBLE);
-                        }
-                    });
-                    hideReview.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            reviewContent.setText(contentStr.substring(0, 150) + "...");
-                            expandReview.setVisibility(View.VISIBLE);
-                            hideReview.setVisibility(View.GONE);
-                        }
-                    });
-                } else {
-                    reviewContent.setText(contentStr);
-                    expandReview.setVisibility(View.GONE);
-                    hideReview.setVisibility(View.GONE);
-                }
-                if(numElements == 1) {
-                    reviewButton.setVisibility(View.GONE);
-                } else {
-                    reviewButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            Intent intent = new Intent(getContext(), ReviewActivity.class);
-                            intent.putExtra("reviews", data);
-                            intent.putExtra("title", mTitle);
-                            startActivity(intent);
-                        }
-                    });
-                }
-            }
-            else {
-                LinearLayout layout_reviews = (LinearLayout) rootView.findViewById(R.id.layout_reviews);
-                layout_reviews.setVisibility(View.GONE);
-            }
+        public void onLoadFinished(Loader<ArrayList<Review>> loader, final ArrayList<Review> reviewData) {
+            Log.v(LOG_TAG, "Loader: onLoadFinished");
+            setReviewLayout(reviewData);
         }
 
         @Override
         public void onLoaderReset(Loader<ArrayList<Review>> loader) {
-
+            Log.v(LOG_TAG, "Loader: onLoaderReset " + REVIEW_LOADER_ID);
         }
     };
 
+    //helper method that sets review layout
+    private void setReviewLayout(final ArrayList<Review> reviewData){
+        final String contentStr;
+        int numElements = reviewData.size();
+        if (numElements > 0) {
+            TextView author = (TextView) rootView.findViewById(R.id.reviewer_name);
+            final TextView reviewContent = (TextView) rootView.findViewById(R.id.review_text);
+            Button reviewButton = (Button) rootView.findViewById(R.id.review_button);
+            final ImageView expandReview = (ImageView) rootView.findViewById(R.id.expand_review);
+            final ImageView hideReview = (ImageView) rootView.findViewById(R.id.hide_review);
+
+            contentStr = reviewData.get(0).getReviewContent();
+            author.setText(reviewData.get(0).getAuthor());
+            if(contentStr.length() > COLLAPSED_REVIEW_SIZE) {
+                reviewContent.setText(contentStr.substring(0, COLLAPSED_REVIEW_SIZE) + "...");
+                expandReview.setVisibility(View.VISIBLE);
+                expandReview.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        reviewContent.setText(contentStr);
+                        expandReview.setVisibility(View.GONE);
+                        hideReview.setVisibility(View.VISIBLE);
+                    }
+                });
+                hideReview.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        reviewContent.setText(contentStr.substring(0, COLLAPSED_REVIEW_SIZE) + "...");
+                        expandReview.setVisibility(View.VISIBLE);
+                        hideReview.setVisibility(View.GONE);
+                    }
+                });
+            } else {
+                reviewContent.setText(contentStr);
+                expandReview.setVisibility(View.GONE);
+                hideReview.setVisibility(View.GONE);
+            }
+            if(numElements == 1) {
+                reviewButton.setVisibility(View.GONE);
+            } else {
+                reviewButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent intent = new Intent(getContext(), ReviewActivity.class);
+                        intent.putExtra("reviews", reviewData);
+                        intent.putExtra("title", mTitle);
+                        startActivity(intent);
+                    }
+                });
+            }
+        }
+        else {
+            LinearLayout layout_reviews = (LinearLayout) rootView.findViewById(R.id.layout_reviews);
+            layout_reviews.setVisibility(View.GONE);
+        }
+    }
 
     public static long getmTMDB_ID() {
         return mTMDB_ID;

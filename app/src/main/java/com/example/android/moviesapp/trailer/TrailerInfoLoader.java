@@ -16,7 +16,8 @@ import static com.example.android.moviesapp.utilities.MDBConnection.getJsonRespo
 public class TrailerInfoLoader extends AsyncTaskLoader<ArrayList<YouTubeTrailer>> {
 
 
-    private final String LOG_TAG = TrailerInfoLoader.class.getSimpleName();
+    private final String LOG_TAG = TrailerInfoLoader.class.getSimpleName() + "LOG";
+    private ArrayList<YouTubeTrailer> trailerArrayList;
 
     public TrailerInfoLoader(Context context){
         super(context);
@@ -24,11 +25,17 @@ public class TrailerInfoLoader extends AsyncTaskLoader<ArrayList<YouTubeTrailer>
 
     @Override
     public void onStartLoading(){
-        forceLoad();
+        if(trailerArrayList == null) {
+            forceLoad();
+        } else{
+            deliverResult(trailerArrayList);
+        }
+        Log.v(LOG_TAG, "Loader: onStartLoading");
     }
 
     @Override
     public ArrayList<YouTubeTrailer> loadInBackground() {
+        Log.v(LOG_TAG, "Loader: loadInBackground");
         String trailerJsonStr = getJsonResponse(LOAD_TRAILER_INFO);
 
         try {
@@ -38,5 +45,11 @@ public class TrailerInfoLoader extends AsyncTaskLoader<ArrayList<YouTubeTrailer>
             e.printStackTrace();
         }
         return null;
+    }
+
+    @Override
+    public void deliverResult(ArrayList<YouTubeTrailer> trailerList){
+        trailerArrayList = trailerList;
+        super.deliverResult(trailerArrayList);
     }
 }

@@ -1,7 +1,9 @@
 package com.example.android.moviesapp.trailer;
 
 
-public class YouTubeTrailer {
+import java.io.Serializable;
+
+public class YouTubeTrailer implements Serializable{
 
     private String key;
 

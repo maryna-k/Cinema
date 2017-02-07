@@ -18,7 +18,8 @@ import static com.example.android.moviesapp.utilities.MDBConnection.getJsonRespo
 public class ReviewLoader extends AsyncTaskLoader<ArrayList<Review>> {
 
 
-    private final String LOG_TAG = TrailerInfoLoader.class.getSimpleName();
+    private final String LOG_TAG = TrailerInfoLoader.class.getSimpleName() + "LOG";
+    private ArrayList<Review> reviewArrayList;
 
     public ReviewLoader(Context context){
         super(context);
@@ -26,11 +27,18 @@ public class ReviewLoader extends AsyncTaskLoader<ArrayList<Review>> {
 
     @Override
     public void onStartLoading(){
-        forceLoad();
+        if(reviewArrayList == null) {
+            Log.v(LOG_TAG, "Loader: onStartLoading, forceLoad");
+            forceLoad();
+        } else {
+            Log.v(LOG_TAG, "Loader: onStartLoading, return");
+            deliverResult(reviewArrayList);
+        }
     }
 
     @Override
     public ArrayList<Review> loadInBackground() {
+        Log.v(LOG_TAG, "Loader: LoadInBackground");
         String reviewJsonStr = getJsonResponse(LOAD_REVIEWS);
 
         try {
@@ -40,5 +48,11 @@ public class ReviewLoader extends AsyncTaskLoader<ArrayList<Review>> {
             e.printStackTrace();
         }
         return null;
+    }
+
+    @Override
+    public void deliverResult(ArrayList<Review> reviewList){
+        reviewArrayList = reviewList;
+        super.deliverResult(reviewArrayList);
     }
 }
