@@ -13,8 +13,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,9 +23,9 @@ import static android.content.ContentValues.TAG;
 
 
 public class FavoriteGridFragment extends Fragment
-        implements LoaderManager.LoaderCallbacks<Cursor>{
+        implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    private final String LOG_TAG = MovieGridFragment.class.getSimpleName();
+    private final String LOG_TAG = MovieGridFragment.class.getSimpleName() + "LOG";
 
     private CursorMovieAdapter mCursorAdapter;
     private RecyclerView mRecyclerView;
@@ -39,12 +37,14 @@ public class FavoriteGridFragment extends Fragment
     private Cursor mCursorMovieData;
 
 
-    public FavoriteGridFragment() {}
+    public FavoriteGridFragment() {
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        Log.v(LOG_TAG, "onCreate");
     }
 
     @Override
@@ -86,13 +86,14 @@ public class FavoriteGridFragment extends Fragment
                 getLoaderManager().restartLoader(PRIMARY_LOADER_ID, null, FavoriteGridFragment.this);
             }
         }).attachToRecyclerView(mRecyclerView);
-
+        Log.v(LOG_TAG, "onCreateView");
         return rootView;
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState){
+    public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+        Log.v(LOG_TAG, "onSaveInstanceState");
     }
 
     @Override
@@ -103,48 +104,44 @@ public class FavoriteGridFragment extends Fragment
         Log.v(TAG, "onResume(): restartLoader");
     }
 
-        @Override
-        public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-            //CursorLoader is a loader that queries the ContentResolver and returns a Cursor.
-            return new CursorLoader(getActivity(),
-                    MovieContract.FavoriteMovieEntry.CONTENT_URI,
-                    null, null, null, null);
-        }
-
-        @Override
-        public void onLoadFinished(Loader<Cursor> loader, Cursor result) {
-            if (result != null && loader.getId() == PRIMARY_LOADER_ID) {
-                mCursorMovieData = result;
-                mCursorAdapter = new CursorMovieAdapter(mCursorMovieData, new MovieAdapter.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(Movie movie) {
-                        Intent intent = new Intent(getActivity(), DetailActivity.class)
-                                .putExtra("movie", movie)
-                                .putExtra("favorite", true);
-                        startActivity(intent);
-                    }
-                });
-                mRecyclerView.setAdapter(mCursorAdapter);
-            }
-        }
-
-
-        //Called when a previously created loader is being reset,making its data unavailable.
-        @Override
-        public void onLoaderReset(Loader<Cursor> loader) {
-            if (mCursorMovieData != null) {
-                mCursorAdapter.swapCursor(null);
-            }
-        }
-
-        @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater){
-        super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.menu_main_fragment, menu);
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        Log.v(LOG_TAG, "Loader: onCreateLoader");
+        //CursorLoader is a loader that queries the ContentResolver and returns a Cursor.
+        return new CursorLoader(getActivity(),
+                MovieContract.FavoriteMovieEntry.CONTENT_URI,
+                null, null, null, null);
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item){
+    public void onLoadFinished(Loader<Cursor> loader, Cursor result) {
+        Log.v(LOG_TAG, "Loader: onLoadFinished");
+        if (result != null && loader.getId() == PRIMARY_LOADER_ID) {
+            mCursorMovieData = result;
+            mCursorAdapter = new CursorMovieAdapter(mCursorMovieData, new MovieAdapter.OnItemClickListener() {
+                @Override
+                public void onItemClick(Movie movie) {
+                    Intent intent = new Intent(getActivity(), DetailActivity.class)
+                            .putExtra("movie", movie)
+                            .putExtra("favorite", true);
+                    startActivity(intent);
+                }
+            });
+            mRecyclerView.setAdapter(mCursorAdapter);
+        }
+    }
+
+    //Called when a previously created loader is being reset,making its data unavailable.
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        Log.v(LOG_TAG, "Loader: onLoaderReset");
+        if (mCursorMovieData != null) {
+            mCursorAdapter.swapCursor(null);
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
         return super.onOptionsItemSelected(item);
     }
 }
