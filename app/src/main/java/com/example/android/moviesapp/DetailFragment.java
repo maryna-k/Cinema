@@ -7,10 +7,12 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
+import android.support.v4.app.ShareCompat;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.ShareActionProvider;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -68,6 +70,8 @@ public class DetailFragment extends Fragment {
 
     private final int TRAILER_LOADER_ID = 1;
     private final int REVIEW_LOADER_ID = 2;
+
+    ShareActionProvider mShareActionProvider;
 
     public DetailFragment() {
     }
@@ -145,7 +149,7 @@ public class DetailFragment extends Fragment {
         Log.v(LOG_TAG, "onCreateOptionsMenu");
     }
 
-    //change the icon of the favorite button depending on if the Movie object is favorite or not
+        //change the icon of the favorite button depending on if the Movie object is favorite or not
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         MenuItem removeFromFavorite = menu.findItem(R.id.action_remove_from_favorite);
@@ -182,8 +186,26 @@ public class DetailFragment extends Fragment {
                             .show();
                 }
                 break;
+            case R.id.action_share:
+                shareMovie();
+                return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void shareMovie(){
+        String mimeType = "text/plain";
+        String title = "Movie from Cinema";
+        String textToShare = movie.getTitle() + "\n\n" + "Rating: " + movie.getRating() + "\n\n" +
+                "Release date: " + movie.getReleaseDate() + "\n\n" + "Overivew: " + "\n" + movie.getOverview();
+        String subject = "Cinema: " + movie.getTitle();
+        ShareCompat.IntentBuilder
+                .from(getActivity())
+                .setType(mimeType)
+                .setSubject(subject)
+                .setChooserTitle(title)
+                .setText(textToShare)
+                .startChooser();
     }
 
     @Override

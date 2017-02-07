@@ -4,6 +4,6 @@
 
     <item android:title="@string/action_refresh"
         android:id="@+id/action_refresh"
-        app:showAsAction="never" />
-
+        android:icon="@drawable/ic_action_refresh"
+        app:showAsAction="always" />
 </menu>
