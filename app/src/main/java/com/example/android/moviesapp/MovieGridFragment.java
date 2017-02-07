@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
@@ -36,10 +35,7 @@ public class MovieGridFragment extends Fragment
     private View rootView;
     private MovieLoader loader;
     private EndlessRecyclerViewScrollListener mScrollListener;
-    private Parcelable mAdapterState;
-    private final String ADAPTER_STATE = "adapter_state";
-    private final String ADAPTER_DATA = "adapter_data";
-    private ArrayList<Movie> mAdapterList;
+
     private final int PRIMARY_LOADER_ID = 0;
     private final int SECONDARY_LOADER_ID = 1;
 
@@ -78,16 +74,7 @@ public class MovieGridFragment extends Fragment
         /*DownloadMovieDataTask downloadMovies = new DownloadMovieDataTask();
         if (checkNetworkConnection()) downloadMovies.execute(drawerItemTitle);*/
 
-        if(savedInstanceState == null){
-            getLoaderManager().initLoader(PRIMARY_LOADER_ID, null, this);
-        }else{
-            mAdapterList = (ArrayList<Movie>) savedInstanceState.getSerializable(ADAPTER_DATA);
-            createAdapter(mAdapterList);
-            mRecyclerView.setAdapter(mAdapter);
-            mAdapterState = savedInstanceState.getParcelable(ADAPTER_STATE);
-            mLayoutManager.onRestoreInstanceState(mAdapterState);
-        }
-
+        getLoaderManager().initLoader(PRIMARY_LOADER_ID, null, this);
         Log.v(LOG_TAG, "OnCreateView");
         return rootView;
     }
@@ -144,10 +131,6 @@ public class MovieGridFragment extends Fragment
     @Override
     public void onSaveInstanceState(Bundle outState){
         super.onSaveInstanceState(outState);
-        mAdapterList = mAdapter.getAdapterData();
-        outState.putSerializable(ADAPTER_DATA, mAdapterList);
-        mAdapterState = mLayoutManager.onSaveInstanceState();
-        outState.putParcelable(ADAPTER_STATE, mAdapterState);
         Log.v(LOG_TAG, "onSaveInstanceState");
     }
 

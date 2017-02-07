@@ -14,9 +14,8 @@ import static com.example.android.moviesapp.utilities.MDBConnection.getJsonRespo
 
 public class MovieLoader extends AsyncTaskLoader<ArrayList<Movie>> {
 
-    //private ArrayList<Movie> movieList;
-
     private final String LOG_TAG = MovieLoader.class.getSimpleName() + "LOG";
+    private ArrayList<Movie> movieArrayList;
 
     public MovieLoader(Context context){
         super(context);
@@ -24,8 +23,13 @@ public class MovieLoader extends AsyncTaskLoader<ArrayList<Movie>> {
 
     @Override
     public void onStartLoading(){
-        forceLoad();
-        Log.v(LOG_TAG, "Loader: onStartLoading");
+        if(movieArrayList == null){
+            Log.v(LOG_TAG, "Loader: onStartLoading");
+            forceLoad();
+        } else {
+            Log.v(LOG_TAG, "Loader: onStartLoading");
+            deliverResult(movieArrayList);
+        }
     }
 
     @Override
@@ -40,5 +44,11 @@ public class MovieLoader extends AsyncTaskLoader<ArrayList<Movie>> {
             e.printStackTrace();
         }
         return null;
+    }
+
+    @Override
+    public void deliverResult(ArrayList<Movie> movieList){
+        movieArrayList = movieList;
+        super.deliverResult(movieArrayList);
     }
 }
