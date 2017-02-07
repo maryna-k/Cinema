@@ -147,7 +147,7 @@ public class MovieGridFragment extends Fragment
     }
 
     public void updateMovieList(){
-        mAdapter.clearData();
+        mAdapter = null;
         getLoaderManager().restartLoader(PRIMARY_LOADER_ID, null, this);
     }
 
