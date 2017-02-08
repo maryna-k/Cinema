@@ -5,13 +5,14 @@ import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 
 public class DetailActivity extends AppCompatActivity {
 
-    private final String LOG_TAG = DetailActivity.class.getSimpleName();
+    private final String LOG_TAG = DetailActivity.class.getSimpleName() + "LOG";
     Toolbar toolbar;
 
     @Override
@@ -23,16 +24,18 @@ public class DetailActivity extends AppCompatActivity {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.detail_container, new DetailFragment()).commit();
         }
+        Log.v(LOG_TAG, "onCreate");
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
         getMenuInflater().inflate(R.menu.menu_detail_activity, menu);
+        Log.v(LOG_TAG, "onCreateOptionsMenu");
         return true;
     }
 

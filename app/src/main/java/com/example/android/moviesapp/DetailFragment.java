@@ -9,10 +9,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.app.ShareCompat;
 import android.support.v4.content.Loader;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.ShareActionProvider;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -71,8 +69,6 @@ public class DetailFragment extends Fragment {
     private final int TRAILER_LOADER_ID = 1;
     private final int REVIEW_LOADER_ID = 2;
 
-    ShareActionProvider mShareActionProvider;
-
     public DetailFragment() {
     }
 
@@ -93,7 +89,6 @@ public class DetailFragment extends Fragment {
         if (intent != null && intent.hasExtra("movie")) {
             movie = (Movie) intent.getSerializableExtra("movie");
             mTMDB_ID = movie.getMdb_id();
-            ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(movie.getTitle());
 
             /*intent.hasExtra("favorite") is true if this intent was sent from FavoriteGridFragment
             * and therefore this movie is in database. Otherwise, fragment should check if the tmdb_id of this
