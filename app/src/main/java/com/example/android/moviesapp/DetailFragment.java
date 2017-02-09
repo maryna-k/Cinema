@@ -313,43 +313,46 @@ public class DetailFragment extends Fragment {
     private void setReviewLayout(final ArrayList<Review> reviewData){
         final String contentStr;
         int numElements = reviewData.size();
+        LinearLayout layout_text = (LinearLayout) rootView.findViewById(R.id.layout_review_text);
+
         if (numElements > 0) {
             TextView author = (TextView) rootView.findViewById(R.id.reviewer_name);
             final TextView reviewContent = (TextView) rootView.findViewById(R.id.review_text);
-            Button reviewButton = (Button) rootView.findViewById(R.id.review_button);
+            Button showMoreReviewsButton = (Button) rootView.findViewById(R.id.review_button);
             final ImageView expandReview = (ImageView) rootView.findViewById(R.id.expand_review);
-            final ImageView hideReview = (ImageView) rootView.findViewById(R.id.hide_review);
+            final ImageView collapseReview = (ImageView) rootView.findViewById(R.id.hide_review);
+
 
             contentStr = reviewData.get(0).getReviewContent();
             author.setText(reviewData.get(0).getAuthor());
             if(contentStr.length() > COLLAPSED_REVIEW_SIZE) {
                 reviewContent.setText(contentStr.substring(0, COLLAPSED_REVIEW_SIZE) + "...");
                 expandReview.setVisibility(View.VISIBLE);
-                expandReview.setOnClickListener(new View.OnClickListener() {
+                collapseReview.setVisibility(View.GONE);
+                layout_text.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        reviewContent.setText(contentStr);
-                        expandReview.setVisibility(View.GONE);
-                        hideReview.setVisibility(View.VISIBLE);
-                    }
-                });
-                hideReview.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        reviewContent.setText(contentStr.substring(0, COLLAPSED_REVIEW_SIZE) + "...");
-                        expandReview.setVisibility(View.VISIBLE);
-                        hideReview.setVisibility(View.GONE);
+                        if(expandReview.getVisibility() == View.VISIBLE && collapseReview.getVisibility() == View.GONE) {
+                            reviewContent.setText(contentStr);
+                            expandReview.setVisibility(View.GONE);
+                            collapseReview.setVisibility(View.VISIBLE);
+                        }
+                        else if(expandReview.getVisibility() == View.GONE && collapseReview.getVisibility() == View.VISIBLE){
+                            reviewContent.setText(contentStr.substring(0, COLLAPSED_REVIEW_SIZE) + "...");
+                            expandReview.setVisibility(View.VISIBLE);
+                            collapseReview.setVisibility(View.GONE);
+                        }
                     }
                 });
             } else {
                 reviewContent.setText(contentStr);
                 expandReview.setVisibility(View.GONE);
-                hideReview.setVisibility(View.GONE);
+                collapseReview.setVisibility(View.GONE);
             }
             if(numElements == 1) {
-                reviewButton.setVisibility(View.GONE);
+                showMoreReviewsButton.setVisibility(View.GONE);
             } else {
-                reviewButton.setOnClickListener(new View.OnClickListener() {
+                showMoreReviewsButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         Intent intent = new Intent(getContext(), ReviewActivity.class);
