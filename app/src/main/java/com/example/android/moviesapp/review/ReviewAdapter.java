@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.android.moviesapp.R;
@@ -16,7 +17,7 @@ import java.util.ArrayList;
 public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder> {
 
     private ArrayList<Review> mList;
-    private final String LOG_TAG = ReviewAdapter.class.getSimpleName();
+    private final String LOG_TAG = ReviewAdapter.class.getSimpleName() + "LOG";
     private Context context;
     private static boolean[] shouldBeHidden;
     private static final int SUBSTRING_LENGTH = 400;
@@ -32,13 +33,12 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder
         public ViewHolder(Context context, View view){
             super(view);
             this.context = context;
+            LinearLayout review_layout = (LinearLayout) view.findViewById(R.id.review_layout);
             authorView = (TextView) view.findViewById(R.id.reviewer_name_activity);
             contentViewSubstring = (TextView) view.findViewById(R.id.review_content_substring);
             contentViewFull = (TextView) view.findViewById(R.id.review_content_full);
             expandReview = (ImageView) view.findViewById(R.id.expand_review_activity);
-            expandReview.setOnClickListener(this);
-            contentViewSubstring.setOnClickListener(this);
-            contentViewFull.setOnClickListener(this);
+            review_layout.setOnClickListener(this);
         }
 
         @Override
