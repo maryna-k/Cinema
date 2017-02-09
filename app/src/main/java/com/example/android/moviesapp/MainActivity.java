@@ -23,7 +23,7 @@ public class MainActivity extends AppCompatActivity {
     private static String preferenceMoviesToSearch;
     private static String moviesToSearch;
 
-    private final String LOG_TAG = MainActivity.class.getSimpleName();
+    private final String LOG_TAG = MainActivity.class.getSimpleName() + " LOG";
 
     /**Api for adding fragments at run-time:
     https://developer.android.com/training/basics/fragments/fragment-ui.html */
@@ -63,29 +63,27 @@ public class MainActivity extends AppCompatActivity {
         if (savedInstanceState == null) {
             //get search category from the MainActivity
             moviesToSearch = preferenceMoviesToSearch;
-            Log.v(LOG_TAG, "SharedPreferences: " + moviesToSearch);
+            //if the activity is restored, no need to create new fragment
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.movie_grid_container, new MovieGridFragment()).commit();
         } else {
             moviesToSearch = savedInstanceState.getString("searchCategory");
         }
-
         this.setTitle(getString(R.string.app_name) + ": " + moviesToSearch);
-
-        //if the activity is restored, no need to create new fragment
-        if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.main_container, new MovieGridFragment()).commit();
-        }
+        Log.v(LOG_TAG, "OnCreate");
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState){
         super.onSaveInstanceState(outState);
         outState.putString("searchCategory", moviesToSearch);
+        Log.v(LOG_TAG, "OnSaveInstanceState");
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
         getMenuInflater().inflate(R.menu.menu_main, menu);
+        Log.v(LOG_TAG, "OnCreateOptionsMenu");
         return true;
     }
 
@@ -107,6 +105,7 @@ public class MainActivity extends AppCompatActivity {
         super.onPostCreate(savedInstanceState);
         // Sync the toggle state after onRestoreInstanceState has occurred.
         mDrawerToggle.syncState();
+        Log.v(LOG_TAG, "OnPostCreate");
     }
 
     @Override
@@ -114,6 +113,7 @@ public class MainActivity extends AppCompatActivity {
         super.onConfigurationChanged(newConfig);
         // Pass any configuration change to the drawer toggles
         mDrawerToggle.onConfigurationChanged(newConfig);
+        Log.v(LOG_TAG, "OnConfigurationChanged");
     }
 
     private void setupDrawerContent(NavigationView navigationView){
@@ -135,25 +135,23 @@ public class MainActivity extends AppCompatActivity {
         if(menuItem.getItemId() == R.id.nav_favorite_fragment){
             fragmentClass = FavoriteGridFragment.class;
         } else {
-            //get title from the drawer and update moviesToSearch variable
-            String title = menuItem.getTitle().toString();
-            moviesToSearch = title;
-
             //MovieGridFragment.moviesToSearch = title;
             fragmentClass = MovieGridFragment.class;
         }
-
         try{
             fragment = (Fragment) fragmentClass.newInstance();
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        getSupportFragmentManager().beginTransaction().replace(R.id.main_container, fragment).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.movie_grid_container, fragment).commit();
         //Highlight selected item in the drawer
         menuItem.setChecked(true);
+        //get title from the drawer and update moviesToSearch variable
+        String title = menuItem.getTitle().toString();
+        moviesToSearch = title;
         //Change the title of the ActionBar
-        setTitle(getString(R.string.app_name) + ": " + menuItem.getTitle());
+        setTitle(getString(R.string.app_name) + ": " + title);
         mDrawerLayout.closeDrawers();
     }
 
