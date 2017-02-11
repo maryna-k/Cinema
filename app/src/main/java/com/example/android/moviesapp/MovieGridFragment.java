@@ -18,8 +18,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import java.util.ArrayList;
+import com.example.android.moviesapp.utilities.FragmentCallback;
 
+import java.util.ArrayList;
 
 public class MovieGridFragment extends Fragment
         implements LoaderManager.LoaderCallbacks<ArrayList<Movie>>{
@@ -37,12 +38,6 @@ public class MovieGridFragment extends Fragment
 
     private final int PRIMARY_LOADER_ID = 0;
     private final int SECONDARY_LOADER_ID = 1;
-
-
-    //DetailFragmentCallback for when an item has been selected.
-    public interface Callback {
-        public void onItemSelected(Movie selectedMovie);
-    }
 
     public MovieGridFragment() {}
 
@@ -120,7 +115,7 @@ public class MovieGridFragment extends Fragment
         mAdapter = new MovieAdapter(data, new MovieAdapter.OnItemClickListener(){
             @Override
             public void onItemClick(Movie movie){
-                ((Callback) getActivity()).onItemSelected(movie);
+                ((FragmentCallback) getActivity()).onItemSelected(movie);
             }
         });
     }

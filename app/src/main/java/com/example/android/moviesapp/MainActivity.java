@@ -15,7 +15,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class MainActivity extends AppCompatActivity implements MovieGridFragment.Callback {
+import com.example.android.moviesapp.utilities.FragmentCallback;
+
+public class MainActivity extends AppCompatActivity implements FragmentCallback {
     private DrawerLayout mDrawerLayout;
     private NavigationView mNavigationViewDrawer;
     private ActionBarDrawerToggle mDrawerToggle;

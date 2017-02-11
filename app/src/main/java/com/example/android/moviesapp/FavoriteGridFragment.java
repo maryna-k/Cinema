@@ -1,6 +1,5 @@
 package com.example.android.moviesapp;
 
-import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -18,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.android.moviesapp.database.MovieContract;
+import com.example.android.moviesapp.utilities.FragmentCallback;
 
 import static android.content.ContentValues.TAG;
 
@@ -35,7 +35,6 @@ public class FavoriteGridFragment extends Fragment
     private Loader loader;
     private final int PRIMARY_LOADER_ID = 0;
     private Cursor mCursorMovieData;
-
 
     public FavoriteGridFragment() {
     }
@@ -120,11 +119,8 @@ public class FavoriteGridFragment extends Fragment
             mCursorMovieData = result;
             mCursorAdapter = new CursorMovieAdapter(mCursorMovieData, new MovieAdapter.OnItemClickListener() {
                 @Override
-                public void onItemClick(Movie movie) {
-                    Intent intent = new Intent(getActivity(), DetailActivity.class)
-                            .putExtra("movie", movie)
-                            .putExtra("favorite", true);
-                    startActivity(intent);
+                public void onItemClick(Movie movie){
+                    ((FragmentCallback) getActivity()).onItemSelected(movie);
                 }
             });
             mRecyclerView.setAdapter(mCursorAdapter);
