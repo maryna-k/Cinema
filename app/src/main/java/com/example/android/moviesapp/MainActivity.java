@@ -15,13 +15,17 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements MovieGridFragment.Callback {
     private DrawerLayout mDrawerLayout;
     private NavigationView mNavigationViewDrawer;
     private ActionBarDrawerToggle mDrawerToggle;
     private Toolbar toolbar;
     private static String preferenceMoviesToSearch;
     private static String moviesToSearch;
+
+    private boolean mTwoPaneLayout;
+
+    private static final String DETAILFRAGMENT_TAG = "DFTAG";
 
     private final String LOG_TAG = MainActivity.class.getSimpleName() + " LOG";
 
@@ -70,6 +74,20 @@ public class MainActivity extends AppCompatActivity {
             moviesToSearch = savedInstanceState.getString("searchCategory");
         }
         this.setTitle(getString(R.string.app_name) + ": " + moviesToSearch);
+
+        if (findViewById(R.id.detail_container) != null) {
+            //if detail_container != null, application is in a two pane layout
+            //and DetailFragment should be called
+            mTwoPaneLayout = true;
+            if (savedInstanceState == null) {
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.detail_container, new DetailFragment(), DETAILFRAGMENT_TAG)
+                        .commit();
+            }
+        } else {
+            mTwoPaneLayout = false;
+            getSupportActionBar().setElevation(0f);
+        }
         Log.v(LOG_TAG, "OnCreate");
     }
 
@@ -162,5 +180,25 @@ public class MainActivity extends AppCompatActivity {
 
     public static String getMoviesToSearch() {
         return moviesToSearch;
+    }
+
+    @Override
+    public void onItemSelected(Movie movie) {
+        if (mTwoPaneLayout) {
+            // In two-pane mode, show the detail view in this activity by
+            // adding or replacing the detail fragment using a
+            // fragment transaction.
+            Bundle args = new Bundle();
+            args.putSerializable(DetailFragment.MOVIE_DETAIL, movie);
+            DetailFragment fragment = new DetailFragment();
+            fragment.setArguments(args);
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.detail_container, fragment, DETAILFRAGMENT_TAG)
+                    .commit();
+        } else {
+            Intent intent = new Intent(this, DetailActivity.class)
+                        .putExtra(DetailFragment.MOVIE_DETAIL, movie);
+                startActivity(intent);
+        }
     }
 }

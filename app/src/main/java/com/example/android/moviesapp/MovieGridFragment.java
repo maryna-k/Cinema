@@ -1,7 +1,6 @@
 package com.example.android.moviesapp;
 
 import android.content.Context;
-import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -38,6 +37,12 @@ public class MovieGridFragment extends Fragment
 
     private final int PRIMARY_LOADER_ID = 0;
     private final int SECONDARY_LOADER_ID = 1;
+
+
+    //DetailFragmentCallback for when an item has been selected.
+    public interface Callback {
+        public void onItemSelected(Movie selectedMovie);
+    }
 
     public MovieGridFragment() {}
 
@@ -115,9 +120,7 @@ public class MovieGridFragment extends Fragment
         mAdapter = new MovieAdapter(data, new MovieAdapter.OnItemClickListener(){
             @Override
             public void onItemClick(Movie movie){
-                Intent intent = new Intent(getActivity(), DetailActivity.class)
-                        .putExtra("movie", movie);
-                startActivity(intent);
+                ((Callback) getActivity()).onItemSelected(movie);
             }
         });
     }
