@@ -69,6 +69,8 @@ public class DetailFragment extends Fragment {
     private final int TRAILER_LOADER_ID = 1;
     private final int REVIEW_LOADER_ID = 2;
 
+    public static final String MOVIE_DETAIL = "movie_detail";
+
     public DetailFragment() {
     }
 
@@ -84,20 +86,31 @@ public class DetailFragment extends Fragment {
                              Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_detail, container, false);
 
-        //get Movie Object from the intent
+        //get Movie Object from the intent or bundle
+        Bundle arguments = getArguments();
+
         Intent intent = getActivity().getIntent();
-        if (intent != null && intent.hasExtra("movie")) {
-            movie = (Movie) intent.getSerializableExtra("movie");
-            mTMDB_ID = movie.getMdb_id();
+        if(!intent.hasExtra(MOVIE_DETAIL) && arguments == null){
+            ImageView empty_movie = (ImageView) rootView.findViewById(R.id.empty_movie);
+            LinearLayout detail_layout = (LinearLayout) rootView.findViewById(R.id.fragment_detail_layout);
+            empty_movie.setVisibility(View.VISIBLE);
+            detail_layout.setVisibility(View.GONE);
+        } else {
+            if (intent != null && intent.hasExtra(MOVIE_DETAIL)) {
+                movie = (Movie) intent.getSerializableExtra(MOVIE_DETAIL);
 
             /*intent.hasExtra("favorite") is true if this intent was sent from FavoriteGridFragment
             * and therefore this movie is in database. Otherwise, fragment should check if the tmdb_id of this
             * Movie object is already in database */
-            if (intent.hasExtra("favorite")) {
-                favorite = intent.getExtras().getBoolean("favorite");
-            } else {
-                favorite = movieIsInFavorite(mTMDB_ID);
+                if (intent.hasExtra("favorite")) {
+                    favorite = intent.getExtras().getBoolean("favorite");
+                } else {
+                    favorite = movieIsInFavorite(mTMDB_ID);
+                }
+            } else if(arguments != null) {
+                movie = (Movie) arguments.getSerializable(MOVIE_DETAIL);
             }
+            mTMDB_ID = movie.getMdb_id();
             mImageAddress = movie.getImageAddress();
             ImageView header = (ImageView) rootView.findViewById(R.id.header);
             String headerImageAddress = "http://image.tmdb.org/t/p/w780/" + mImageAddress;
