@@ -15,6 +15,9 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.example.android.moviesapp.database.MovieContract;
 import com.example.android.moviesapp.utilities.FragmentCallback;
@@ -115,7 +118,7 @@ public class FavoriteGridFragment extends Fragment
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor result) {
         Log.v(LOG_TAG, "Loader: onLoadFinished");
-        if (result != null && loader.getId() == PRIMARY_LOADER_ID) {
+        if (result != null && result.getCount() != 0) {
             mCursorMovieData = result;
             mCursorAdapter = new CursorMovieAdapter(mCursorMovieData, new MovieAdapter.OnItemClickListener() {
                 @Override
@@ -124,6 +127,13 @@ public class FavoriteGridFragment extends Fragment
                 }
             });
             mRecyclerView.setAdapter(mCursorAdapter);
+        } else {
+            LinearLayout emptyFavoritesLayout = (LinearLayout) rootView.findViewById(R.id.empty_grid_view_layout);
+            ImageView emptyImage = (ImageView) rootView.findViewById(R.id.empty_view_image);
+            TextView emptyText = (TextView) rootView.findViewById(R.id.empty_view_message);
+            emptyFavoritesLayout.setVisibility(View.VISIBLE);
+            emptyImage.setImageDrawable(getResources().getDrawable(R.drawable.ic_empty_movie_grid));
+            emptyText.setText(getText(R.string.empty_favorite_movie_gridview));
         }
     }
 

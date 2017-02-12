@@ -14,6 +14,11 @@
     <string name="review_button">Show more reviews</string>
     <!---->
 
+    <!--Empty view strings-->
+    <string name="empty_movie_detail">Please, select a movie to see details</string>
+    <string name="empty_movie_gridview">Please, connect to the network to see movies</string>
+    <string name="empty_favorite_movie_gridview">You have no favorite movies so far</string>
+
     <string name="pref_search_key">search_value</string>
     <string name="pref_search_default" translatable="false">Popular</string>
     <string name="pref_search_topic_title">Default search by</string>

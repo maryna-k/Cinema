@@ -16,6 +16,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.android.moviesapp.utilities.FragmentCallback;
@@ -96,7 +99,7 @@ public class MovieGridFragment extends Fragment
     @Override
     public void onLoadFinished(Loader<ArrayList<Movie>> loader, ArrayList<Movie> result) {
         Log.v(LOG_TAG, "Loader: OnLoadFinished, ID " + loader.getId());
-        if (result != null){
+        if (result != null && result.size() != 0){
             switch(loader.getId()){
                 case PRIMARY_LOADER_ID:
                         if (mAdapter == null){
@@ -108,6 +111,13 @@ public class MovieGridFragment extends Fragment
                     mAdapter.addData(result);
                     getLoaderManager().destroyLoader(SECONDARY_LOADER_ID);
             }
+        } else {
+            LinearLayout emptyFavoritesLayout = (LinearLayout) rootView.findViewById(R.id.empty_grid_view_layout);
+            ImageView emptyImage = (ImageView) rootView.findViewById(R.id.empty_view_image);
+            TextView emptyText = (TextView) rootView.findViewById(R.id.empty_view_message);
+            emptyFavoritesLayout.setVisibility(View.VISIBLE);
+            emptyImage.setImageDrawable(getResources().getDrawable(R.drawable.ic_empty_movie_grid));
+            emptyText.setText(getText(R.string.empty_movie_gridview));
         }
     }
 

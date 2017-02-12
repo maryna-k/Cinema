@@ -5,6 +5,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <include layout="@layout/empty_view"
+        android:id="@+id/empty_grid_view_layout"
+        android:gravity="center"
+        android:visibility="gone"/>
+
     <!-- Main content view -->
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_view"

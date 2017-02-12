@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center">
+
+    <ImageView
+        android:id="@+id/empty_view_image"
+        android:layout_width="250dp"
+        android:layout_height="250dp"
+        tools:src="@drawable/ic_empty_movie_grid"
+        android:layout_gravity="center"/>
+
+    <TextView
+        android:id="@+id/empty_view_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="No movies to show. To add a movie click on the favorite icon"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="@dimen/empty_view_message_size"
+        android:textStyle="bold"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:layout_marginLeft="@dimen/empty_text_margins"
+        android:layout_marginRight="@dimen/empty_text_margins"/>
+
+</LinearLayout>
