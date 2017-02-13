@@ -3,4 +3,7 @@
     <integer name="grid_columns">3</integer>
 
     <dimen name="poster_height">400dp</dimen>
+
+    <dimen name="fragmentDivider_margin">15dp</dimen>
+
 </resources>
