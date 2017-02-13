@@ -9,16 +9,6 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <ImageView
-            android:id="@+id/empty_movie"
-            android:layout_width="300dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:layout_marginTop="100dp"
-            android:src="@drawable/ic_empty_movie_detail"
-            android:visibility="gone" />
-
         <LinearLayout
             android:id="@+id/fragment_detail_layout"
             android:layout_width="match_parent"
