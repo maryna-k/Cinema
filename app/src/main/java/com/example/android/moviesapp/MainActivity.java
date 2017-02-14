@@ -14,6 +14,10 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.example.android.moviesapp.utilities.FragmentCallback;
 
@@ -26,6 +30,7 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
     private static String moviesToSearch;
 
     private boolean mTwoPaneLayout;
+    private LinearLayout emptyView;
 
     private static final String DETAILFRAGMENT_TAG = "DFTAG";
 
@@ -77,18 +82,19 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
         }
         this.setTitle(getString(R.string.app_name) + ": " + moviesToSearch);
 
-        if (findViewById(R.id.detail_container) != null) {
+        if (findViewById(R.id.detail_container_main_activity) != null) {
             //if detail_container != null, application is in a two pane layout
             //and DetailFragment should be called
+            emptyView = (LinearLayout) findViewById(R.id.empty_movie_view_layout);
             mTwoPaneLayout = true;
             if (savedInstanceState == null) {
+                setEmptyMovieDetailViewVisible(true);
                 getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.detail_container, new DetailFragment(), DETAILFRAGMENT_TAG)
+                        .replace(R.id.detail_container_main_activity, new DetailFragment(), DETAILFRAGMENT_TAG)
                         .commit();
             }
         } else {
             mTwoPaneLayout = false;
-            getSupportActionBar().setElevation(0f);
         }
         Log.v(LOG_TAG, "OnCreate");
     }
@@ -147,7 +153,7 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
                 });
     }
 
-    public void selectDrawerItem(MenuItem menuItem){
+    private void selectDrawerItem(MenuItem menuItem){
         //Create a new fragment and specify the fragment to show based on
         //the navigation item clicked
         Fragment fragment = null;
@@ -180,26 +186,43 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
                 this, mDrawerLayout, toolbar, R.string.drawer_open, R.string.drawer_close);
     }
 
+    private void setEmptyMovieDetailViewVisible(boolean visible){
+        if(visible){
+            emptyView.setVisibility(View.VISIBLE);
+            ImageView emptyViewImage = (ImageView) findViewById(R.id.empty_view_image);
+            TextView emptyViewText = (TextView) findViewById(R.id.empty_view_message);
+            emptyViewImage.setImageDrawable(getResources().getDrawable(R.drawable.ic_empty_movie_detail));
+            emptyViewText.setText(getText(R.string.empty_movie_detail));
+        } else{
+            emptyView.setVisibility(View.GONE);
+        }
+    }
+
     public static String getMoviesToSearch() {
         return moviesToSearch;
     }
 
     @Override
-    public void onItemSelected(Movie movie) {
+    public void onItemSelected(Movie movie, boolean favorite) {
         if (mTwoPaneLayout) {
             // In two-pane mode, show the detail view in this activity by
             // adding or replacing the detail fragment using a
             // fragment transaction.
             Bundle args = new Bundle();
             args.putSerializable(DetailFragment.MOVIE_DETAIL, movie);
+            args.putBoolean(DetailFragment.MOVIE_IN_FAVORITE, favorite);
             DetailFragment fragment = new DetailFragment();
             fragment.setArguments(args);
+            if(emptyView.getVisibility() == View.VISIBLE){
+                setEmptyMovieDetailViewVisible(false);
+            }
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.detail_container, fragment, DETAILFRAGMENT_TAG)
+                    .replace(R.id.detail_container_main_activity, fragment, DETAILFRAGMENT_TAG)
                     .commit();
         } else {
             Intent intent = new Intent(this, DetailActivity.class)
-                        .putExtra(DetailFragment.MOVIE_DETAIL, movie);
+                        .putExtra(DetailFragment.MOVIE_DETAIL, movie)
+                        .putExtra(DetailFragment.MOVIE_IN_FAVORITE, favorite);
                 startActivity(intent);
         }
     }

@@ -27,7 +27,7 @@ public class DetailActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.detail_container, new DetailFragment()).commit();
+                    .add(R.id.detail_container_detail_activity, new DetailFragment()).commit();
         }
         Log.v(LOG_TAG, "onCreate");
     }

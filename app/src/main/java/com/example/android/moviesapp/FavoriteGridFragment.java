@@ -28,7 +28,7 @@ import static android.content.ContentValues.TAG;
 public class FavoriteGridFragment extends Fragment
         implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    private final String LOG_TAG = MovieGridFragment.class.getSimpleName() + "LOG";
+    private final String LOG_TAG = MovieGridFragment.class.getSimpleName() + " LOG";
 
     private CursorMovieAdapter mCursorAdapter;
     private RecyclerView mRecyclerView;
@@ -52,7 +52,6 @@ public class FavoriteGridFragment extends Fragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
@@ -60,7 +59,6 @@ public class FavoriteGridFragment extends Fragment
         mLayoutManager = new GridLayoutManager(getContext(), GRID_COLUMNS_NUM);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        //recreate fragment state on rotation
         if (savedInstanceState == null) {
             getLoaderManager().initLoader(PRIMARY_LOADER_ID, null, this);
         }
@@ -83,8 +81,6 @@ public class FavoriteGridFragment extends Fragment
                         .build();
 
                 getActivity().getContentResolver().delete(uri, null, null);
-
-                // Restart the loader to re-query for all tasks after a deletion
                 getLoaderManager().restartLoader(PRIMARY_LOADER_ID, null, FavoriteGridFragment.this);
             }
         }).attachToRecyclerView(mRecyclerView);
@@ -101,7 +97,6 @@ public class FavoriteGridFragment extends Fragment
     @Override
     public void onResume() {
         super.onResume();
-        // re-queries for all tasks
         getLoaderManager().restartLoader(PRIMARY_LOADER_ID, null, this);
         Log.v(TAG, "onResume(): restartLoader");
     }
@@ -109,7 +104,6 @@ public class FavoriteGridFragment extends Fragment
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         Log.v(LOG_TAG, "Loader: onCreateLoader");
-        //CursorLoader is a loader that queries the ContentResolver and returns a Cursor.
         return new CursorLoader(getActivity(),
                 MovieContract.FavoriteMovieEntry.CONTENT_URI,
                 null, null, null, null);
@@ -118,26 +112,21 @@ public class FavoriteGridFragment extends Fragment
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor result) {
         Log.v(LOG_TAG, "Loader: onLoadFinished");
-        if (result != null && result.getCount() != 0) {
+        if (result != null) {
+            setEmptyGridViewVisible(false);
             mCursorMovieData = result;
             mCursorAdapter = new CursorMovieAdapter(mCursorMovieData, new MovieAdapter.OnItemClickListener() {
                 @Override
                 public void onItemClick(Movie movie){
-                    ((FragmentCallback) getActivity()).onItemSelected(movie);
+                    ((FragmentCallback) getActivity()).onItemSelected(movie, true);
                 }
             });
             mRecyclerView.setAdapter(mCursorAdapter);
-        } else {
-            LinearLayout emptyFavoritesLayout = (LinearLayout) rootView.findViewById(R.id.empty_grid_view_layout);
-            ImageView emptyImage = (ImageView) rootView.findViewById(R.id.empty_view_image);
-            TextView emptyText = (TextView) rootView.findViewById(R.id.empty_view_message);
-            emptyFavoritesLayout.setVisibility(View.VISIBLE);
-            emptyImage.setImageDrawable(getResources().getDrawable(R.drawable.ic_empty_movie_grid));
-            emptyText.setText(getText(R.string.empty_favorite_movie_gridview));
+        } if (result == null || result.getCount() == 0){
+            setEmptyGridViewVisible(true);
         }
     }
 
-    //Called when a previously created loader is being reset,making its data unavailable.
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         Log.v(LOG_TAG, "Loader: onLoaderReset");
@@ -149,5 +138,18 @@ public class FavoriteGridFragment extends Fragment
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         return super.onOptionsItemSelected(item);
+    }
+
+    private void setEmptyGridViewVisible(boolean visible){
+        LinearLayout emptyFavoritesLayout = (LinearLayout) rootView.findViewById(R.id.empty_grid_view_layout);
+        if(visible) {
+            emptyFavoritesLayout.setVisibility(View.VISIBLE);
+            ImageView emptyImage = (ImageView) rootView.findViewById(R.id.empty_view_image);
+            TextView emptyText = (TextView) rootView.findViewById(R.id.empty_view_message);
+            emptyImage.setImageDrawable(getResources().getDrawable(R.drawable.ic_empty_movie_grid));
+            emptyText.setText(getText(R.string.empty_favorite_movie_gridview));
+        } else{
+            emptyFavoritesLayout.setVisibility(View.GONE);
+        }
     }
 }
