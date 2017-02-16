@@ -121,6 +121,10 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
                         .commit();
             }
         } else if(findViewById(R.id.tablet_portrait_layout) != null){
+            if(savedInstanceState != null && savedInstanceState.getSerializable(LAST_VIEWED_MOVIE) != null) {
+                lastViewedMovie = (Movie) savedInstanceState.getSerializable(LAST_VIEWED_MOVIE);
+                lastViewedMovieIsFavorite = savedInstanceState.getBoolean(LAST_VIEWED_FAVORITE);
+            }
             appLayout = AppLayoutType.TABLET_PORTRAIT_LAYOUT;
         }
         else {
