@@ -126,6 +126,9 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
                 lastViewedMovieIsFavorite = savedInstanceState.getBoolean(LAST_VIEWED_FAVORITE);
             }
             appLayout = AppLayoutType.TABLET_PORTRAIT_LAYOUT;
+            //mDrawerToggle.setDrawerIndicatorEnabled(true);
+            mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+            getSupportActionBar().setDisplayShowTitleEnabled(true);
         }
         else {
             appLayout = AppLayoutType.SMALL_LAYOUT;
@@ -296,6 +299,7 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
             } else {
                 mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
                 mDrawerToggle.setDrawerIndicatorEnabled(false);
+                getSupportActionBar().setDisplayShowTitleEnabled(false);
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.movie_grid_container, fragment, DETAILFRAGMENT_TAG).addToBackStack(null).commit();
             }

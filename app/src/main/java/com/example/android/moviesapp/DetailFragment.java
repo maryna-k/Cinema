@@ -9,7 +9,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.app.ShareCompat;
 import android.support.v4.content.Loader;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -138,8 +137,6 @@ public class DetailFragment extends Fragment {
 
             mProgressBar = (ProgressBar) rootView.findViewById(R.id.progress_bar);
             trailerView = (LinearLayout) rootView.findViewById(R.id.layout_trailers_title);
-
-            ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(false);
 
             getLoaderManager().initLoader(REVIEW_LOADER_ID, null, reviewResultLoaderListener);
             getLoaderManager().initLoader(TRAILER_LOADER_ID, null, trailerResultLoaderListener);
