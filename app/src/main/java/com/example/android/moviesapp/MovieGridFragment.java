@@ -95,6 +95,7 @@ public class MovieGridFragment extends Fragment
                             createAdapter(result);
                             mRecyclerView.setAdapter(mAdapter);
                         }
+                    mRecyclerView.setAdapter(mAdapter);
                     break;
                 case SECONDARY_LOADER_ID:
                     mAdapter.addData(result);

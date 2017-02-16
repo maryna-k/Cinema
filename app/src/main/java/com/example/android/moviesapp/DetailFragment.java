@@ -9,6 +9,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.app.ShareCompat;
 import android.support.v4.content.Loader;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -138,6 +139,8 @@ public class DetailFragment extends Fragment {
             mProgressBar = (ProgressBar) rootView.findViewById(R.id.progress_bar);
             trailerView = (LinearLayout) rootView.findViewById(R.id.layout_trailers_title);
 
+            ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(false);
+
             getLoaderManager().initLoader(REVIEW_LOADER_ID, null, reviewResultLoaderListener);
             getLoaderManager().initLoader(TRAILER_LOADER_ID, null, trailerResultLoaderListener);
             Log.v(LOG_TAG, "onCreateView");
@@ -150,22 +153,26 @@ public class DetailFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.menu_detail_fragment, menu);
+        if(movie != null) {
+            inflater.inflate(R.menu.menu_detail_fragment, menu);
+        }
         Log.v(LOG_TAG, "onCreateOptionsMenu");
     }
 
         //change the icon of the favorite button depending on if the Movie object is favorite or not
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
-        MenuItem removeFromFavorite = menu.findItem(R.id.action_remove_from_favorite);
-        MenuItem addToFavorite = menu.findItem(R.id.action_add_to_favorite);
+        if(movie != null) {
+            MenuItem removeFromFavorite = menu.findItem(R.id.action_remove_from_favorite);
+            MenuItem addToFavorite = menu.findItem(R.id.action_add_to_favorite);
 
-        if (favorite) {
-            addToFavorite.setVisible(false);
-            removeFromFavorite.setVisible(true);
-        } else {
-            addToFavorite.setVisible(true);
-            removeFromFavorite.setVisible(false);
+            if (favorite) {
+                addToFavorite.setVisible(false);
+                removeFromFavorite.setVisible(true);
+            } else {
+                addToFavorite.setVisible(true);
+                removeFromFavorite.setVisible(false);
+            }
         }
     }
 
@@ -193,7 +200,11 @@ public class DetailFragment extends Fragment {
                 break;
             case R.id.action_share:
                 shareMovie();
+                break;
+            case android.R.id.home:
+                getActivity().onBackPressed();
                 return true;
+
         }
         return super.onOptionsItemSelected(item);
     }

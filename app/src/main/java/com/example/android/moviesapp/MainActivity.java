@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -22,6 +23,9 @@ import android.widget.TextView;
 import com.example.android.moviesapp.utilities.FragmentCallback;
 
 public class MainActivity extends AppCompatActivity implements FragmentCallback {
+
+    private enum AppLayoutType {TABLET_TWOPANE_LAYOUT, TABLET_PORTRAIT_LAYOUT, SMALL_LAYOUT};
+
     private DrawerLayout mDrawerLayout;
     private NavigationView mNavigationViewDrawer;
     private ActionBarDrawerToggle mDrawerToggle;
@@ -29,10 +33,17 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
     private static String preferenceMoviesToSearch;
     private static String moviesToSearch;
 
-    private boolean mTwoPaneLayout;
+    private AppLayoutType appLayout;
     private LinearLayout emptyView;
+    private FrameLayout movieGridContainet;
 
-    private static final String DETAILFRAGMENT_TAG = "DFTAG";
+    private Movie lastViewedMovie;
+    private boolean lastViewedMovieIsFavorite;
+    private static final String LAST_VIEWED_MOVIE = "last_viewed";
+    private static final String LAST_VIEWED_FAVORITE = "favorite_movie";
+
+    public static final String DETAILFRAGMENT_TAG = "DFTAG";
+    public static final String GRIDFRAGMENT_TAG = "GFTAG";
 
     private final String LOG_TAG = MainActivity.class.getSimpleName() + " LOG";
 
@@ -51,8 +62,10 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
         // Set a Toolbar
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         mDrawerToggle = setupDrawerToggle();
+        //mDrawerToggle.setDrawerIndicatorEnabled(true);
 
         //tie mDrawerLayout to the ActionBarToggle
         mDrawerLayout.addDrawerListener(mDrawerToggle);
@@ -70,13 +83,15 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
         preferenceMoviesToSearch = settings.getString(getString(R.string.pref_search_key),
                 getString(R.string.pref_search_default));
 
+        movieGridContainet = (FrameLayout) findViewById(R.id.movie_grid_container);
+
         //recreate fragment state on rotation
         if (savedInstanceState == null) {
             //get search category from the MainActivity
             moviesToSearch = preferenceMoviesToSearch;
             //if the activity is restored, no need to create new fragment
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.movie_grid_container, new MovieGridFragment()).commit();
+                    .add(R.id.movie_grid_container, new MovieGridFragment(), GRIDFRAGMENT_TAG).commit();
         } else {
             moviesToSearch = savedInstanceState.getString("searchCategory");
         }
@@ -85,16 +100,31 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
         if (findViewById(R.id.detail_container_main_activity) != null) {
             //if detail_container != null, application is in a two pane layout
             //and DetailFragment should be called
+            appLayout = AppLayoutType.TABLET_TWOPANE_LAYOUT;
             emptyView = (LinearLayout) findViewById(R.id.empty_movie_view_layout);
-            mTwoPaneLayout = true;
             if (savedInstanceState == null) {
-                setEmptyMovieDetailViewVisible(true);
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.detail_container_main_activity, new DetailFragment(), DETAILFRAGMENT_TAG)
                         .commit();
+                setEmptyMovieDetailViewVisible(true);
+            } else if(savedInstanceState.getSerializable(LAST_VIEWED_MOVIE) == null){
+                setEmptyMovieDetailViewVisible(true);
+            } else {
+                Movie movie = (Movie) savedInstanceState.getSerializable(LAST_VIEWED_MOVIE);
+                Boolean favorite = savedInstanceState.getBoolean(LAST_VIEWED_FAVORITE);
+                DetailFragment fragment = detailFragmentBundle(movie, favorite);
+                if (emptyView.getVisibility() == View.VISIBLE) {
+                        setEmptyMovieDetailViewVisible(false);
+                }
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.detail_container_main_activity, fragment, DETAILFRAGMENT_TAG)
+                        .commit();
             }
-        } else {
-            mTwoPaneLayout = false;
+        } else if(findViewById(R.id.tablet_portrait_layout) != null){
+            appLayout = AppLayoutType.TABLET_PORTRAIT_LAYOUT;
+        }
+        else {
+            appLayout = AppLayoutType.SMALL_LAYOUT;
         }
         Log.v(LOG_TAG, "OnCreate");
     }
@@ -103,6 +133,10 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
     public void onSaveInstanceState(Bundle outState){
         super.onSaveInstanceState(outState);
         outState.putString("searchCategory", moviesToSearch);
+        if(lastViewedMovie != null){
+            outState.putSerializable(LAST_VIEWED_MOVIE, lastViewedMovie);
+            outState.putBoolean(LAST_VIEWED_FAVORITE, lastViewedMovieIsFavorite);
+        }
         Log.v(LOG_TAG, "OnSaveInstanceState");
     }
 
@@ -139,6 +173,21 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
         super.onConfigurationChanged(newConfig);
         // Pass any configuration change to the drawer toggles
         mDrawerToggle.onConfigurationChanged(newConfig);
+        if(appLayout == AppLayoutType.TABLET_PORTRAIT_LAYOUT && newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            Fragment detailFragment = getSupportFragmentManager().findFragmentById(R.id.movie_grid_container);
+            if (detailFragment instanceof DetailFragment) {
+                getSupportFragmentManager().beginTransaction().remove(detailFragment).commit();
+                MovieGridFragment gridFragment = (MovieGridFragment) getSupportFragmentManager().findFragmentByTag(GRIDFRAGMENT_TAG);
+                if (gridFragment != null) {
+                    getSupportFragmentManager().beginTransaction().replace(R.id.movie_grid_container, gridFragment, GRIDFRAGMENT_TAG).commit();
+                }
+            }
+        } else if(appLayout == AppLayoutType.TABLET_TWOPANE_LAYOUT && newConfig.orientation == Configuration.ORIENTATION_PORTRAIT){
+            Fragment detailFragment = getSupportFragmentManager().findFragmentById(R.id.detail_container_main_activity);
+            if (detailFragment instanceof DetailFragment) {
+                getSupportFragmentManager().beginTransaction().remove(detailFragment).commit();
+            }
+        }
         Log.v(LOG_TAG, "OnConfigurationChanged");
     }
 
@@ -183,7 +232,7 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
 
     private ActionBarDrawerToggle setupDrawerToggle(){
         return new ActionBarDrawerToggle(
-                this, mDrawerLayout, toolbar, R.string.drawer_open, R.string.drawer_close);
+                this, mDrawerLayout, R.string.drawer_open, R.string.drawer_close);
     }
 
     private void setEmptyMovieDetailViewVisible(boolean visible){
@@ -203,27 +252,63 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
     }
 
     @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        mDrawerToggle.setDrawerIndicatorEnabled(true);
+        mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+        getSupportActionBar().setDisplayShowTitleEnabled(true);
+        Fragment detailFragment = getSupportFragmentManager().findFragmentById(R.id.movie_grid_container);
+        if (detailFragment instanceof DetailFragment && appLayout == AppLayoutType.TABLET_PORTRAIT_LAYOUT){
+            Fragment fragment = getSupportFragmentManager().findFragmentByTag(DETAILFRAGMENT_TAG);
+            if (fragment != null) {
+                getSupportFragmentManager().beginTransaction().remove(fragment).commit();
+            }
+        }
+    }
+
+    @Override
     public void onItemSelected(Movie movie, boolean favorite) {
-        if (mTwoPaneLayout) {
+        lastViewedMovie = movie;
+        lastViewedMovieIsFavorite = favorite;
+
+        if (appLayout == AppLayoutType.TABLET_TWOPANE_LAYOUT || appLayout == AppLayoutType.TABLET_PORTRAIT_LAYOUT) {
             // In two-pane mode, show the detail view in this activity by
             // adding or replacing the detail fragment using a
             // fragment transaction.
-            Bundle args = new Bundle();
+
+            /*Bundle args = new Bundle();
             args.putSerializable(DetailFragment.MOVIE_DETAIL, movie);
             args.putBoolean(DetailFragment.MOVIE_IN_FAVORITE, favorite);
             DetailFragment fragment = new DetailFragment();
-            fragment.setArguments(args);
-            if(emptyView.getVisibility() == View.VISIBLE){
-                setEmptyMovieDetailViewVisible(false);
+            fragment.setArguments(args);*/
+            DetailFragment fragment = detailFragmentBundle(movie, favorite);
+            if (appLayout == AppLayoutType.TABLET_TWOPANE_LAYOUT){
+                if (emptyView.getVisibility() == View.VISIBLE) {
+                    setEmptyMovieDetailViewVisible(false);
+                }
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.detail_container_main_activity, fragment, DETAILFRAGMENT_TAG)
+                        .commit();
+            } else {
+                mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+                mDrawerToggle.setDrawerIndicatorEnabled(false);
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.movie_grid_container, fragment, DETAILFRAGMENT_TAG).addToBackStack(null).commit();
             }
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.detail_container_main_activity, fragment, DETAILFRAGMENT_TAG)
-                    .commit();
-        } else {
+        } else if(appLayout == AppLayoutType.SMALL_LAYOUT){
             Intent intent = new Intent(this, DetailActivity.class)
                         .putExtra(DetailFragment.MOVIE_DETAIL, movie)
                         .putExtra(DetailFragment.MOVIE_IN_FAVORITE, favorite);
                 startActivity(intent);
         }
+    }
+
+    private DetailFragment detailFragmentBundle(Movie movie, boolean favorite){
+        Bundle args = new Bundle();
+        args.putSerializable(DetailFragment.MOVIE_DETAIL, movie);
+        args.putBoolean(DetailFragment.MOVIE_IN_FAVORITE, favorite);
+        DetailFragment fragment = new DetailFragment();
+        fragment.setArguments(args);
+        return fragment;
     }
 }
