@@ -22,6 +22,8 @@ import android.widget.TextView;
 
 import com.example.android.moviesapp.utilities.FragmentCallback;
 
+import static android.support.v4.app.FragmentManager.POP_BACK_STACK_INCLUSIVE;
+
 public class MainActivity extends AppCompatActivity implements FragmentCallback {
 
     private enum AppLayoutType {TABLET_TWOPANE_LAYOUT, TABLET_PORTRAIT_LAYOUT, SMALL_LAYOUT};
@@ -44,6 +46,7 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
 
     public static final String DETAILFRAGMENT_TAG = "DFTAG";
     public static final String GRIDFRAGMENT_TAG = "GFTAG";
+    public static final String REPLACE_GRID_TAG = "replace_grid_with_detail_fragment";
 
     private final String LOG_TAG = MainActivity.class.getSimpleName() + " LOG";
 
@@ -148,17 +151,17 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
         super.onConfigurationChanged(newConfig);
         // Pass any configuration change to the drawer toggles
         mDrawerToggle.onConfigurationChanged(newConfig);
-        if(appLayout == AppLayoutType.TABLET_PORTRAIT_LAYOUT && newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+        if(appLayout == AppLayoutType.TABLET_PORTRAIT_LAYOUT
+                && newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+
             mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
             Fragment detailFragment = getSupportFragmentManager().findFragmentById(R.id.movie_grid_container);
             if (detailFragment instanceof DetailFragment) {
-                getSupportFragmentManager().beginTransaction().remove(detailFragment).commit();
-                MovieGridFragment gridFragment = (MovieGridFragment) getSupportFragmentManager().findFragmentByTag(GRIDFRAGMENT_TAG);
-                if (gridFragment != null) {
-                    getSupportFragmentManager().beginTransaction().replace(R.id.movie_grid_container, gridFragment, GRIDFRAGMENT_TAG).commit();
-                }
+                getSupportFragmentManager().popBackStack(REPLACE_GRID_TAG, POP_BACK_STACK_INCLUSIVE);
             }
-        } else if(appLayout == AppLayoutType.TABLET_TWOPANE_LAYOUT && newConfig.orientation == Configuration.ORIENTATION_PORTRAIT){
+        } else if(appLayout == AppLayoutType.TABLET_TWOPANE_LAYOUT
+                && newConfig.orientation == Configuration.ORIENTATION_PORTRAIT){
+
             Fragment detailFragment = getSupportFragmentManager().findFragmentById(R.id.detail_container_main_activity);
             if (detailFragment instanceof DetailFragment) {
                 getSupportFragmentManager().beginTransaction().remove(detailFragment).commit();
@@ -232,8 +235,11 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
                 mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
                 mDrawerToggle.setDrawerIndicatorEnabled(false);
                 getSupportActionBar().setDisplayShowTitleEnabled(false);
+                Fragment gridFragment = getSupportFragmentManager().findFragmentById(R.id.movie_grid_container);
                 getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.movie_grid_container, fragment, DETAILFRAGMENT_TAG).addToBackStack(null).commit();
+                        .add(R.id.movie_grid_container, fragment, DETAILFRAGMENT_TAG)
+                        .hide(gridFragment)
+                        .addToBackStack(REPLACE_GRID_TAG).commit();
             }
         } else if(appLayout == AppLayoutType.SMALL_LAYOUT){
             Intent intent = new Intent(this, DetailActivity.class)
