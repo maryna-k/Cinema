@@ -1,6 +1,9 @@
 package com.example.android.moviesapp;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -19,7 +22,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.android.moviesapp.utilities.FragmentCallback;
 
@@ -38,6 +40,11 @@ public class MovieGridFragment extends Fragment
     private View rootView;
     private MovieLoader loader;
     private EndlessRecyclerViewScrollListener mScrollListener;
+
+    private LinearLayout emptyMovieGridLayout;
+
+    private IntentFilter mInternetFilter;
+    private BroadcastReceiver mBroadcastReceiver;
 
     private final int PRIMARY_LOADER_ID = 0;
     private final int SECONDARY_LOADER_ID = 1;
@@ -61,15 +68,23 @@ public class MovieGridFragment extends Fragment
         mLayoutManager = new GridLayoutManager(getContext(), GRID_COLUMNS_NUM);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        mScrollListener = new EndlessRecyclerViewScrollListener(mLayoutManager) {
+        emptyMovieGridLayout = (LinearLayout) rootView.findViewById(R.id.empty_grid_view_layout);
+
+        mScrollListener = new EndlessRecyclerViewScrollListener(mLayoutManager, getContext()) {
             @Override
             public void onLoadMore() {
                 loadNextDataFromApi();
             }
         };
         mRecyclerView.addOnScrollListener(mScrollListener);
-        moviesToSearch = MainActivity.getMoviesToSearch();
-        getLoaderManager().initLoader(PRIMARY_LOADER_ID, null, this);
+
+        if(checkNetworkConnection() || savedInstanceState != null) {
+            getLoaderManager().initLoader(PRIMARY_LOADER_ID, null, this);
+        } else {
+            setEmptyGridViewVisible(true);
+        }
+
+        installConnectionListener();
         Log.v(LOG_TAG, "OnCreateView");
         return rootView;
     }
@@ -101,8 +116,7 @@ public class MovieGridFragment extends Fragment
                     mAdapter.addData(result);
                     getLoaderManager().destroyLoader(SECONDARY_LOADER_ID);
             }
-        }
-        if (result == null || result.size() == 0){
+        } else if (result == null && loader.getId() == PRIMARY_LOADER_ID){
             setEmptyGridViewVisible(true);
         }
     }
@@ -135,6 +149,37 @@ public class MovieGridFragment extends Fragment
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onResume(){
+        super.onResume();
+        getActivity().registerReceiver(mBroadcastReceiver, mInternetFilter);
+    }
+
+    @Override
+    public void onPause(){
+        super.onPause();
+        getActivity().unregisterReceiver(mBroadcastReceiver);
+    }
+
+    private void installConnectionListener() {
+        if (mBroadcastReceiver == null) {
+            mBroadcastReceiver = new BroadcastReceiver() {
+
+                @Override
+                public void onReceive(Context context, Intent intent) {
+                    Bundle extras = intent.getExtras();
+                    NetworkInfo info = (NetworkInfo) extras.getParcelable("networkInfo");
+                    NetworkInfo.State state = info.getState();
+                    if (state == NetworkInfo.State.CONNECTED && emptyMovieGridLayout.getVisibility() == View.VISIBLE) {
+                        updateMovieList();
+                    }
+                }
+            };
+            mInternetFilter = new IntentFilter();
+            mInternetFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+        }
+    }
+
     private void loadNextDataFromApi(){
         getLoaderManager().initLoader(SECONDARY_LOADER_ID, null, this);
     }
@@ -156,15 +201,15 @@ public class MovieGridFragment extends Fragment
     }
 
     private void setEmptyGridViewVisible(boolean visible){
-        LinearLayout emptyFavoritesLayout = (LinearLayout) rootView.findViewById(R.id.empty_grid_view_layout);
+
         if(visible) {
-            emptyFavoritesLayout.setVisibility(View.VISIBLE);
+            emptyMovieGridLayout.setVisibility(View.VISIBLE);
             ImageView emptyImage = (ImageView) rootView.findViewById(R.id.empty_view_image);
             TextView emptyText = (TextView) rootView.findViewById(R.id.empty_view_message);
             emptyImage.setImageDrawable(getResources().getDrawable(R.drawable.ic_empty_movie_grid));
             emptyText.setText(getText(R.string.empty_movie_gridview));
         } else{
-            emptyFavoritesLayout.setVisibility(View.GONE);
+            emptyMovieGridLayout.setVisibility(View.GONE);
         }
     }
 
@@ -174,7 +219,6 @@ public class MovieGridFragment extends Fragment
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
         if (networkInfo != null && networkInfo.isConnected()) return true;
         else {
-            Toast.makeText(getContext(), "No Internet connection", Toast.LENGTH_LONG).show();
             return false;
         }
     }
