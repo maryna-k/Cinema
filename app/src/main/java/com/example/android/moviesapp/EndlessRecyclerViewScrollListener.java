@@ -1,7 +1,13 @@
 package com.example.android.moviesapp;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.widget.Toast;
+
+import static com.example.android.moviesapp.MovieGridFragment.setLoadMoreMovies;
 
 /*Based on the interface from https://gist.github.com/nesquena/d09dc68ff07e845cc622 as a part of the
 tutorial Endless Scrolling with AdapterViews and RecyclerView
@@ -10,7 +16,7 @@ tutorial Endless Scrolling with AdapterViews and RecyclerView
 public abstract class EndlessRecyclerViewScrollListener extends RecyclerView.OnScrollListener {
     // The minimum amount of items to have below your current scroll position
     // before loading more.
-    private int visibleThreshold = 2;
+    private int visibleThreshold = 1;
     // The current offset index of data you have loaded
     private static int currentPage = 1;
     // The total number of items in the dataset after the last load
@@ -20,21 +26,27 @@ public abstract class EndlessRecyclerViewScrollListener extends RecyclerView.OnS
     // Sets the starting page index
     private int startingPageIndex = 1;
 
+    private int lastVisibleItemPosition;
+    private int totalItemCount;
+
     private GridLayoutManager mLayoutManager;
 
-    private final String LOG_TAG = EndlessRecyclerViewScrollListener.class.getSimpleName();
+    private Context context;
 
-    public EndlessRecyclerViewScrollListener(GridLayoutManager layoutManager) {
+    private boolean connectionMessageCalled;
+
+    private final String LOG_TAG = EndlessRecyclerViewScrollListener.class.getSimpleName() + "LOG";
+
+    public EndlessRecyclerViewScrollListener(GridLayoutManager layoutManager, Context context) {
         this.mLayoutManager = layoutManager;
         visibleThreshold = visibleThreshold * layoutManager.getSpanCount();
+        this.context = context;
     }
 
     @Override
     public void onScrolled(RecyclerView view, int dx, int dy) {
-        int lastVisibleItemPosition;
-        int totalItemCount = mLayoutManager.getItemCount();
-
-        lastVisibleItemPosition = ((GridLayoutManager) mLayoutManager).findLastVisibleItemPosition();
+        lastVisibleItemPosition = mLayoutManager.findLastVisibleItemPosition();
+        totalItemCount = mLayoutManager.getItemCount();
 
         // If the total item count is zero and the previous isn't, assume the
         // list is invalidated and should be reset back to initial state
@@ -57,9 +69,25 @@ public abstract class EndlessRecyclerViewScrollListener extends RecyclerView.OnS
         // the visibleThreshold is reached and more data need to be reload
         // which is done by onLoadMore.
         if (!loading && (lastVisibleItemPosition + visibleThreshold) > totalItemCount) {
-            currentPage++;
-            onLoadMore();
-            loading = true;
+            if(checkNetworkConnection()) {
+                currentPage++;
+                onLoadMore();
+                setLoadMoreMovies(false);
+                loading = true;
+                connectionMessageCalled = false;
+            } else {
+                if(!connectionMessageCalled) {
+                    setLoadMoreMovies(true);
+                    Toast.makeText(context, context.getResources().
+                            getText(R.string.empty_movie_gridview), Toast.LENGTH_SHORT).show();
+                    connectionMessageCalled = true;
+                }
+            }
+        }
+
+        if(connectionMessageCalled && lastVisibleItemPosition <= (totalItemCount - visibleThreshold)){
+            setLoadMoreMovies(false);
+            connectionMessageCalled = false;
         }
     }
 
@@ -73,6 +101,20 @@ public abstract class EndlessRecyclerViewScrollListener extends RecyclerView.OnS
 
     public static int setPageIndex(){
         return currentPage;
+    }
+
+    private boolean checkNetworkConnection() {
+        ConnectivityManager connMgr = (ConnectivityManager)
+                context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+        if (networkInfo != null && networkInfo.isConnected())
+            return true;
+        else
+            return false;
+    }
+
+    public void incrementCurrentPage(){
+        currentPage++;
     }
 
     public abstract void onLoadMore();

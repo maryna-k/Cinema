@@ -45,6 +45,7 @@ public class MovieGridFragment extends Fragment
 
     private IntentFilter mInternetFilter;
     private BroadcastReceiver mBroadcastReceiver;
+    private static boolean loadMoreMovies;
 
     private final int PRIMARY_LOADER_ID = 0;
     private final int SECONDARY_LOADER_ID = 1;
@@ -173,6 +174,11 @@ public class MovieGridFragment extends Fragment
                     if (state == NetworkInfo.State.CONNECTED && emptyMovieGridLayout.getVisibility() == View.VISIBLE) {
                         updateMovieList();
                     }
+                    if (state == NetworkInfo.State.CONNECTED && loadMoreMovies){
+                        loadMoreMovies = false;
+                        mScrollListener.incrementCurrentPage();
+                        loadNextDataFromApi();
+                    }
                 }
             };
             mInternetFilter = new IntentFilter();
@@ -221,5 +227,9 @@ public class MovieGridFragment extends Fragment
         else {
             return false;
         }
+    }
+
+    static void setLoadMoreMovies(boolean load){
+        loadMoreMovies = load;
     }
 }
