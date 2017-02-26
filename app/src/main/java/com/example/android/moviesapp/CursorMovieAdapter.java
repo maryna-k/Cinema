@@ -4,19 +4,51 @@ package com.example.android.moviesapp;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
-import com.example.android.moviesapp.database.MovieContract.*;
+import com.example.android.moviesapp.database.MovieContract.FavoriteMovieEntry;
+import com.squareup.picasso.Picasso;
 
 
-public class CursorMovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder>{
+public class CursorMovieAdapter extends RecyclerView.Adapter<CursorMovieAdapter.ViewHolder>{
 
     private Cursor mCursor;
-    private final String LOG_TAG = CursorMovieAdapter.class.getSimpleName();
+    private static final String LOG_TAG = CursorMovieAdapter.class.getSimpleName() + "LOG";
     private Context context;
     private MovieAdapter.OnItemClickListener listener;
+
+    public static class ViewHolder extends RecyclerView.ViewHolder {
+        private ImageView imageViewItem;
+        private TextView titleView;
+
+        public ViewHolder(View view) {
+            super(view);
+            imageViewItem = (ImageView) view.findViewById(R.id.grid_poster);
+            titleView = (TextView) view.findViewById(R.id.title_without_poster);
+        }
+
+        public void bind(final Movie movie, final MovieAdapter.OnItemClickListener listener) {
+            String imageAddress = movie.getImageAddress();
+            Log.v(LOG_TAG, "Poster address: " + imageAddress);
+            String fullImageAddress = "http://image.tmdb.org/t/p/w780/" + movie.getImageAddress();
+            Picasso.with(itemView.getContext()).load(fullImageAddress).into(imageViewItem);
+            if(imageAddress.equals("null")){
+                titleView.setText(movie.getTitle());
+                titleView.setVisibility(View.VISIBLE);
+            } else titleView.setVisibility(View.GONE);
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listener.onItemClick(movie);
+                }
+            });
+        }
+    }
 
 
     public CursorMovieAdapter(Cursor mCursor, MovieAdapter.OnItemClickListener listener){
@@ -25,15 +57,15 @@ public class CursorMovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHo
     }
 
     @Override
-    public MovieAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
         context = parent.getContext();
         View itemView = LayoutInflater.from(context)
                 .inflate(R.layout.grid_item_movie, parent, false);
-        return new MovieAdapter.ViewHolder(itemView);
+        return new ViewHolder(itemView);
     }
 
     @Override
-    public void onBindViewHolder(MovieAdapter.ViewHolder holder, int position){
+    public void onBindViewHolder(ViewHolder holder, int position){
         mCursor.moveToPosition(position);
         String imageAddress = mCursor.getString(
                 mCursor.getColumnIndex(FavoriteMovieEntry.COLUMN_NAME_IMAGE_ADDRESS));
