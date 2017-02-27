@@ -5,6 +5,13 @@
     android:background="@color/color_movie_poster_background"
     android:layout_margin="2dp">
 
+    <LinearLayout
+        android:id="@+id/grid_item_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/color_movie_poster_background"
+        android:gravity="center">
+
     <TextView
         android:id="@+id/title_without_poster"
         android:layout_width="wrap_content"
@@ -21,5 +28,7 @@
         android:layout_height="@dimen/poster_height"
         android:scaleType="centerCrop"
         android:layout_gravity="center" />
+
+    </LinearLayout>
 
 </FrameLayout>

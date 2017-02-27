@@ -47,6 +47,8 @@ public class MovieGridFragment extends Fragment
     private BroadcastReceiver mBroadcastReceiver;
     private static boolean loadMoreMovies;
 
+    private int progressBarExtraItems;
+
     private final int PRIMARY_LOADER_ID = 0;
     private final int SECONDARY_LOADER_ID = 1;
 
@@ -64,6 +66,7 @@ public class MovieGridFragment extends Fragment
                              Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
+        progressBarExtraItems = getContext().getResources().getInteger(R.integer.grid_columns);
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
         GRID_COLUMNS_NUM = getResources().getInteger(R.integer.grid_columns);
         mLayoutManager = new GridLayoutManager(getContext(), GRID_COLUMNS_NUM);
@@ -196,7 +199,7 @@ public class MovieGridFragment extends Fragment
     }
 
     private void createAdapter(ArrayList<Movie> data){
-        mAdapter = new MovieAdapter(data, new MovieAdapter.OnItemClickListener(){
+        mAdapter = new MovieAdapter(progressBarExtraItems, data, new MovieAdapter.OnItemClickListener(){
             @Override
             public void onItemClick(Movie movie){
                 /* false here just indicates that DetailFragment has to check the database,

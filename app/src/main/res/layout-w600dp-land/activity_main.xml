@@ -29,7 +29,7 @@
                 android:id="@+id/movie_grid_container"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
+                android:layout_weight="4"
                 tools:context="com.example.android.moviesapp.MainActivity" />
 
             <View style="@style/fragmentDivider" />
@@ -39,7 +39,7 @@
                 android:id="@+id/detail_container_main_activity"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="1">
+                android:layout_weight="5">
 
                 <include layout="@layout/empty_view"
                     android:id="@+id/empty_movie_view_layout"
