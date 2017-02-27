@@ -13,48 +13,52 @@ import com.example.android.moviesapp.R;
 
 import java.util.ArrayList;
 
+import static com.example.android.moviesapp.R.id.review_layout;
+
 
 public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder> {
 
     private ArrayList<Review> mList;
     private final String LOG_TAG = ReviewAdapter.class.getSimpleName() + "LOG";
     private Context context;
-    private static boolean[] shouldBeHidden;
+    private static boolean[] isCollapsed;
     private static final int SUBSTRING_LENGTH = 400;
 
     public static  class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         private TextView authorView;
-        private TextView contentViewSubstring;
-        private TextView contentViewFull;
+        private TextView contentView;
         private ImageView expandReview;
+        private ImageView collapseReview;
+        private LinearLayout reviewLayout;
         private Context context;
         private String contentStr;
+        private String contentStrSubstring;
 
         public ViewHolder(Context context, View view){
             super(view);
             this.context = context;
-            LinearLayout review_layout = (LinearLayout) view.findViewById(R.id.review_layout);
+            reviewLayout = (LinearLayout) view.findViewById(review_layout);
             authorView = (TextView) view.findViewById(R.id.reviewer_name_activity);
-            contentViewSubstring = (TextView) view.findViewById(R.id.review_content_substring);
-            contentViewFull = (TextView) view.findViewById(R.id.review_content_full);
+            contentView = (TextView) view.findViewById(R.id.review_content);
             expandReview = (ImageView) view.findViewById(R.id.expand_review_activity);
-            review_layout.setOnClickListener(this);
+            collapseReview = (ImageView) view.findViewById(R.id.collapse_review_activity);
+            reviewLayout.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View view) {
             if(contentStr.length() > SUBSTRING_LENGTH) {
                 int position = getLayoutPosition(); // gets item position
-                if (!shouldBeHidden[position]) {
-                    contentViewSubstring.setVisibility(View.GONE);
-                    contentViewFull.setVisibility(View.VISIBLE);
-                    expandReview.setImageResource(R.drawable.ic_action_hide_review);
-                    shouldBeHidden[position] = true;
+                if (isCollapsed[position]) {
+                    isCollapsed[position] = false;
+                    contentView.setText(contentStr);
+                    expandReview.setVisibility(View.GONE);
+                    collapseReview.setVisibility(View.VISIBLE);
                 } else {
-                    contentViewSubstring.setVisibility(View.VISIBLE);
-                    contentViewFull.setVisibility(View.GONE);
-                    expandReview.setImageResource(R.drawable.ic_action_expand_review);
-                    shouldBeHidden[position] = false;
+                    isCollapsed[position] = true;
+                    contentView.setText(contentStrSubstring);
+                    expandReview.setVisibility(View.VISIBLE);
+                    collapseReview.setVisibility(View.GONE);
                 }
             }
         }
@@ -62,9 +66,9 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder
 
     public ReviewAdapter(ArrayList<Review> mList){
         this.mList = mList;
-        shouldBeHidden = new boolean[mList.size()];
+        isCollapsed = new boolean[mList.size()];
         for(int i = 0; i<mList.size(); i++){
-            shouldBeHidden[i] = true;
+            isCollapsed[i] = true;
         }
     }
 
@@ -81,26 +85,17 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder
         Review reviewItem = mList.get(position);
         holder.contentStr = reviewItem.getReviewContent();
         holder.authorView.setText(reviewItem.getAuthor());
-        holder.contentViewFull.setText(holder.contentStr);
-        holder.expandReview.setVisibility(View.VISIBLE);
+        holder.contentView.setText(holder.contentStr);
 
-        if(holder.contentStr.length() > SUBSTRING_LENGTH) {
-            final String contentStrSubstring = (holder.contentStr.substring(0, SUBSTRING_LENGTH) + "...");
-            holder.contentViewSubstring.setText(contentStrSubstring);
-
-            if (shouldBeHidden[position]) {
-                holder.contentViewSubstring.setVisibility(View.VISIBLE);
-                holder.contentViewFull.setVisibility(View.GONE);
-                holder.expandReview.setImageResource(R.drawable.ic_action_expand_review);
-            } else {
-                holder.contentViewSubstring.setVisibility(View.GONE);
-                holder.contentViewFull.setVisibility(View.VISIBLE);
-                holder.expandReview.setImageResource(R.drawable.ic_action_hide_review);
-            }
+        if (holder.contentStr.length() > SUBSTRING_LENGTH) {
+            holder.contentStrSubstring = (holder.contentStr.substring(0, SUBSTRING_LENGTH) + "...");
+            holder.contentView.setText(holder.contentStrSubstring);
+            holder.expandReview.setVisibility(View.VISIBLE);
+            holder.collapseReview.setVisibility(View.GONE);
         } else {
-            holder.contentViewSubstring.setVisibility(View.GONE);
-            holder.contentViewFull.setVisibility(View.VISIBLE);
+            holder.contentView.setText(holder.contentStr);
             holder.expandReview.setVisibility(View.GONE);
+            holder.collapseReview.setVisibility(View.GONE);
         }
     }
 

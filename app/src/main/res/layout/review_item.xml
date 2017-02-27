@@ -10,7 +10,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:clickable="true"
         android:foreground="?android:attr/selectableItemBackground">
 
         <LinearLayout
@@ -38,21 +37,12 @@
                     tools:text="reviewer name" />
 
                 <TextView
-                    android:id="@+id/review_content_substring"
+                    android:id="@+id/review_content"
                     style="@style/details_text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="5dp"
-                    android:visibility="visible"
                     tools:text="Some Review" />
-
-                <TextView
-                    android:id="@+id/review_content_full"
-                    style="@style/details_text"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="5dp"
-                    android:visibility="gone" />
             </LinearLayout>
         </LinearLayout>
 
