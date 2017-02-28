@@ -27,7 +27,6 @@ import android.widget.Toast;
 
 import com.example.android.moviesapp.database.MovieContract.FavoriteMovieEntry;
 import com.example.android.moviesapp.review.Review;
-import com.example.android.moviesapp.review.ReviewActivity;
 import com.example.android.moviesapp.review.ReviewLoader;
 import com.example.android.moviesapp.trailer.TrailerAdapter;
 import com.example.android.moviesapp.trailer.TrailerInfoLoader;
@@ -71,6 +70,12 @@ public class DetailFragment extends Fragment {
 
     public static final String MOVIE_DETAIL = "movie_detail";
     public static final String MOVIE_IN_FAVORITE = "movie_in_favorite";
+
+
+    //FragmentCallback for when Show more reviews button is clicked.
+    public interface ReviewFragmentCallback {
+        public void onMoreReviewsSelected(ArrayList<Review> reviewList, String title);
+    }
 
     public DetailFragment() {
     }
@@ -373,10 +378,11 @@ public class DetailFragment extends Fragment {
                 showMoreReviewsButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        Intent intent = new Intent(getContext(), ReviewActivity.class);
+                        ((ReviewFragmentCallback)getActivity()).onMoreReviewsSelected(reviewData, mTitle);
+                        /*Intent intent = new Intent(getContext(), ReviewActivity.class);
                         intent.putExtra("reviews", reviewData);
                         intent.putExtra("title", mTitle);
-                        startActivity(intent);
+                        startActivity(intent);*/
                     }
                 });
             }
