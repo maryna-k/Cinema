@@ -6,6 +6,7 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -20,11 +21,15 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.example.android.moviesapp.review.Review;
+import com.example.android.moviesapp.review.ReviewDialogFragment;
 import com.example.android.moviesapp.utilities.FragmentCallback;
+
+import java.util.ArrayList;
 
 import static android.support.v4.app.FragmentManager.POP_BACK_STACK_INCLUSIVE;
 
-public class MainActivity extends AppCompatActivity implements FragmentCallback {
+public class MainActivity extends AppCompatActivity implements FragmentCallback, DetailFragment.ReviewFragmentCallback {
 
     private enum AppLayoutType {TABLET_TWOPANE_LAYOUT, TABLET_PORTRAIT_LAYOUT, SMALL_LAYOUT};
 
@@ -247,6 +252,12 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
                     .putExtra(DetailFragment.MOVIE_IN_FAVORITE, favorite);
             startActivity(intent);
         }
+    }
+
+    @Override
+    public void onMoreReviewsSelected(ArrayList<Review> reviewList, String title){
+        DialogFragment newFragment = ReviewDialogFragment.newInstance(reviewList, title);
+        newFragment.show(getSupportFragmentManager(), "dialog");
     }
 
     private void setupDrawerContent(NavigationView navigationView){

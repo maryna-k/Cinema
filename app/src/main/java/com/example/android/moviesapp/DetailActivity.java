@@ -9,8 +9,13 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.example.android.moviesapp.review.Review;
+import com.example.android.moviesapp.review.ReviewActivity;
 
-public class DetailActivity extends AppCompatActivity {
+import java.util.ArrayList;
+
+
+public class DetailActivity extends AppCompatActivity implements DetailFragment.ReviewFragmentCallback{
 
     private final String LOG_TAG = DetailActivity.class.getSimpleName() + "LOG";
     Toolbar toolbar;
@@ -51,5 +56,13 @@ public class DetailActivity extends AppCompatActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onMoreReviewsSelected(ArrayList<Review> reviewList, String title){
+        Intent intent = new Intent(this, ReviewActivity.class);
+        intent.putExtra("reviews", reviewList);
+        intent.putExtra("title", title);
+        startActivity(intent);
     }
 }
