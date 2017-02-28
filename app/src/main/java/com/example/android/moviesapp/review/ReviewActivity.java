@@ -4,9 +4,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -18,12 +17,11 @@ import java.util.ArrayList;
 
 public class ReviewActivity extends AppCompatActivity{
 
-    ArrayList<Review> reviewList;
-    private RecyclerView mRecyclerView;
-    private LinearLayoutManager mLayoutManager;
-    private ReviewAdapter mAdapter;
+    private ArrayList<Review> reviewList;
 
-    private final String LOG_TAG = ReviewActivity.class.getSimpleName();
+    private final String LOG_TAG = ReviewActivity.class.getSimpleName() + "LOG";
+
+    public static final String REVIEW_LIST = "review_list";
     Toolbar toolbar;
 
     @Override
@@ -31,7 +29,6 @@ public class ReviewActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_review);
 
-        // Set a Toolbar
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -41,19 +38,19 @@ public class ReviewActivity extends AppCompatActivity{
         getSupportActionBar().setTitle(intent.getStringExtra("title"));
 
         if (savedInstanceState == null) {
-
+            ReviewDialogFragment fragment = new ReviewDialogFragment();
+            Bundle args = new Bundle();
+            args.putSerializable(REVIEW_LIST, reviewList);
+            fragment.setArguments(args);
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.review_container, fragment).commit();
         }
-        mRecyclerView = (RecyclerView) findViewById(R.id.review_recyclerview);
-        mRecyclerView.setHasFixedSize(true);
-        mLayoutManager = new LinearLayoutManager(this);
-        mRecyclerView.setLayoutManager(mLayoutManager);
-        mRecyclerView.setNestedScrollingEnabled(false);
-        mAdapter = new ReviewAdapter(reviewList);
-        mRecyclerView.setAdapter(mAdapter);
+        Log.v(LOG_TAG, "onCreate");
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
+        Log.v(LOG_TAG, "onCreateOptionsMenu");
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
@@ -64,7 +61,6 @@ public class ReviewActivity extends AppCompatActivity{
             case R.id.action_settings:
                 startActivity(new Intent(this, SettingsActivity.class));
                 return true;
-            // Respond to the action bar's Up button
             case android.R.id.home:
                 NavUtils.navigateUpFromSameTask(this);
                 return true;
