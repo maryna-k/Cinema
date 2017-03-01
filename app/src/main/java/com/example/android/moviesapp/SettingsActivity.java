@@ -6,16 +6,33 @@ import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 
 public class SettingsActivity extends AppCompatActivity {
+
+    Toolbar toolbar;
 
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.settings);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle(R.string.action_settings);
 
         getFragmentManager().beginTransaction().
-                replace(android.R.id.content, new SettingsFragment())
+                replace(R.id.settings_content_frame, new SettingsFragment())
                 .commit();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+        if(item.getItemId() == android.R.id.home){
+                onBackPressed();
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     public static class SettingsFragment extends PreferenceFragment implements Preference.OnPreferenceChangeListener{
@@ -24,7 +41,6 @@ public class SettingsActivity extends AppCompatActivity {
         public void onCreate(Bundle savedInstanceState){
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.pref_general);
-
             bindPreferenceSummaryToValue(findPreference(getString(R.string.pref_search_key)));
         }
 
