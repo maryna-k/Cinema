@@ -24,6 +24,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.android.moviesapp.utilities.FragmentCallback;
+import com.example.android.moviesapp.utilities.MDBConnection;
 
 import java.util.ArrayList;
 
@@ -82,7 +83,7 @@ public class MovieGridFragment extends Fragment
         };
         mRecyclerView.addOnScrollListener(mScrollListener);
 
-        if(checkNetworkConnection() || savedInstanceState != null) {
+        if(MDBConnection.checkNetworkConnection(getContext()) || savedInstanceState != null) {
             getLoaderManager().initLoader(PRIMARY_LOADER_ID, null, this);
         } else {
             setEmptyGridViewVisible(true);
@@ -219,16 +220,6 @@ public class MovieGridFragment extends Fragment
             emptyText.setText(getText(R.string.empty_movie_gridview));
         } else{
             emptyMovieGridLayout.setVisibility(View.GONE);
-        }
-    }
-
-    private boolean checkNetworkConnection() {
-        ConnectivityManager connMgr = (ConnectivityManager)
-                getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-        if (networkInfo != null && networkInfo.isConnected()) return true;
-        else {
-            return false;
         }
     }
 

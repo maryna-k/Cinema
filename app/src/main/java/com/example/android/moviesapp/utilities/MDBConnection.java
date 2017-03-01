@@ -1,5 +1,8 @@
 package com.example.android.moviesapp.utilities;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.util.Log;
 
 import com.example.android.moviesapp.BuildConfig;
@@ -15,9 +18,10 @@ import java.net.URL;
 import java.util.HashMap;
 
 import static com.example.android.moviesapp.MainActivity.getMoviesToSearch;
-import static com.example.android.moviesapp.database.MovieProvider.LOG_TAG;
 
 public class MDBConnection {
+
+    private final static String LOG_TAG = MDBConnection.class.getSimpleName() + "LOG";
 
     public final static int LOAD_MOVIES = 1;
     public final static int LOAD_TRAILER_INFO = 2;
@@ -75,7 +79,7 @@ public class MDBConnection {
                 return null;
             }
             jsonString = buffer.toString();
-            Log.v(LOG_TAG, "TMDb JSON string: " + jsonString);
+            //Log.v(LOG_TAG, "TMDb JSON string: " + jsonString);
 
         } catch (IOException e) {
             Log.e(LOG_TAG, "Error ", e);
@@ -133,6 +137,16 @@ public class MDBConnection {
                 .append(type)
                 .append(API_KEY)
                 .toString();
+    }
+
+    public static boolean checkNetworkConnection(Context context) {
+        ConnectivityManager connMgr = (ConnectivityManager)
+                context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+        if (networkInfo != null && networkInfo.isConnected())
+            return true;
+        else
+            return false;
     }
 
 

@@ -1,11 +1,11 @@
 package com.example.android.moviesapp;
 
 import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.Toast;
+
+import com.example.android.moviesapp.utilities.MDBConnection;
 
 import static com.example.android.moviesapp.MovieGridFragment.setLoadMoreMovies;
 
@@ -69,7 +69,7 @@ public abstract class EndlessRecyclerViewScrollListener extends RecyclerView.OnS
         // the visibleThreshold is reached and more data need to be reload
         // which is done by onLoadMore.
         if (!loading && (lastVisibleItemPosition + visibleThreshold) > totalItemCount) {
-            if(checkNetworkConnection()) {
+            if(MDBConnection.checkNetworkConnection(context)) {
                 currentPage++;
                 onLoadMore();
                 setLoadMoreMovies(false);
@@ -101,16 +101,6 @@ public abstract class EndlessRecyclerViewScrollListener extends RecyclerView.OnS
 
     public static int setPageIndex(){
         return currentPage;
-    }
-
-    private boolean checkNetworkConnection() {
-        ConnectivityManager connMgr = (ConnectivityManager)
-                context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-        if (networkInfo != null && networkInfo.isConnected())
-            return true;
-        else
-            return false;
     }
 
     public void incrementCurrentPage(){
