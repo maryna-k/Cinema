@@ -3,6 +3,10 @@
     <integer name="grid_columns">4</integer>
 
     <dimen name="poster_height">280dp</dimen>
+    <dimen name="header_poster_height">240dp</dimen>
+    <dimen name="small_poster_height">300dp</dimen>
+    <dimen name="small_poster_width">220dp</dimen>
+    <dimen name="small_poster_top_margin">60dp</dimen>
 
     <dimen name="fragmentDivider_margin">15dp</dimen>
 

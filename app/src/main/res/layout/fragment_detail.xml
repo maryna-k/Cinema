@@ -5,293 +5,292 @@
     android:layout_height="wrap_content">
 
     <LinearLayout
+        android:id="@+id/fragment_detail_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <LinearLayout
-            android:id="@+id/fragment_detail_layout"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_height="wrap_content">
 
-            <RelativeLayout
+            <ImageView
+                android:id="@+id/header"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="@dimen/header_poster_height"
+                android:scaleType="centerCrop" />
+
+            <!--Rating layout-->
+
+            <LinearLayout
+                android:id="@+id/rating_layout"
+                style="@style/details_margins"
+                android:layout_below="@id/header"
+                android:gravity="right"
+                android:orientation="horizontal">
 
                 <ImageView
-                    android:id="@+id/header"
-                    android:layout_width="match_parent"
-                    android:layout_height="170dp"
-                    android:scaleType="centerCrop" />
-
-                <!--Rating layout-->
-
-                <LinearLayout
-                    android:id="@+id/rating_layout"
-                    style="@style/details_margins"
-                    android:layout_below="@id/header"
-                    android:gravity="right"
-                    android:orientation="horizontal">
-
-                    <ImageView
-                        android:id="@+id/icon_rating"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:src="@drawable/ic_rating" />
-
-                    <TextView
-                        android:id="@+id/rating"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:gravity="center"
-                        android:textSize="@dimen/detail_text_size"
-                        tools:text="10/10" />
-                </LinearLayout>
-
-                <ImageView
-                    android:id="@+id/small_poster"
+                    android:id="@+id/icon_rating"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignBottom="@id/rating_layout"
-                    android:layout_alignParentLeft="true"
-                    android:layout_marginBottom="-32dp"
-                    android:layout_marginLeft="@dimen/details_activity_margin_left"
-                    android:scaleType="centerCrop" />
-            </RelativeLayout>
+                    android:layout_height="match_parent"
+                    android:src="@drawable/ic_rating" />
+
+                <TextView
+                    android:id="@+id/rating"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:textSize="@dimen/detail_text_size"
+                    tools:text="10/10" />
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/small_poster"
+                android:layout_width="@dimen/small_poster_width"
+                android:layout_height="@dimen/small_poster_height"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginLeft="@dimen/details_activity_margin_left"
+                android:layout_marginTop="32dp"
+                android:scaleType="centerCrop" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            style="@style/details_margins"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
             <TextView
                 android:id="@+id/title"
                 style="@style/title"
+                android:layout_alignParentTop="true"
                 tools:text="This is a title" />
 
             <!--Genre layout-->
 
-            <RelativeLayout
-                android:id="@+id/layout_genre"
-                style="@style/details_margins">
+            <ImageView
+                android:id="@+id/ic_genre"
+                style="@style/details_icon"
+                android:layout_below="@id/title"
+                android:src="@drawable/ic_genre" />
 
-                <ImageView
-                    android:id="@+id/ic_genre"
-                    style="@style/details_icon"
-                    android:src="@drawable/ic_genre" />
+            <TextView
+                android:id="@+id/title_genre"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/title"
+                android:layout_toRightOf="@id/ic_genre"
+                android:text="@string/genre" />
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_toRightOf="@id/ic_genre"
-                    android:orientation="vertical">
+            <TextView
+                android:id="@+id/genre"
+                style="@style/details_text"
+                android:layout_below="@id/title_genre"
+                android:layout_toRightOf="@id/ic_genre"
+                tools:text="Some genre" />
 
-                    <TextView
-                        android:id="@+id/title_genre"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/genre" />
-
-                    <TextView
-                        android:id="@+id/genre"
-                        style="@style/details_text"
-                        tools:text="Some genre" />
-                </LinearLayout>
-            </RelativeLayout>
-
-            <View style="@style/Divider" />
+            <View
+                android:id="@+id/divider_below_genre"
+                style="@style/Divider"
+                android:layout_below="@id/genre" />
 
             <!--Release layout-->
 
-            <RelativeLayout
-                android:id="@+id/layout_release"
-                style="@style/details_margins">
+            <ImageView
+                android:id="@+id/ic_release"
+                style="@style/details_icon"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@id/divider_below_genre"
+                android:src="@drawable/ic_release_date" />
 
-                <ImageView
-                    android:id="@+id/ic_release"
-                    style="@style/details_icon"
-                    android:src="@drawable/ic_release_date" />
+            <TextView
+                android:id="@+id/title_release_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/divider_below_genre"
+                android:layout_toRightOf="@id/ic_release"
+                android:text="@string/release_date" />
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_toRightOf="@id/ic_release"
-                    android:orientation="vertical">
+            <TextView
+                android:id="@+id/release_date"
+                style="@style/details_text"
+                android:layout_below="@id/title_release_date"
+                android:layout_toRightOf="@id/ic_release"
+                tools:text="01/01/01" />
 
-                    <TextView
-                        android:id="@+id/title_release_date"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/release_date" />
-
-                    <TextView
-                        android:id="@+id/release_date"
-                        style="@style/details_text"
-                        tools:text="01/01/01" />
-                </LinearLayout>
-            </RelativeLayout>
-
-            <View style="@style/Divider" />
+            <View
+                android:id="@+id/divider_below_release"
+                style="@style/Divider"
+                android:layout_below="@id/release_date" />
 
             <!--Layout overview-->
             <!--Layout header-->
-            <LinearLayout
-                android:id="@+id/layout_overview_title"
-                style="@style/details_margins"
-                android:orientation="horizontal">
 
-                <ImageView
-                    android:id="@+id/ic_overview"
-                    style="@style/details_icon"
-                    android:src="@drawable/ic_overview" />
+            <ImageView
+                android:id="@+id/ic_overview"
+                style="@style/details_icon"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@id/divider_below_release"
+                android:src="@drawable/ic_overview" />
 
-                <TextView
-                    android:id="@+id/title_overview"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:text="@string/overview" />
-            </LinearLayout>
+            <TextView
+                android:id="@+id/title_overview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/divider_below_release"
+                android:layout_marginTop="8dp"
+                android:layout_toRightOf="@id/ic_overview"
+                android:text="@string/overview" />
+
             <!--Overview text-->
             <TextView
                 android:id="@+id/overview"
                 style="@style/details_margins"
+                android:layout_below="@id/ic_overview"
                 android:textSize="@dimen/detail_text_size"
                 tools:text="Some example text" />
 
-            <View style="@style/Divider" />
+            <View
+                android:id="@+id/divider_below_overview"
+                style="@style/Divider"
+                android:layout_below="@id/overview" />
 
             <!--Trailer layout-->
             <!--Layout header-->
-            <LinearLayout
-                android:id="@+id/layout_trailers_title"
-                style="@style/details_margins"
-                android:orientation="horizontal">
 
-                <ImageView
-                    android:id="@+id/ic_trailers"
-                    style="@style/details_icon"
-                    android:src="@drawable/ic_trailers" />
+        </RelativeLayout>
 
-                <TextView
-                    android:id="@+id/title_trailers"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:text="@string/trailers" />
-            </LinearLayout>
-            <!-- RecyclerView to display trailers -->
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/trailers_recycler_view"
+        <LinearLayout
+            android:id="@+id/layout_trailers_title"
+            style="@style/details_margins"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/ic_trailers"
+                style="@style/details_icon"
+                android:src="@drawable/ic_trailers" />
+
+            <TextView
+                android:id="@+id/title_trailers"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:orientation="horizontal" />
+                android:text="@string/trailers" />
+        </LinearLayout>
 
-            <ProgressBar
-                android:id="@+id/progress_bar"
-                style="@style/Widget.AppCompat.ProgressBar"
+        <!-- RecyclerView to display trailers -->
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/trailers_recycler_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/layout_trailers_title"
+            android:layout_gravity="center"
+            android:orientation="horizontal" />
+
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            style="@style/Widget.AppCompat.ProgressBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/layout_trailers_title"
+            android:theme="@style/CircularProgress" />
+
+        <View
+            android:id="@+id/divider_below_trailers"
+            style="@style/Divider"
+            android:layout_marginLeft="@dimen/details_activity_margin_left"
+            android:layout_marginRight="@dimen/details_activity_margin_right" />
+
+        <!--Reviews layout-->
+
+        <RelativeLayout
+            android:id="@+id/layout_reviews"
+            style="@style/details_margins"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <!--Layout header-->
+            <ImageView
+                android:id="@+id/ic_reviews"
+                style="@style/details_icon"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:src="@drawable/ic_reviews" />
+
+            <TextView
+                android:id="@+id/title_reviews"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_toRightOf="@id/ic_reviews"
+                android:text="@string/reviews" />
+            <!--Layout body: contains actual reviews and author names-->
+
+            <RelativeLayout
+                android:id="@+id/layout_review_text"
+                style="@style/details_margins"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:theme="@style/CircularProgress" />
+                android:layout_below="@id/ic_reviews"
+                android:clickable="true"
+                android:foreground="?android:attr/selectableItemBackground">
 
-            <View style="@style/Divider" />
-
-            <!--Reviews layout-->
-
-            <LinearLayout
-                android:id="@+id/layout_reviews"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-                <!--Layout header-->
-                <LinearLayout
-                    android:id="@+id/layout_reviews_title"
-                    style="@style/details_margins"
-                    android:orientation="horizontal">
-
-                    <ImageView
-                        android:id="@+id/ic_reviews"
-                        style="@style/details_icon"
-                        android:src="@drawable/ic_reviews" />
-
-                    <TextView
-                        android:id="@+id/title_reviews"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:text="@string/reviews" />
-                </LinearLayout>
-                <!--Layout body: contains actual reviews and author names-->
-
-                <LinearLayout
-                    android:id="@+id/layout_review_text"
-                    style="@style/details_margins"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:clickable="true"
-                    android:foreground="?android:attr/selectableItemBackground"
-                    android:orientation="vertical">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="15dp"
-                            android:layout_marginRight="15dp"
-                            android:src="@drawable/ic_review" />
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical">
-
-                            <TextView
-                                android:id="@+id/reviewer_name"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                tools:text="reviewer name" />
-
-                            <TextView
-                                android:id="@+id/review_text"
-                                style="@style/details_text"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginBottom="5dp"
-                                tools:text="Some Review" />
-                        </LinearLayout>
-                    </LinearLayout>
-
-                    <ImageView
-                        android:id="@+id/expand_review"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_marginBottom="10dp"
-                        android:src="@drawable/ic_action_expand_review"
-                        android:visibility="visible" />
-
-                    <ImageView
-                        android:id="@+id/hide_review"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_marginBottom="10dp"
-                        android:src="@drawable/ic_action_hide_review"
-                        android:visibility="gone" />
-                </LinearLayout>
-
-                <Button
-                    android:id="@+id/review_button"
+                <ImageView
+                    android:id="@+id/ic_detail_review"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginRight="15dp"
+                    android:src="@drawable/ic_review" />
+
+                <TextView
+                    android:id="@+id/reviewer_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@id/ic_detail_review"
+                    tools:text="reviewer name" />
+
+                <TextView
+                    android:id="@+id/review_text"
+                    style="@style/details_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/reviewer_name"
+                    android:layout_marginBottom="5dp"
+                    android:layout_toRightOf="@id/ic_detail_review"
+                    tools:text="Some Review" />
+
+                <ImageView
+                    android:id="@+id/expand_review"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/review_text"
                     android:layout_gravity="center"
-                    android:text="@string/review_button" />
+                    android:layout_marginBottom="10dp"
+                    android:src="@drawable/ic_action_expand_review"
+                    android:visibility="visible" />
 
-            </LinearLayout>
+                <ImageView
+                    android:id="@+id/hide_review"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/review_text"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="10dp"
+                    android:src="@drawable/ic_action_hide_review"
+                    android:visibility="gone" />
+            </RelativeLayout>
 
-            <!-- Reviews layout end -->
-
-        </LinearLayout>
+            <Button
+                android:id="@+id/review_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/layout_review_text"
+                android:layout_centerHorizontal="true"
+                android:layout_gravity="center"
+                android:text="@string/review_button" />
+        </RelativeLayout>
+        <!-- Reviews layout end -->
     </LinearLayout>
 </ScrollView>

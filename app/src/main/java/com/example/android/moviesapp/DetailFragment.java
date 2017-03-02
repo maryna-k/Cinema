@@ -22,6 +22,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -336,7 +337,7 @@ public class DetailFragment extends Fragment {
     private void setReviewLayout(final ArrayList<Review> reviewData){
         final String contentStr;
         int numElements = reviewData.size();
-        LinearLayout layout_text = (LinearLayout) rootView.findViewById(R.id.layout_review_text);
+        RelativeLayout layout_text = (RelativeLayout) rootView.findViewById(R.id.layout_review_text);
 
         if (numElements > 0) {
             TextView author = (TextView) rootView.findViewById(R.id.reviewer_name);
@@ -379,16 +380,12 @@ public class DetailFragment extends Fragment {
                     @Override
                     public void onClick(View view) {
                         ((ReviewFragmentCallback)getActivity()).onMoreReviewsSelected(reviewData, mTitle);
-                        /*Intent intent = new Intent(getContext(), ReviewActivity.class);
-                        intent.putExtra("reviews", reviewData);
-                        intent.putExtra("title", mTitle);
-                        startActivity(intent);*/
                     }
                 });
             }
         }
         else {
-            LinearLayout layout_reviews = (LinearLayout) rootView.findViewById(R.id.layout_reviews);
+            RelativeLayout layout_reviews = (RelativeLayout) rootView.findViewById(R.id.layout_reviews);
             layout_reviews.setVisibility(View.GONE);
         }
     }
