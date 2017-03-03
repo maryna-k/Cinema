@@ -5,4 +5,5 @@
     <color name="colorAccent">#afb3b2</color>
     <color name="primary_material_dark">#FF212121</color>
     <color name="color_movie_poster_background">#424242</color>
+    <color name="color_empty_view">#9e9e9e</color>
 </resources>

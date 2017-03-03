@@ -6,7 +6,7 @@
     <dimen name="details_activity_margin_right">15dp</dimen>
     <dimen name="details_activity_margin_top">10dp</dimen>
     <dimen name="details_activity_margin_bottom">10dp</dimen>
-    
+
     <dimen name="header_poster_height">170dp</dimen>
     <dimen name="small_poster_height">200dp</dimen>
     <dimen name="small_poster_width">135dp</dimen>
@@ -16,6 +16,8 @@
     <dimen name="detail_text_size">16sp</dimen>
     <dimen name="empty_view_message_size">24sp</dimen>
     <dimen name="empty_text_margins">15dp</dimen>
+    <dimen name="title_to_the_middle_of_icon_margin">8dp</dimen>
+    <dimen name="empty_trailers_reviews_icon_size">100dp</dimen>
 
     <dimen name="poster_height">300dp</dimen>
 
