@@ -47,7 +47,6 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback,
     private Movie lastViewedMovie;
     private boolean lastViewedMovieIsFavorite;
     private static final String LAST_VIEWED_MOVIE = "last_viewed";
-    private static final String LAST_VIEWED_FAVORITE = "favorite_movie";
 
     public static final String DETAILFRAGMENT_TAG = "DFTAG";
     public static final String GRIDFRAGMENT_TAG = "GFTAG";
@@ -116,11 +115,10 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback,
                 setEmptyMovieDetailViewVisible(true);
             } else {
                 lastViewedMovie = (Movie) savedInstanceState.getSerializable(LAST_VIEWED_MOVIE);
-                lastViewedMovieIsFavorite = savedInstanceState.getBoolean(LAST_VIEWED_FAVORITE);
                 if (emptyView.getVisibility() == View.VISIBLE) {
                         setEmptyMovieDetailViewVisible(false);
                 }
-                DetailFragment fragment = detailFragmentBundle(lastViewedMovie, lastViewedMovieIsFavorite);
+                DetailFragment fragment = detailFragmentBundle(lastViewedMovie);
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.detail_container_main_activity, fragment, DETAILFRAGMENT_TAG)
                         .commit();
@@ -130,7 +128,6 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback,
                 //put the movie object to the local variables so that on rotation it will be saved in the bundle
                 //and restored in the two pane layout
                 lastViewedMovie = (Movie) savedInstanceState.getSerializable(LAST_VIEWED_MOVIE);
-                lastViewedMovieIsFavorite = savedInstanceState.getBoolean(LAST_VIEWED_FAVORITE);
             }
             appLayout = AppLayoutType.TABLET_PORTRAIT_LAYOUT;
         }
@@ -146,7 +143,6 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback,
         outState.putString("searchCategory", moviesToSearch);
         if(lastViewedMovie != null){
             outState.putSerializable(LAST_VIEWED_MOVIE, lastViewedMovie);
-            outState.putBoolean(LAST_VIEWED_FAVORITE, lastViewedMovieIsFavorite);
         }
         Log.v(LOG_TAG, "OnSaveInstanceState");
     }
@@ -219,16 +215,15 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback,
     }
 
     @Override
-    public void onItemSelected(Movie movie, boolean favorite) {
+    public void onItemSelected(Movie movie) {
         lastViewedMovie = movie;
-        lastViewedMovieIsFavorite = favorite;
 
         if (appLayout == AppLayoutType.TABLET_TWOPANE_LAYOUT || appLayout == AppLayoutType.TABLET_PORTRAIT_LAYOUT) {
             // In two-pane mode, show the detail view in this activity by
             // adding or replacing the detail fragment using a
             // fragment transaction.
 
-            DetailFragment fragment = detailFragmentBundle(movie, favorite);
+            DetailFragment fragment = detailFragmentBundle(movie);
             if (appLayout == AppLayoutType.TABLET_TWOPANE_LAYOUT){
                 if (emptyView.getVisibility() == View.VISIBLE) {
                     setEmptyMovieDetailViewVisible(false);
@@ -248,8 +243,7 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback,
             }
         } else if(appLayout == AppLayoutType.SMALL_LAYOUT){
             Intent intent = new Intent(this, DetailActivity.class)
-                    .putExtra(DetailFragment.MOVIE_DETAIL, movie)
-                    .putExtra(DetailFragment.MOVIE_IN_FAVORITE, favorite);
+                    .putExtra(DetailFragment.MOVIE_DETAIL, movie);
             startActivity(intent);
         }
     }
@@ -320,10 +314,9 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback,
         return moviesToSearch;
     }
 
-    private DetailFragment detailFragmentBundle(Movie movie, boolean favorite){
+    private DetailFragment detailFragmentBundle(Movie movie){
         Bundle args = new Bundle();
         args.putSerializable(DetailFragment.MOVIE_DETAIL, movie);
-        args.putBoolean(DetailFragment.MOVIE_IN_FAVORITE, favorite);
         DetailFragment fragment = new DetailFragment();
         fragment.setArguments(args);
         return fragment;

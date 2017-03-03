@@ -205,7 +205,7 @@ public class MovieGridFragment extends Fragment
             public void onItemClick(Movie movie){
                 /* false here just indicates that DetailFragment has to check the database,
                 to see if the movie is in favorite */
-                ((FragmentCallback) getActivity()).onItemSelected(movie, false);
+                ((FragmentCallback) getActivity()).onItemSelected(movie);
             }
         });
     }

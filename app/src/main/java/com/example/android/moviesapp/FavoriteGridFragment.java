@@ -23,6 +23,7 @@ import com.example.android.moviesapp.database.MovieContract;
 import com.example.android.moviesapp.utilities.FragmentCallback;
 
 import static android.content.ContentValues.TAG;
+import static com.example.android.moviesapp.MainActivity.DETAILFRAGMENT_TAG;
 
 
 public class FavoriteGridFragment extends Fragment
@@ -38,6 +39,10 @@ public class FavoriteGridFragment extends Fragment
     private Loader loader;
     private final int PRIMARY_LOADER_ID = 0;
     private Cursor mCursorMovieData;
+
+    public interface SwipeMovieCallback {
+        public void onSwipeMovie(long tmdb_id);
+    }
 
     public FavoriteGridFragment() {
     }
@@ -81,6 +86,10 @@ public class FavoriteGridFragment extends Fragment
                         .build();
 
                 getActivity().getContentResolver().delete(uri, null, null);
+                Fragment fragment = getActivity().getSupportFragmentManager().findFragmentByTag(DETAILFRAGMENT_TAG);
+                if(fragment != null) {
+                    ((SwipeMovieCallback) fragment).onSwipeMovie(tmdb_id);
+                }
                 getLoaderManager().restartLoader(PRIMARY_LOADER_ID, null, FavoriteGridFragment.this);
             }
         }).attachToRecyclerView(mRecyclerView);
@@ -118,7 +127,7 @@ public class FavoriteGridFragment extends Fragment
             mCursorAdapter = new CursorMovieAdapter(mCursorMovieData, new MovieAdapter.OnItemClickListener() {
                 @Override
                 public void onItemClick(Movie movie){
-                    ((FragmentCallback) getActivity()).onItemSelected(movie, true);
+                    ((FragmentCallback) getActivity()).onItemSelected(movie);
                 }
             });
             mRecyclerView.setAdapter(mCursorAdapter);

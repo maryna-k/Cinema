@@ -42,7 +42,7 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 
 
-public class DetailFragment extends Fragment {
+public class DetailFragment extends Fragment implements FavoriteGridFragment.SwipeMovieCallback{
 
     private final String LOG_TAG = DetailFragment.class.getSimpleName() + "LOG";
 
@@ -106,17 +106,13 @@ public class DetailFragment extends Fragment {
 
             if (intent != null && intent.hasExtra(MOVIE_DETAIL)) {
                 movie = (Movie) intent.getSerializableExtra(MOVIE_DETAIL);
-                favorite = intent.getExtras().getBoolean(MOVIE_IN_FAVORITE);
             } else if (arguments != null) {
                 movie = (Movie) arguments.getSerializable(MOVIE_DETAIL);
-                favorite = arguments.getBoolean(MOVIE_IN_FAVORITE);
             }
 
             mTMDB_ID = movie.getMdb_id();
-            //if favorite is false, intent was send from MovieGridFragment, that does not know if the movie is favorite
-            if (!favorite) {
-                favorite = movieIsInFavorite(mTMDB_ID);
-            }
+            favorite = movieIsInFavorite(mTMDB_ID);
+
             mImageAddress = movie.getImageAddress();
             ImageView header = (ImageView) rootView.findViewById(R.id.header);
             String headerImageAddress = "http://image.tmdb.org/t/p/w780/" + mImageAddress;
@@ -166,6 +162,14 @@ public class DetailFragment extends Fragment {
             inflater.inflate(R.menu.menu_detail_fragment, menu);
         }
         Log.v(LOG_TAG, "onCreateOptionsMenu");
+    }
+
+    @Override
+    public void onSwipeMovie(long tmdb_id){
+        if(tmdb_id == mTMDB_ID){
+            favorite = false;
+            getActivity().invalidateOptionsMenu();
+        }
     }
 
     //change the icon of the favorite button depending on if the Movie object is favorite or not
