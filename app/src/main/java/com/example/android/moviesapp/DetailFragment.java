@@ -1,8 +1,13 @@
 package com.example.android.moviesapp;
 
+import android.content.BroadcastReceiver;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -20,7 +25,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -58,11 +62,13 @@ public class DetailFragment extends Fragment {
     private TrailerAdapter mTrailerAdapter;
     private RecyclerView mRecyclerView;
     private LinearLayoutManager mLayoutManager;
-
     private TrailerInfoLoader loader;
     private View rootView;
-    private ProgressBar mProgressBar;
-    private LinearLayout trailerView;
+    private ProgressBar trailersProgressBar;
+    private ProgressBar reviewsProgressBar;
+
+    private BroadcastReceiver mBroadcastReceiver;
+    private IntentFilter mInternetFilter;
 
     private final int COLLAPSED_REVIEW_SIZE = 150;
 
@@ -95,14 +101,13 @@ public class DetailFragment extends Fragment {
 
         //get Movie Object from the intent or bundle
         Bundle arguments = getArguments();
-
         Intent intent = getActivity().getIntent();
-        if(intent != null && intent.hasExtra(MOVIE_DETAIL) || arguments != null) {
+        if (intent != null && intent.hasExtra(MOVIE_DETAIL) || arguments != null) {
 
             if (intent != null && intent.hasExtra(MOVIE_DETAIL)) {
                 movie = (Movie) intent.getSerializableExtra(MOVIE_DETAIL);
                 favorite = intent.getExtras().getBoolean(MOVIE_IN_FAVORITE);
-            } else if(arguments != null) {
+            } else if (arguments != null) {
                 movie = (Movie) arguments.getSerializable(MOVIE_DETAIL);
                 favorite = arguments.getBoolean(MOVIE_IN_FAVORITE);
             }
@@ -141,12 +146,13 @@ public class DetailFragment extends Fragment {
             mLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
             mRecyclerView.setLayoutManager(mLayoutManager);
 
-            mProgressBar = (ProgressBar) rootView.findViewById(R.id.progress_bar);
-            trailerView = (LinearLayout) rootView.findViewById(R.id.layout_trailers_title);
+            trailersProgressBar = (ProgressBar) rootView.findViewById(R.id.trailer_progress_bar);
+            reviewsProgressBar = (ProgressBar) rootView.findViewById(R.id.review_progress_bar);
 
             getLoaderManager().initLoader(REVIEW_LOADER_ID, null, reviewResultLoaderListener);
             getLoaderManager().initLoader(TRAILER_LOADER_ID, null, trailerResultLoaderListener);
             Log.v(LOG_TAG, "onCreateView");
+            installConnectionListener();
         } else {
             rootView.setVisibility(View.GONE);
         }
@@ -156,16 +162,16 @@ public class DetailFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        if(movie != null) {
+        if (movie != null) {
             inflater.inflate(R.menu.menu_detail_fragment, menu);
         }
         Log.v(LOG_TAG, "onCreateOptionsMenu");
     }
 
-        //change the icon of the favorite button depending on if the Movie object is favorite or not
+    //change the icon of the favorite button depending on if the Movie object is favorite or not
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
-        if(movie != null) {
+        if (movie != null) {
             MenuItem removeFromFavorite = menu.findItem(R.id.action_remove_from_favorite);
             MenuItem addToFavorite = menu.findItem(R.id.action_add_to_favorite);
 
@@ -189,7 +195,6 @@ public class DetailFragment extends Fragment {
                     getActivity().invalidateOptionsMenu();
                 }
                 break;
-
             case R.id.action_remove_from_favorite:
                 Uri uri = FavoriteMovieEntry.CONTENT_URI.buildUpon()
                         .appendPath(FavoriteMovieEntry.PATH_FAVORITE_MOVIES_TMDB_ID).appendPath(Long.toString(mTMDB_ID)).build();
@@ -212,7 +217,23 @@ public class DetailFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
-    private void shareMovie(){
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (mBroadcastReceiver != null && mInternetFilter != null) {
+            getActivity().registerReceiver(mBroadcastReceiver, mInternetFilter);
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (mBroadcastReceiver != null) {
+            getActivity().unregisterReceiver(mBroadcastReceiver);
+        }
+    }
+
+    private void shareMovie() {
         String mimeType = "text/plain";
         String title = "Movie from Cinema";
         String textToShare = movie.getTitle() + "\n\n" + "Rating: " + movie.getRating() + "\n\n" +
@@ -228,13 +249,12 @@ public class DetailFragment extends Fragment {
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState){
+    public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
     }
 
     //insert Movie object to favorite_movies table
     public boolean insertMovie() {
-
         ContentValues values = new ContentValues();
         values.put(FavoriteMovieEntry.COLUMN_NAME_TITLE, mTitle);
         values.put(FavoriteMovieEntry.COLUMN_NAME_OVERVIEW, mOverview);
@@ -285,8 +305,12 @@ public class DetailFragment extends Fragment {
 
         @Override
         public void onLoadFinished(Loader<ArrayList<YouTubeTrailer>> loader, ArrayList<YouTubeTrailer> trailerData) {
-            int numElements = trailerData.size();
-            if (numElements != 0) {
+            ImageView emptyTrailers = (ImageView) rootView.findViewById(R.id.no_trailers_found_icon);
+            if (trailerData == null) {
+                mRecyclerView.setVisibility(View.GONE);
+                trailersProgressBar.setVisibility(View.VISIBLE);
+                emptyTrailers.setVisibility(View.GONE);
+            } else if (trailerData.size() > 0) {
                 mTrailerAdapter = new TrailerAdapter(trailerData, new TrailerAdapter.OnItemClickListener() {
                     @Override
                     public void onItemClick(String keyStr) {
@@ -294,12 +318,15 @@ public class DetailFragment extends Fragment {
                                 BuildConfig.YOUTUBE_API_KEY, keyStr, 0, true, true));
                     }
                 });
-                mTrailerAdapter.setProgressBar(mProgressBar);
+                mTrailerAdapter.setProgressBar(trailersProgressBar);
                 mRecyclerView.setAdapter(mTrailerAdapter);
-            } else {
+                mRecyclerView.setVisibility(View.VISIBLE);
+                trailersProgressBar.setVisibility(View.GONE);
+                emptyTrailers.setVisibility(View.GONE);
+            } else if (trailerData.size() == 0) {
                 mRecyclerView.setVisibility(View.GONE);
-                mProgressBar.setVisibility(View.GONE);
-                trailerView.setVisibility(View.GONE);
+                trailersProgressBar.setVisibility(View.GONE);
+                emptyTrailers.setVisibility(View.VISIBLE);
             }
         }
 
@@ -333,35 +360,64 @@ public class DetailFragment extends Fragment {
         }
     };
 
+    private void installConnectionListener() {
+        if (mBroadcastReceiver == null) {
+            mBroadcastReceiver = new BroadcastReceiver() {
+                @Override
+                public void onReceive(Context context, Intent intent) {
+                    Bundle extras = intent.getExtras();
+                    NetworkInfo info = (NetworkInfo) extras.getParcelable("networkInfo");
+                    NetworkInfo.State state = info.getState();
+                    if (state == NetworkInfo.State.CONNECTED && trailersProgressBar.getVisibility() == View.VISIBLE) {
+                        getLoaderManager().restartLoader(TRAILER_LOADER_ID, null, trailerResultLoaderListener);
+                    }
+                    if (state == NetworkInfo.State.CONNECTED && reviewsProgressBar.getVisibility() == View.VISIBLE) {
+                        getLoaderManager().restartLoader(REVIEW_LOADER_ID, null, reviewResultLoaderListener);
+                    }
+                }
+            };
+            mInternetFilter = new IntentFilter();
+            mInternetFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+        }
+    }
+
     //helper method that sets review layout
-    private void setReviewLayout(final ArrayList<Review> reviewData){
+    private void setReviewLayout(final ArrayList<Review> reviewData) {
         final String contentStr;
-        int numElements = reviewData.size();
-        RelativeLayout layout_text = (RelativeLayout) rootView.findViewById(R.id.layout_review_text);
+        RelativeLayout layoutReviews = (RelativeLayout) rootView.findViewById(R.id.layout_reviews);
 
-        if (numElements > 0) {
-            TextView author = (TextView) rootView.findViewById(R.id.reviewer_name);
-            final TextView reviewContent = (TextView) rootView.findViewById(R.id.review_text);
-            Button showMoreReviewsButton = (Button) rootView.findViewById(R.id.review_button);
-            final ImageView expandReview = (ImageView) rootView.findViewById(R.id.expand_review);
-            final ImageView collapseReview = (ImageView) rootView.findViewById(R.id.hide_review);
+        TextView author = (TextView) rootView.findViewById(R.id.reviewer_name);
+        final TextView reviewContent = (TextView) rootView.findViewById(R.id.review_text);
+        Button showMoreReviewsButton = (Button) rootView.findViewById(R.id.review_button);
+        final ImageView expandReview = (ImageView) rootView.findViewById(R.id.expand_review);
+        final ImageView collapseReview = (ImageView) rootView.findViewById(R.id.hide_review);
+        ImageView emptyReviews = (ImageView) rootView.findViewById(R.id.no_reviews_found_icon);
 
-
+        if (reviewData == null) {
+            layoutReviews.setVisibility(View.GONE);
+            showMoreReviewsButton.setVisibility(View.GONE);
+            emptyReviews.setVisibility(View.GONE);
+            reviewsProgressBar.setVisibility(View.VISIBLE);
+        } else if (reviewData.size() > 0) {
             contentStr = reviewData.get(0).getReviewContent();
             author.setText(reviewData.get(0).getAuthor());
-            if(contentStr.length() > COLLAPSED_REVIEW_SIZE) {
+
+            layoutReviews.setVisibility(View.VISIBLE);
+            emptyReviews.setVisibility(View.GONE);
+            reviewsProgressBar.setVisibility(View.GONE);
+
+            if (contentStr.length() > COLLAPSED_REVIEW_SIZE) {
                 reviewContent.setText(contentStr.substring(0, COLLAPSED_REVIEW_SIZE) + "...");
                 expandReview.setVisibility(View.VISIBLE);
                 collapseReview.setVisibility(View.GONE);
-                layout_text.setOnClickListener(new View.OnClickListener() {
+                layoutReviews.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        if(expandReview.getVisibility() == View.VISIBLE && collapseReview.getVisibility() == View.GONE) {
+                        if (expandReview.getVisibility() == View.VISIBLE && collapseReview.getVisibility() == View.GONE) {
                             reviewContent.setText(contentStr);
                             expandReview.setVisibility(View.GONE);
                             collapseReview.setVisibility(View.VISIBLE);
-                        }
-                        else if(expandReview.getVisibility() == View.GONE && collapseReview.getVisibility() == View.VISIBLE){
+                        } else if (expandReview.getVisibility() == View.GONE && collapseReview.getVisibility() == View.VISIBLE) {
                             reviewContent.setText(contentStr.substring(0, COLLAPSED_REVIEW_SIZE) + "...");
                             expandReview.setVisibility(View.VISIBLE);
                             collapseReview.setVisibility(View.GONE);
@@ -373,20 +429,21 @@ public class DetailFragment extends Fragment {
                 expandReview.setVisibility(View.GONE);
                 collapseReview.setVisibility(View.GONE);
             }
-            if(numElements == 1) {
+            if (reviewData.size() == 1) {
                 showMoreReviewsButton.setVisibility(View.GONE);
             } else {
                 showMoreReviewsButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        ((ReviewFragmentCallback)getActivity()).onMoreReviewsSelected(reviewData, mTitle);
+                        ((ReviewFragmentCallback) getActivity()).onMoreReviewsSelected(reviewData, mTitle);
                     }
                 });
             }
-        }
-        else {
-            RelativeLayout layout_reviews = (RelativeLayout) rootView.findViewById(R.id.layout_reviews);
-            layout_reviews.setVisibility(View.GONE);
+        } else if (reviewData.size() == 0) {
+            layoutReviews.setVisibility(View.GONE);
+            showMoreReviewsButton.setVisibility(View.GONE);
+            emptyReviews.setVisibility(View.VISIBLE);
+            reviewsProgressBar.setVisibility(View.GONE);
         }
     }
 

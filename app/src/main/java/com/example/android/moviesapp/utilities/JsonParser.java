@@ -1,7 +1,5 @@
 package com.example.android.moviesapp.utilities;
 
-import android.util.Log;
-
 import com.example.android.moviesapp.Movie;
 import com.example.android.moviesapp.review.Review;
 import com.example.android.moviesapp.trailer.YouTubeTrailer;
@@ -12,12 +10,14 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-import static com.example.android.moviesapp.database.MovieProvider.LOG_TAG;
-
 
 public class JsonParser {
 
+    private final String LOG_TAG = JsonParser.class.getSimpleName() + "LOG";
+
     public static ArrayList<Movie> getMovieDataFromJson(String movieJsonStr) throws JSONException {
+
+        if(movieJsonStr == null) return null;
 
         final String RESULTS = "results";
         final String TITLE = "title";
@@ -45,12 +45,14 @@ public class JsonParser {
             movie.setMdb_id(movieObject.getLong(TMDB_ID));
 
             movieList.add(i, movie);
-            Log.v(LOG_TAG, movie.toString());
+            //Log.v(LOG_TAG, movie.toString());
         }
         return movieList;
     }
 
     public static ArrayList<YouTubeTrailer> getTrailerDataFromJson(String trailerJsonStr) throws JSONException{
+
+        if (trailerJsonStr == null) return null;
 
         ArrayList<YouTubeTrailer> trailerList = new ArrayList<>();
         final String RESULTS = "results";
@@ -67,13 +69,15 @@ public class JsonParser {
             if(trailerObject.getString(TYPE).equals("Trailer")){
                 YouTubeTrailer trailer = new YouTubeTrailer(trailerObject.getString(KEY));
                 trailerList.add(trailer);
-                Log.v(LOG_TAG, "Trailer key: " +  trailer.getKey());
+                //Log.v(LOG_TAG, "Trailer key: " +  trailer.getKey());
             }
         }
         return trailerList;
     }
 
     public static ArrayList<Review> getReviewDataFromJson(String reviewJsonStr) throws JSONException{
+
+        if (reviewJsonStr == null) return null;
 
         ArrayList<Review> reviewList = new ArrayList<>();
         final String RESULTS = "results";
@@ -93,7 +97,7 @@ public class JsonParser {
             String content = reviewObject.getString(CONTENT);
             Review review = new Review(id, author, content);
             reviewList.add(review);
-            Log.v(LOG_TAG, review.toString());
+            //Log.v(LOG_TAG, review.toString());
         }
         return reviewList;
     }
