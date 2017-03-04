@@ -11,6 +11,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.ActionMenuView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -31,16 +32,17 @@ import static android.support.v4.app.FragmentManager.POP_BACK_STACK_INCLUSIVE;
 
 public class MainActivity extends AppCompatActivity implements FragmentCallback, DetailFragment.ReviewFragmentCallback {
 
-    private enum AppLayoutType {TABLET_TWOPANE_LAYOUT, TABLET_PORTRAIT_LAYOUT, SMALL_LAYOUT};
+    public enum AppLayoutType {TABLET_TWOPANE_LAYOUT, TABLET_PORTRAIT_LAYOUT, SMALL_LAYOUT};
 
     private DrawerLayout mDrawerLayout;
     private NavigationView mNavigationViewDrawer;
     private ActionBarDrawerToggle mDrawerToggle;
     private Toolbar toolbar;
+    private ActionMenuView amvMenu;
     private static String preferenceMoviesToSearch;
     private static String moviesToSearch;
 
-    private AppLayoutType appLayout;
+    private static AppLayoutType appLayout;
     private LinearLayout emptyView;
     private FrameLayout movieGridContainet;
 
@@ -320,5 +322,9 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback,
         DetailFragment fragment = new DetailFragment();
         fragment.setArguments(args);
         return fragment;
+    }
+
+    public static AppLayoutType getAppLayout(){
+        return appLayout;
     }
 }

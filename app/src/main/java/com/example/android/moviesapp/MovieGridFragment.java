@@ -10,8 +10,10 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v7.widget.ActionMenuView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -28,6 +30,8 @@ import com.example.android.moviesapp.utilities.MDBConnection;
 
 import java.util.ArrayList;
 
+import static com.example.android.moviesapp.MainActivity.getAppLayout;
+
 public class MovieGridFragment extends Fragment
         implements LoaderManager.LoaderCallbacks<ArrayList<Movie>>{
 
@@ -41,6 +45,10 @@ public class MovieGridFragment extends Fragment
     private View rootView;
     private MovieLoader loader;
     private EndlessRecyclerViewScrollListener mScrollListener;
+
+    private Toolbar toolbar;
+    private ActionMenuView amvMenu;
+    private boolean refreshMenuItemMoved = false;
 
     private LinearLayout emptyMovieGridLayout;
 
@@ -89,9 +97,68 @@ public class MovieGridFragment extends Fragment
             setEmptyGridViewVisible(true);
         }
 
+        if(getAppLayout() == MainActivity.AppLayoutType.TABLET_TWOPANE_LAYOUT) {
+            toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
+            amvMenu = (ActionMenuView) toolbar.findViewById(R.id.amvMenu);
+            amvMenu.setOnMenuItemClickListener(new ActionMenuView.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem menuItem) {
+                    return onOptionsItemSelected(menuItem);
+                }
+            });
+        }
+
         installConnectionListener();
         Log.v(LOG_TAG, "OnCreateView");
         return rootView;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState){
+        super.onSaveInstanceState(outState);
+        Log.v(LOG_TAG, "onSaveInstanceState");
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater){
+        super.onCreateOptionsMenu(menu, inflater);
+        if(getAppLayout() == MainActivity.AppLayoutType.TABLET_TWOPANE_LAYOUT && !refreshMenuItemMoved){
+            inflater.inflate(R.menu.menu_main_fragment, amvMenu.getMenu());
+            refreshMenuItemMoved = true;
+        } else if (getAppLayout() != MainActivity.AppLayoutType.TABLET_TWOPANE_LAYOUT){
+            inflater.inflate(R.menu.menu_main_fragment, menu);
+        }
+        Log.v(LOG_TAG, "OnCreateOptionsMenu");
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+        // Activate the navigation drawer toggle
+        if(item.getItemId() == R.id.action_refresh){
+            updateMovieList();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        getActivity().registerReceiver(mBroadcastReceiver, mInternetFilter);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        getActivity().unregisterReceiver(mBroadcastReceiver);
+    }
+
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+        if (getAppLayout() == MainActivity.AppLayoutType.TABLET_TWOPANE_LAYOUT) {
+            amvMenu.getMenu().clear();
+        }
     }
 
     @Override
@@ -129,41 +196,6 @@ public class MovieGridFragment extends Fragment
     @Override
     public void onLoaderReset(Loader<ArrayList<Movie>> loader) {
         Log.v(LOG_TAG, "Loader: OnLoaderReset");
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState){
-        super.onSaveInstanceState(outState);
-        Log.v(LOG_TAG, "onSaveInstanceState");
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater){
-        super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.menu_main_fragment, menu);
-        Log.v(LOG_TAG, "OnCreateOptionsMenu");
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item){
-        // Activate the navigation drawer toggle
-        if(item.getItemId() == R.id.action_refresh){
-            updateMovieList();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onResume(){
-        super.onResume();
-        getActivity().registerReceiver(mBroadcastReceiver, mInternetFilter);
-    }
-
-    @Override
-    public void onPause(){
-        super.onPause();
-        getActivity().unregisterReceiver(mBroadcastReceiver);
     }
 
     private void installConnectionListener() {
