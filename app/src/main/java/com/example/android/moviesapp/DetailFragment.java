@@ -16,6 +16,7 @@ import android.support.v4.app.ShareCompat;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -36,10 +37,13 @@ import com.example.android.moviesapp.review.ReviewLoader;
 import com.example.android.moviesapp.trailer.TrailerAdapter;
 import com.example.android.moviesapp.trailer.TrailerInfoLoader;
 import com.example.android.moviesapp.trailer.YouTubeTrailer;
+import com.example.android.moviesapp.utilities.KeysFinals;
 import com.google.android.youtube.player.YouTubeStandalonePlayer;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+
+import static com.example.android.moviesapp.MainActivity.getAppLayout;
 
 
 public class DetailFragment extends Fragment implements FavoriteGridFragment.SwipeMovieCallback{
@@ -115,11 +119,11 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
 
             mImageAddress = movie.getImageAddress();
             ImageView header = (ImageView) rootView.findViewById(R.id.header);
-            String headerImageAddress = "http://image.tmdb.org/t/p/w780/" + mImageAddress;
+            String headerImageAddress = KeysFinals.HEADER_POSTER_BASE_URL + mImageAddress;
             Picasso.with(getContext()).load(headerImageAddress).into(header);
 
             ImageView small_poster = (ImageView) rootView.findViewById(R.id.small_poster);
-            String smallImageAddress = "http://image.tmdb.org/t/p/w500/" + mImageAddress;
+            String smallImageAddress = KeysFinals.HEADER_POSTER_BASE_URL + mImageAddress;
             Picasso.with(getContext()).load(smallImageAddress).into(small_poster);
 
             mTitle = movie.getTitle();
@@ -157,8 +161,17 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        if (movie != null) {
+        if(getAppLayout() == MainActivity.AppLayoutType.TABLET_TWOPANE_LAYOUT && movie != null){
+            ((MainActivity) getActivity()).getSecondaryToolbar().getMenu().clear();
+            ((MainActivity) getActivity()).getSecondaryToolbar().inflateMenu(R.menu.menu_detail_fragment);
+            ((MainActivity) getActivity()).getSecondaryToolbar().setOnMenuItemClickListener
+                    (new Toolbar.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    return onOptionsItemSelected(item);
+                }
+            });
+        } else if (movie != null){
             inflater.inflate(R.menu.menu_detail_fragment, menu);
         }
         Log.v(LOG_TAG, "onCreateOptionsMenu");
@@ -176,6 +189,11 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         if (movie != null) {
+
+            if(getAppLayout() == MainActivity.AppLayoutType.TABLET_TWOPANE_LAYOUT){
+                menu = ((MainActivity) getActivity()).getSecondaryToolbar().getMenu();
+            }
+
             MenuItem removeFromFavorite = menu.findItem(R.id.action_remove_from_favorite);
             MenuItem addToFavorite = menu.findItem(R.id.action_add_to_favorite);
 
@@ -237,6 +255,18 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
         }
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        Toolbar toolbar;
+        if (getAppLayout() == MainActivity.AppLayoutType.TABLET_PORTRAIT_LAYOUT) {
+            toolbar = ((MainActivity) getActivity()).getSecondaryToolbar();
+            if (toolbar != null) {
+                toolbar.getMenu().clear();
+            }
+        }
+    }
+
     private void shareMovie() {
         String mimeType = "text/plain";
         String title = "Movie from Cinema";
@@ -272,7 +302,7 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
             favorite = true;
             //set db_id from the uri, in case if user wants to remove item right away
             db_id = Integer.parseInt(uri.getPathSegments().get(1));
-            Toast.makeText(getContext(), "Movie was saved into Favorite with uri: " + uri + " and id " + db_id,
+            Toast.makeText(getContext(), "Movie is now in Favorite",
                     Toast.LENGTH_LONG)
                     .show();
             return true;

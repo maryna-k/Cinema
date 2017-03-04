@@ -11,7 +11,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.ActionMenuView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -32,13 +31,13 @@ import static android.support.v4.app.FragmentManager.POP_BACK_STACK_INCLUSIVE;
 
 public class MainActivity extends AppCompatActivity implements FragmentCallback, DetailFragment.ReviewFragmentCallback {
 
-    public enum AppLayoutType {TABLET_TWOPANE_LAYOUT, TABLET_PORTRAIT_LAYOUT, SMALL_LAYOUT};
+    public enum AppLayoutType {TABLET_TWOPANE_LAYOUT, TABLET_PORTRAIT_LAYOUT, SMALL_LAYOUT}
 
     private DrawerLayout mDrawerLayout;
     private NavigationView mNavigationViewDrawer;
     private ActionBarDrawerToggle mDrawerToggle;
     private Toolbar toolbar;
-    private ActionMenuView amvMenu;
+    private Toolbar secondaryToolbar;
     private static String preferenceMoviesToSearch;
     private static String moviesToSearch;
 
@@ -47,7 +46,6 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback,
     private FrameLayout movieGridContainet;
 
     private Movie lastViewedMovie;
-    private boolean lastViewedMovieIsFavorite;
     private static final String LAST_VIEWED_MOVIE = "last_viewed";
 
     public static final String DETAILFRAGMENT_TAG = "DFTAG";
@@ -107,6 +105,7 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback,
             //if detail_container != null, application is in a two pane layout
             //and DetailFragment should be called
             appLayout = AppLayoutType.TABLET_TWOPANE_LAYOUT;
+            secondaryToolbar = (Toolbar) findViewById(R.id.secondary_toolbar);
             emptyView = (LinearLayout) findViewById(R.id.empty_movie_view_layout);
             if (savedInstanceState == null) {
                 getSupportFragmentManager().beginTransaction()
@@ -326,5 +325,9 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback,
 
     public static AppLayoutType getAppLayout(){
         return appLayout;
+    }
+
+    public Toolbar getSecondaryToolbar(){
+        return secondaryToolbar;
     }
 }

@@ -12,11 +12,30 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <!-- The ActionBar displayed at the top -->
-        <include
-            layout="@layout/toolbar"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <!-- The ActionBar for the grid fragment -->
+            <include
+                android:id="@+id/toolbar"
+                layout="@layout/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="4" />
+
+            <View style="@style/fragmentDivider" />
+
+            <!-- The ActionBar for the detail fragment -->
+            <include
+                android:id="@+id/secondary_toolbar"
+                layout="@layout/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="5" />
+
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -41,10 +60,11 @@
                 android:layout_height="match_parent"
                 android:layout_weight="5">
 
-                <include layout="@layout/empty_view"
+                <include
                     android:id="@+id/empty_movie_view_layout"
+                    layout="@layout/empty_view"
                     android:gravity="center"
-                    android:visibility="gone"/>
+                    android:visibility="gone" />
 
             </FrameLayout>
 
