@@ -2,6 +2,7 @@ package com.example.android.moviesapp;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -15,39 +16,46 @@ import com.example.android.moviesapp.review.ReviewActivity;
 import java.util.ArrayList;
 
 
-public class DetailActivity extends AppCompatActivity implements DetailFragment.ReviewFragmentCallback{
+public class DetailActivity extends AppCompatActivity implements DetailFragment.ReviewFragmentCallback {
 
     private final String LOG_TAG = DetailActivity.class.getSimpleName() + "LOG";
     Toolbar toolbar;
+    private boolean isTabletTwoPane;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_detail);
+        isTabletTwoPane = getResources().getBoolean(R.bool.isTabletTwoPane);
+        if (isTabletTwoPane) {
+            Fragment fr = getSupportFragmentManager().findFragmentById(R.id.detail_container_detail_activity);
+            getSupportFragmentManager().beginTransaction().remove(fr).commit();
+            this.finish();
+        } else {
+            setContentView(R.layout.activity_detail);
 
-        // Set a Toolbar
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
-        if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.detail_container_detail_activity, new DetailFragment()).commit();
+            toolbar = (Toolbar) findViewById(R.id.toolbar);
+            setSupportActionBar(toolbar);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowTitleEnabled(false);
+            if (savedInstanceState == null) {
+                getSupportFragmentManager().beginTransaction()
+                        .add(R.id.detail_container_detail_activity, new DetailFragment()).commit();
+            }
+            Log.v(LOG_TAG, "onCreate");
         }
-        Log.v(LOG_TAG, "onCreate");
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu){
+    public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_detail_activity, menu);
         Log.v(LOG_TAG, "onCreateOptionsMenu");
         return true;
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item){
+    public boolean onOptionsItemSelected(MenuItem item) {
 
-        switch(item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.action_settings:
                 startActivity(new Intent(this, SettingsActivity.class));
                 return true;
@@ -59,7 +67,7 @@ public class DetailActivity extends AppCompatActivity implements DetailFragment.
     }
 
     @Override
-    public void onMoreReviewsSelected(ArrayList<Review> reviewList, String title){
+    public void onMoreReviewsSelected(ArrayList<Review> reviewList, String title) {
         Intent intent = new Intent(this, ReviewActivity.class);
         intent.putExtra("reviews", reviewList);
         intent.putExtra("title", title);
