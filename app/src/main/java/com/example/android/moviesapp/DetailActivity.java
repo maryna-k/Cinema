@@ -33,10 +33,11 @@ public class DetailActivity extends AppCompatActivity implements DetailFragment.
         } else {
             setContentView(R.layout.activity_detail);
 
-            toolbar = (Toolbar) findViewById(R.id.toolbar);
+            toolbar = (Toolbar) findViewById(R.id.detail_activity_toolbar);
             setSupportActionBar(toolbar);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowTitleEnabled(false);
+            getSupportActionBar().setBackgroundDrawable(getResources().getDrawable(R.drawable.background_toolbar_translucent));
             if (savedInstanceState == null) {
                 getSupportFragmentManager().beginTransaction()
                         .add(R.id.detail_container_detail_activity, new DetailFragment()).commit();
@@ -54,7 +55,6 @@ public class DetailActivity extends AppCompatActivity implements DetailFragment.
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
         switch (item.getItemId()) {
             case R.id.action_settings:
                 startActivity(new Intent(this, SettingsActivity.class));

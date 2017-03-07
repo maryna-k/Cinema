@@ -15,6 +15,7 @@
 
     <!-- The ActionBar displayed at the top -->
     <include
+        android:id="@+id/detail_activity_toolbar"
         layout="@layout/toolbar"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
