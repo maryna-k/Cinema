@@ -6,4 +6,6 @@
     <color name="primary_material_dark">#FF212121</color>
     <color name="color_movie_poster_background">#424242</color>
     <color name="color_empty_view">#9e9e9e</color>
+    <color name="color_transparent">#00000000</color>
+    <color name="black_alpha_40">#CC000000</color>
 </resources>
