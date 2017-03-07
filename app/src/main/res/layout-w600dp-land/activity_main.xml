@@ -7,49 +7,37 @@
     android:layout_height="match_parent">
 
     <!-- This LinearLayout represents the contents of the screen -->
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <!-- The ActionBar for the grid fragment -->
-            <include
-                android:id="@+id/toolbar"
-                layout="@layout/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="4" />
-
-            <View style="@style/fragmentDivider" />
-
-            <!-- The ActionBar for the detail fragment -->
-            <include
-                android:id="@+id/secondary_toolbar"
-                layout="@layout/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="5" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:layout_alignParentTop="true">
 
-            <!-- This FrameLayout represents the container for the fragments-->
-            <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:tools="http://schemas.android.com/tools"
-                android:id="@+id/movie_grid_container"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="4"
-                tools:context="com.example.android.moviesapp.MainActivity" />
+                android:orientation="vertical"
+                android:layout_weight="4">
+
+                <View
+                    android:id="@+id/toolbar_placeholder"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp" />
+
+                <!-- This FrameLayout represents the container for the fragments-->
+                <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                    xmlns:tools="http://schemas.android.com/tools"
+                    android:id="@+id/movie_grid_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+
+                    tools:context="com.example.android.moviesapp.MainActivity" />
+            </LinearLayout>
 
             <View style="@style/fragmentDivider" />
 
@@ -69,7 +57,34 @@
             </FrameLayout>
 
         </LinearLayout>
-    </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_alignParentTop="true"
+            android:windowActionBarOverlay="true">
+
+            <!-- The ActionBar for the grid fragment -->
+            <include
+                android:id="@+id/toolbar"
+                layout="@layout/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="4" />
+
+            <View style="@style/fragmentDivider" />
+
+            <!-- The ActionBar for the detail fragment -->
+            <include
+                android:id="@+id/secondary_toolbar"
+                layout="@layout/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="5" />
+        </LinearLayout>
+
+    </RelativeLayout>
 
     <!-- The navigation drawer that comes from the left -->
     <android.support.design.widget.NavigationView

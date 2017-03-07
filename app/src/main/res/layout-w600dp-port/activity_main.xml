@@ -18,21 +18,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
-        <LinearLayout
-            android:id="@+id/tablet_portrait_layout"
+        <!-- This FrameLayout represents the container for the fragments-->
+        <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/movie_grid_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="horizontal">
-
-            <!-- This FrameLayout represents the container for the fragments-->
-            <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:tools="http://schemas.android.com/tools"
-                android:id="@+id/movie_grid_container"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                tools:context="com.example.android.moviesapp.MainActivity" />
-
-        </LinearLayout>
+            tools:context="com.example.android.moviesapp.MainActivity" />
     </LinearLayout>
 
     <!-- The navigation drawer that comes from the left -->

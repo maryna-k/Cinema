@@ -1,20 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
-
-    <!-- The ActionBar displayed at the top -->
-    <include
-        layout="@layout/toolbar" />
+    android:layout_height="match_parent">
 
     <FrameLayout
         xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/detail_container_detail_activity"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
         tools:context="com.example.android.moviesapp.DetailActivity"
         tools:ignore="MergeRootFrame">
     </FrameLayout>
 
-</LinearLayout>
+    <!-- The ActionBar displayed at the top -->
+    <include
+        layout="@layout/toolbar"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_alignParentTop="true"/>
+
+</RelativeLayout>
