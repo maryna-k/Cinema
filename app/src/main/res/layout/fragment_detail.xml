@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/scrollView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -18,16 +19,18 @@
                 android:id="@+id/header"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/header_poster_height"
+                android:layout_alignParentTop="true"
                 android:scaleType="centerCrop" />
 
             <!--Rating layout-->
 
             <LinearLayout
                 android:id="@+id/rating_layout"
-                style="@style/details_margins"
                 android:layout_below="@id/header"
                 android:gravity="right"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent">
 
                 <ImageView
                     android:id="@+id/icon_rating"
@@ -41,6 +44,7 @@
                     android:layout_height="match_parent"
                     android:gravity="center"
                     android:textSize="@dimen/detail_text_size"
+                    android:layout_marginRight="@dimen/details_activity_margin_right"
                     tools:text="10/10" />
             </LinearLayout>
 
@@ -49,10 +53,17 @@
                 android:layout_width="@dimen/small_poster_width"
                 android:layout_height="@dimen/small_poster_height"
                 android:layout_alignParentLeft="true"
-                android:layout_alignParentTop="true"
-                android:layout_marginLeft="@dimen/details_activity_margin_left"
-                android:layout_marginTop="32dp"
-                android:scaleType="centerCrop" />
+                android:layout_alignBottom="@id/rating_layout"
+                android:layout_marginLeft="@dimen/small_poster_left_margin"
+                android:layout_marginBottom="@dimen/small_poster_bottom_margin"
+                android:scaleType="centerCrop"/>
+
+            <TextView
+                android:id="@+id/title"
+                style="@style/title"
+                android:layout_below="@+id/rating_layout"
+                tools:text="This is a title" />
+
         </RelativeLayout>
 
         <RelativeLayout
@@ -61,25 +72,19 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <TextView
-                android:id="@+id/title"
-                style="@style/title"
-                android:layout_alignParentTop="true"
-                tools:text="This is a title" />
-
             <!--Genre layout-->
 
             <ImageView
                 android:id="@+id/ic_genre"
                 style="@style/details_icon"
-                android:layout_below="@id/title"
+                android:layout_alignParentTop="true"
                 android:src="@drawable/ic_genre" />
 
             <TextView
                 android:id="@+id/title_genre"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/title"
+                android:layout_alignParentTop="true"
                 android:layout_toRightOf="@id/ic_genre"
                 android:text="@string/genre" />
 

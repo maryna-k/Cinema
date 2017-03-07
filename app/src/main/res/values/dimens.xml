@@ -7,12 +7,14 @@
     <dimen name="details_activity_margin_top">10dp</dimen>
     <dimen name="details_activity_margin_bottom">10dp</dimen>
 
-    <dimen name="header_poster_height">170dp</dimen>
-    <dimen name="small_poster_height">200dp</dimen>
-    <dimen name="small_poster_width">135dp</dimen>
-    <dimen name="small_poster_top_margin">35dp</dimen>
+    <dimen name="header_poster_height">250dp</dimen>
+    <dimen name="small_poster_height">150dp</dimen>
+    <dimen name="small_poster_width">100dp</dimen>
+    <dimen name="small_poster_bottom_margin">10dp</dimen>
+    <dimen name="small_poster_left_margin">@dimen/details_activity_margin_left</dimen>
 
     <dimen name="movie_title_size">24sp</dimen>
+    <dimen name="movie_title_padding">7dp</dimen>
     <dimen name="detail_text_size">16sp</dimen>
     <dimen name="empty_view_message_size">24sp</dimen>
     <dimen name="empty_text_margins">15dp</dimen>

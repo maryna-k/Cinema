@@ -25,9 +25,12 @@
         <item name="android:layout_marginRight">@dimen/details_activity_margin_left</item>
     </style>
 
-    <style name="title" parent="details_margins">
-        <item name="android:layout_width">wrap_content</item>
+    <style name="title">
+        <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingLeft">@dimen/details_activity_margin_left</item>
+        <item name="android:paddingTop">@dimen/movie_title_padding</item>
+        <item name="android:paddingBottom">@dimen/movie_title_padding</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textSize">@dimen/movie_title_size</item>
     </style>
