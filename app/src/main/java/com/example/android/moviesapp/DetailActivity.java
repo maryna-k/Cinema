@@ -2,6 +2,7 @@ package com.example.android.moviesapp;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
@@ -12,6 +13,7 @@ import android.view.MenuItem;
 
 import com.example.android.moviesapp.review.Review;
 import com.example.android.moviesapp.review.ReviewActivity;
+import com.example.android.moviesapp.review.ReviewDialogFragment;
 
 import java.util.ArrayList;
 
@@ -21,11 +23,13 @@ public class DetailActivity extends AppCompatActivity implements DetailFragment.
     private final String LOG_TAG = DetailActivity.class.getSimpleName() + "LOG";
     Toolbar toolbar;
     private boolean isTabletTwoPane;
+    private boolean isTabletPortrait;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         isTabletTwoPane = getResources().getBoolean(R.bool.isTabletTwoPane);
+        isTabletPortrait = getResources().getBoolean(R.bool.isTabletPortrait);
         if (isTabletTwoPane) {
             Fragment fr = getSupportFragmentManager().findFragmentById(R.id.detail_container_detail_activity);
             getSupportFragmentManager().beginTransaction().remove(fr).commit();
@@ -67,10 +71,17 @@ public class DetailActivity extends AppCompatActivity implements DetailFragment.
     }
 
     @Override
-    public void onMoreReviewsSelected(ArrayList<Review> reviewList, String title) {
-        Intent intent = new Intent(this, ReviewActivity.class);
-        intent.putExtra("reviews", reviewList);
-        intent.putExtra("title", title);
-        startActivity(intent);
+    public void onMoreReviewsSelected(ArrayList<Review> reviewList, String title, int color) {
+        /*start ReviewActivity on a phone, but display a dialog on a tablet*/
+        if(!isTabletTwoPane && !isTabletPortrait) {
+            Intent intent = new Intent(this, ReviewActivity.class);
+            intent.putExtra("reviews", reviewList);
+            intent.putExtra("title", title);
+            intent.putExtra("color", color);
+            startActivity(intent);
+        } else {
+            DialogFragment newFragment = ReviewDialogFragment.newInstance(reviewList, title);
+            newFragment.show(getSupportFragmentManager(), "dialog");
+        }
     }
 }

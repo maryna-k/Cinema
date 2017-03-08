@@ -203,7 +203,7 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback,
     }
 
     @Override
-    public void onMoreReviewsSelected(ArrayList<Review> reviewList, String title) {
+    public void onMoreReviewsSelected(ArrayList<Review> reviewList, String title, int color) {
         DialogFragment newFragment = ReviewDialogFragment.newInstance(reviewList, title);
         newFragment.show(getSupportFragmentManager(), "dialog");
     }

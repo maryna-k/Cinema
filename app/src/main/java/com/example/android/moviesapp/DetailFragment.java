@@ -105,7 +105,7 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
 
     //FragmentCallback for when Show more reviews button is clicked.
     public interface ReviewFragmentCallback {
-        public void onMoreReviewsSelected(ArrayList<Review> reviewList, String title);
+        public void onMoreReviewsSelected(ArrayList<Review> reviewList, String title, int themeColor);
     }
 
     public DetailFragment() {
@@ -595,7 +595,7 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
                 showMoreReviewsButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        ((ReviewFragmentCallback) getActivity()).onMoreReviewsSelected(reviewData, mTitle);
+                        ((ReviewFragmentCallback) getActivity()).onMoreReviewsSelected(reviewData, mTitle, themeColor);
                     }
                 });
             }
