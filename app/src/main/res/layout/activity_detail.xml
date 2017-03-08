@@ -16,7 +16,7 @@
     <!-- The ActionBar displayed at the top -->
     <include
         android:id="@+id/detail_activity_toolbar"
-        layout="@layout/toolbar"
+        layout="@layout/toolbar_transparent"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
         android:layout_alignParentTop="true"/>

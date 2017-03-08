@@ -39,8 +39,6 @@ public class DetailActivity extends AppCompatActivity implements DetailFragment.
             setSupportActionBar(toolbar);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowTitleEnabled(false);
-            getSupportActionBar().setBackgroundDrawable(getResources()
-                    .getDrawable(R.drawable.background_toolbar_translucent));
             if (savedInstanceState == null) {
                 getSupportFragmentManager().beginTransaction()
                         .add(R.id.detail_container_detail_activity, new DetailFragment()).commit();
