@@ -55,7 +55,6 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignBottom="@id/rating_layout"
                 android:layout_marginLeft="@dimen/small_poster_left_margin"
-                android:layout_marginBottom="@dimen/small_poster_bottom_margin"
                 android:scaleType="centerCrop"/>
 
             <TextView
