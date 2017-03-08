@@ -28,7 +28,8 @@ import com.example.android.moviesapp.utilities.FragmentCallback;
 
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity implements FragmentCallback, DetailFragment.ReviewFragmentCallback {
+public class MainActivity extends AppCompatActivity implements FragmentCallback,
+        DetailFragment.ReviewFragmentCallback, DetailFragment.SettingsFragmentCallback {
 
     private DrawerLayout mDrawerLayout;
     private NavigationView mNavigationViewDrawer;
@@ -164,7 +165,9 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback,
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        if(!isTabletTwoPaneLayout) {
+            getMenuInflater().inflate(R.menu.menu_main, menu);
+        }
         Log.v(LOG_TAG, "OnCreateOptionsMenu");
         return true;
     }
@@ -180,6 +183,13 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback,
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onSettingsMenuItemSelected(boolean selected){
+        if(selected){
+            startActivity(new Intent(this, SettingsActivity.class));
+        }
     }
 
     //method from callback interface between MovieGridFragment, FavoriteMovieFragment and activities

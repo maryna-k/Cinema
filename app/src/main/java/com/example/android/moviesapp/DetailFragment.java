@@ -108,6 +108,11 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
         public void onMoreReviewsSelected(ArrayList<Review> reviewList, String title, int themeColor);
     }
 
+    //FragmentCallback for when Settings menu item is clicked
+    public interface SettingsFragmentCallback{
+        public void onSettingsMenuItemSelected(boolean selected);
+    }
+
     public DetailFragment() {
     }
 
@@ -288,6 +293,9 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
             case R.id.action_share:
                 shareMovie();
                 break;
+            case R.id.action_settings:
+                ((SettingsFragmentCallback)getActivity()).onSettingsMenuItemSelected(true);
+                return true;
             case android.R.id.home:
                 getActivity().onBackPressed();
                 return true;

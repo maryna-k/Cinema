@@ -1,6 +1,7 @@
 package com.example.android.moviesapp.review;
 
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
@@ -36,6 +37,8 @@ public class ReviewActivity extends AppCompatActivity{
         Intent intent = getIntent();
         reviewList = (ArrayList<Review>) intent.getSerializableExtra("reviews");
         getSupportActionBar().setTitle(intent.getStringExtra("title"));
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable
+                (intent.getIntExtra("color", getResources().getColor(R.color.colorPrimaryDark))));
 
         if (savedInstanceState == null) {
             ReviewDialogFragment fragment = new ReviewDialogFragment();

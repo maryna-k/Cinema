@@ -23,4 +23,10 @@
         android:title="@string/action_share"
         app:showAsAction="always"
         android:orderInCategory="200"/>
+
+    <item android:title="@string/action_settings"
+        android:id="@+id/action_settings"
+        app:showAsAction="never"
+        android:visible="true"
+        android:orderInCategory="9999"/>
 </menu>

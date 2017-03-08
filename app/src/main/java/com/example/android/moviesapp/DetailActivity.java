@@ -4,12 +4,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 
 import com.example.android.moviesapp.review.Review;
 import com.example.android.moviesapp.review.ReviewActivity;
@@ -18,7 +15,8 @@ import com.example.android.moviesapp.review.ReviewDialogFragment;
 import java.util.ArrayList;
 
 
-public class DetailActivity extends AppCompatActivity implements DetailFragment.ReviewFragmentCallback {
+public class DetailActivity extends AppCompatActivity implements DetailFragment.ReviewFragmentCallback,
+        DetailFragment.SettingsFragmentCallback {
 
     private final String LOG_TAG = DetailActivity.class.getSimpleName() + "LOG";
     Toolbar toolbar;
@@ -41,7 +39,8 @@ public class DetailActivity extends AppCompatActivity implements DetailFragment.
             setSupportActionBar(toolbar);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowTitleEnabled(false);
-            getSupportActionBar().setBackgroundDrawable(getResources().getDrawable(R.drawable.background_toolbar_translucent));
+            getSupportActionBar().setBackgroundDrawable(getResources()
+                    .getDrawable(R.drawable.background_toolbar_translucent));
             if (savedInstanceState == null) {
                 getSupportFragmentManager().beginTransaction()
                         .add(R.id.detail_container_detail_activity, new DetailFragment()).commit();
@@ -51,23 +50,10 @@ public class DetailActivity extends AppCompatActivity implements DetailFragment.
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_detail_activity, menu);
-        Log.v(LOG_TAG, "onCreateOptionsMenu");
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_settings:
-                startActivity(new Intent(this, SettingsActivity.class));
-                return true;
-            case android.R.id.home:
-                NavUtils.navigateUpFromSameTask(this);
-                return true;
+    public void onSettingsMenuItemSelected(boolean selected){
+        if(selected){
+            startActivity(new Intent(this, SettingsActivity.class));
         }
-        return super.onOptionsItemSelected(item);
     }
 
     @Override
