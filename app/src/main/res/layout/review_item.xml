@@ -6,62 +6,73 @@
     android:orientation="vertical">
 
     <LinearLayout
-        android:id="@+id/review_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:foreground="?android:attr/selectableItemBackground">
+        android:orientation="vertical">
 
-        <LinearLayout
-            android:id="@+id/layout_reviews_text_activity"
+        <RelativeLayout
+            android:id="@+id/review_layout"
             style="@style/details_margins"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:foreground="?android:attr/selectableItemBackground">
 
+            <!--<LinearLayout
+                android:id="@+id/layout_reviews_text_activity"
+                style="@style/details_margins"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+    -->
             <ImageView
+                android:id="@+id/ic_review"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
                 android:layout_marginRight="15dp"
                 android:src="@drawable/ic_review" />
 
-            <LinearLayout
+            <TextView
+                android:id="@+id/reviewer_name_activity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_toRightOf="@id/ic_review"
+                tools:text="reviewer name" />
+
+            <TextView
+                android:id="@+id/review_content"
+                style="@style/details_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:layout_alignParentLeft="true"
+                android:layout_below="@id/ic_review"
+                android:layout_marginBottom="5dp"
+                tools:text="Some Review" />
 
-                <TextView
-                    android:id="@+id/reviewer_name_activity"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    tools:text="reviewer name" />
+            <!--</LinearLayout>-->
 
-                <TextView
-                    android:id="@+id/review_content"
-                    style="@style/details_text"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="5dp"
-                    tools:text="Some Review" />
-            </LinearLayout>
-        </LinearLayout>
+            <ImageView
+                android:id="@+id/expand_review_activity"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/review_content"
+                android:layout_gravity="center"
+                android:layout_marginBottom="10dp"
+                android:src="@drawable/ic_action_expand_review" />
 
-        <ImageView
-            android:id="@+id/expand_review_activity"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginBottom="10dp"
-            android:src="@drawable/ic_action_expand_review" />
+            <ImageView
+                android:id="@+id/collapse_review_activity"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/review_content"
+                android:layout_gravity="center"
+                android:layout_marginBottom="10dp"
+                android:src="@drawable/ic_action_hide_review"
+                android:visibility="gone" />
 
-        <ImageView
-            android:id="@+id/collapse_review_activity"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginBottom="10dp"
-            android:src="@drawable/ic_action_hide_review"
-            android:visibility="gone" />
+        </RelativeLayout>
 
         <View style="@style/Divider" />
 

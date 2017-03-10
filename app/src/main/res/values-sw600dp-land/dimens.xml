@@ -10,6 +10,8 @@
     <dimen name="small_poster_width">130dp</dimen>
     <dimen name="small_poster_bottom_margin">15dp</dimen>
     <dimen name="small_poster_left_margin">@dimen/details_activity_margin_left</dimen>
+    <!--Genre left padding = small poster left padding + details activity left margin + 5dp-->
+    <dimen name="genre_left_padding">165dp</dimen>
 
     <dimen name="movie_title_padding">10dp</dimen>
 

@@ -4,14 +4,18 @@
     <string name="drawer_close">Close navigation drawer</string>
 
     <!--Strings for fragment_detail.xml-->
-    <string name="genre">Genre</string>
-    <string name="release_date">Release Date</string>
-    <string name="country">Country</string>
-    <string name="overview">Overview</string>
+    <string name="movie_info">Movie info</string>
+    <string name="genre">Genre:</string>
+    <string name="release_date">Release:</string>
+    <string name="duration">Duration:</string>
+    <string name="budget">Budget:</string>
+    <string name="company">Company:</string>
+    <string name="country">Country:</string>
+    <string name="overview">Storyline</string>
     <string name="reviews">Reviews</string>
     <string name="more_reviews">More reviews</string>
     <string name="trailers">Trailers</string>
-    <string name="review_button">Show more reviews</string>
+    <string name="review_button">More reviews</string>
     <!---->
 
     <!--Empty view strings-->

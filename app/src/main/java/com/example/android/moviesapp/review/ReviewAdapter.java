@@ -6,7 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.android.moviesapp.R;
@@ -29,7 +29,7 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder
         private TextView contentView;
         private ImageView expandReview;
         private ImageView collapseReview;
-        private LinearLayout reviewLayout;
+        private RelativeLayout reviewLayout;
         private Context context;
         private String contentStr;
         private String contentStrSubstring;
@@ -37,7 +37,7 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder
         public ViewHolder(Context context, View view){
             super(view);
             this.context = context;
-            reviewLayout = (LinearLayout) view.findViewById(review_layout);
+            reviewLayout = (RelativeLayout) view.findViewById(review_layout);
             authorView = (TextView) view.findViewById(R.id.reviewer_name_activity);
             contentView = (TextView) view.findViewById(R.id.review_content);
             expandReview = (ImageView) view.findViewById(R.id.expand_review_activity);

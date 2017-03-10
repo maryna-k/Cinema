@@ -12,10 +12,13 @@
     <dimen name="small_poster_width">100dp</dimen>
     <dimen name="small_poster_bottom_margin">10dp</dimen>
     <dimen name="small_poster_left_margin">@dimen/details_activity_margin_left</dimen>
+    <!--Genre left padding = small poster left padding + details activity left margin + 5dp-->
+    <dimen name="genre_left_padding">125dp</dimen>
 
     <dimen name="movie_title_size">24sp</dimen>
     <dimen name="movie_title_padding">7dp</dimen>
     <dimen name="detail_text_size">16sp</dimen>
+    <dimen name="infor_title_width">120dp</dimen>
     <dimen name="empty_view_message_size">24sp</dimen>
     <dimen name="empty_text_margins">15dp</dimen>
     <dimen name="title_to_the_middle_of_icon_margin">8dp</dimen>

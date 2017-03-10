@@ -23,14 +23,14 @@
                 android:scaleType="centerCrop" />
 
             <!--Rating layout-->
-
             <LinearLayout
                 android:id="@+id/rating_layout"
-                android:layout_below="@id/header"
-                android:gravity="right"
-                android:orientation="horizontal"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_width="match_parent">
+                android:layout_below="@id/header"
+                android:background="@color/colorPrimary"
+                android:gravity="right"
+                android:orientation="horizontal">
 
                 <ImageView
                     android:id="@+id/icon_rating"
@@ -42,9 +42,9 @@
                     android:id="@+id/rating"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
+                    android:layout_marginRight="@dimen/details_activity_margin_right"
                     android:gravity="center"
                     android:textSize="@dimen/detail_text_size"
-                    android:layout_marginRight="@dimen/details_activity_margin_right"
                     tools:text="10/10" />
             </LinearLayout>
 
@@ -52,17 +52,17 @@
                 android:id="@+id/small_poster"
                 android:layout_width="@dimen/small_poster_width"
                 android:layout_height="@dimen/small_poster_height"
-                android:layout_alignParentLeft="true"
                 android:layout_alignBottom="@id/rating_layout"
+                android:layout_alignParentLeft="true"
                 android:layout_marginLeft="@dimen/small_poster_left_margin"
-                android:scaleType="centerCrop"/>
+                android:scaleType="centerCrop" />
 
             <TextView
                 android:id="@+id/title"
                 style="@style/title"
                 android:layout_below="@+id/rating_layout"
+                android:background="@color/colorPrimary"
                 tools:text="This is a title" />
-
         </RelativeLayout>
 
         <RelativeLayout
@@ -71,78 +71,135 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <!--Genre layout-->
-
+            <!--Movie info title-->
             <ImageView
-                android:id="@+id/ic_genre"
+                android:id="@+id/ic_movie_info"
                 style="@style/details_icon"
                 android:layout_alignParentTop="true"
                 android:src="@drawable/ic_genre" />
 
             <TextView
-                android:id="@+id/title_genre"
+                android:id="@+id/title_movie_info"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
-                android:layout_toRightOf="@id/ic_genre"
-                android:text="@string/genre" />
+                android:layout_toRightOf="@id/ic_movie_info"
+                android:text="@string/movie_info" />
 
-            <TextView
-                android:id="@+id/genre"
-                style="@style/details_text"
-                android:layout_below="@id/title_genre"
-                android:layout_toRightOf="@id/ic_genre"
-                tools:text="Some genre" />
-
-            <View
-                android:id="@+id/divider_below_genre"
-                style="@style/Divider"
-                android:layout_below="@id/genre" />
-
-            <!--Release layout-->
-
-            <ImageView
-                android:id="@+id/ic_release"
-                style="@style/details_icon"
-                android:layout_alignParentLeft="true"
-                android:layout_below="@id/divider_below_genre"
-                android:src="@drawable/ic_release_date" />
-
-            <TextView
-                android:id="@+id/title_release_date"
+            <LinearLayout
+                android:id="@+id/release_layout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/divider_below_genre"
-                android:layout_toRightOf="@id/ic_release"
-                android:text="@string/release_date" />
+                android:layout_alignParentLeft="true"
+                android:layout_below="@id/title_movie_info"
+                android:layout_marginTop="@dimen/details_activity_margin_top">
 
-            <TextView
-                android:id="@+id/release_date"
-                style="@style/details_text"
-                android:layout_below="@id/title_release_date"
-                android:layout_toRightOf="@id/ic_release"
-                tools:text="01/01/01" />
+                <TextView
+                    android:id="@+id/release_date_title"
+                    style="@style/details_text"
+                    android:layout_width="@dimen/infor_title_width"
+                    android:text="@string/release_date" />
+
+                <TextView
+                    android:id="@+id/release_date"
+                    style="@style/details_text"
+                    tools:text="01-01-01" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/duration_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@id/release_layout">
+
+                <TextView
+                    android:id="@+id/duration_title"
+                    style="@style/details_text"
+                    android:layout_width="@dimen/infor_title_width"
+                    android:text="@string/duration" />
+
+                <TextView
+                    android:id="@+id/duration"
+                    style="@style/details_text"
+                    tools:text="110 min." />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/genre_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@id/duration_layout">
+
+                <TextView
+                    android:id="@+id/genre_title"
+                    style="@style/details_text"
+                    android:layout_width="@dimen/infor_title_width"
+                    android:text="@string/genre" />
+
+                <TextView
+                    android:id="@+id/genre"
+                    style="@style/details_text"
+                    tools:text="Action, Romance" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/country_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@id/genre_layout">
+
+                <TextView
+                    android:id="@+id/country_title"
+                    style="@style/details_text"
+                    android:layout_width="@dimen/infor_title_width"
+                    android:text="@string/country" />
+
+                <TextView
+                    android:id="@+id/country"
+                    style="@style/details_text"
+                    tools:text="United States of America" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/company_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@id/country_layout">
+
+                <TextView
+                    android:id="@+id/company_title"
+                    style="@style/details_text"
+                    android:layout_width="@dimen/infor_title_width"
+                    android:text="@string/company" />
+
+                <TextView
+                    android:id="@+id/company"
+                    style="@style/details_text"
+                    tools:text="Paramount Pictures" />
+            </LinearLayout>
 
             <View
-                android:id="@+id/divider_below_release"
+                android:id="@+id/divider_below_movie_info"
                 style="@style/Divider"
-                android:layout_below="@id/release_date" />
+                android:layout_below="@id/company_layout" />
 
             <!--Layout overview-->
-            <!--Layout header-->
-
             <ImageView
                 android:id="@+id/ic_overview"
                 style="@style/details_icon"
                 android:layout_alignParentLeft="true"
-                android:layout_below="@id/divider_below_release"
+                android:layout_below="@id/divider_below_movie_info"
                 android:src="@drawable/ic_overview" />
 
             <TextView
                 android:id="@+id/title_overview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/divider_below_release"
+                android:layout_below="@id/divider_below_movie_info"
                 android:layout_marginTop="@dimen/title_to_the_middle_of_icon_margin"
                 android:layout_toRightOf="@id/ic_overview"
                 android:text="@string/overview" />
@@ -150,8 +207,10 @@
             <!--Overview text-->
             <TextView
                 android:id="@+id/overview"
-                style="@style/details_margins"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_below="@id/ic_overview"
+                android:layout_marginTop="@dimen/details_activity_margin_top"
                 android:textSize="@dimen/detail_text_size"
                 tools:text="Some example text" />
 
@@ -243,20 +302,11 @@
             android:clickable="true"
             android:foreground="?android:attr/selectableItemBackground">
 
-            <ImageView
-                android:id="@+id/ic_detail_review"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_marginLeft="15dp"
-                android:layout_marginRight="15dp"
-                android:src="@drawable/ic_review" />
-
             <TextView
                 android:id="@+id/reviewer_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_toRightOf="@id/ic_detail_review"
+                android:textSize="@dimen/detail_text_size"
                 tools:text="reviewer name" />
 
             <TextView
@@ -266,7 +316,6 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/reviewer_name"
                 android:layout_marginBottom="5dp"
-                android:layout_toRightOf="@id/ic_detail_review"
                 tools:text="Some Review" />
 
             <ImageView
