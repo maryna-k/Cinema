@@ -7,31 +7,34 @@ public class Movie implements Serializable {
     private String title;
     private String overview; //string for synopsis
     private double rating;
-    private int vote_count;
+    private int voteCount;
+    private String country;
+    private String genre;
+    private String productionCompanies;
     private String releaseDate;
-    private String imageAddress;
+    private int duration;
+    private String posterAddress; //small poster image
+    private String backdropAddress; //header image
     private long mdb_id;
     private boolean favorite;
 
     public Movie() {
     }
 
-    public Movie(String title, String overview, double rating, String releaseDate, String imageAddress, Long mdb_id) {
+    public Movie(String title, String overview, double rating, int voteCount, String country, String genre, String productionCompanies,
+                 String releaseDate, int duration, String posterAddress, String backdropAddress, Long mdb_id) {
         this.title = title;
         this.overview = overview;
         this.rating = rating;
+        this.voteCount = voteCount;
+        this.country = country;
+        this.genre = genre;
+        this.productionCompanies = productionCompanies;
         this.releaseDate = releaseDate;
-        this.imageAddress = imageAddress;
+        this.duration = duration;
+        this.posterAddress = posterAddress;
+        this.backdropAddress = backdropAddress;
         this.mdb_id = mdb_id;
-    }
-
-    public Movie(Movie original){
-        title = original.title;
-        overview = original.overview;
-        rating = original.rating;
-        releaseDate = original.releaseDate;
-        imageAddress = original.imageAddress;
-        mdb_id = original.mdb_id;
     }
 
     public String getTitle() {
@@ -58,12 +61,36 @@ public class Movie implements Serializable {
         this.rating = rating;
     }
 
-    public int getVote_count() {
-        return vote_count;
+    public int getVoteCount() {
+        return voteCount;
     }
 
-    public void setVote_count(int vote_count) {
-        this.vote_count = vote_count;
+    public void setVoteCount(int vote_count) {
+        this.voteCount = vote_count;
+    }
+
+    public String getCountry(){
+        return country;
+    }
+
+    public void setCountry(String country){
+        this.country = country;
+    }
+
+    public String getGenre(){
+        return genre;
+    }
+
+    public void setGenre(String genre){
+        this.genre = genre;
+    }
+
+    public String getProductionCompanies(){
+        return productionCompanies;
+    }
+
+    public void setProductionCompanies(String productionCompanies){
+        this.productionCompanies = productionCompanies;
     }
 
     public String getReleaseDate() {
@@ -74,12 +101,28 @@ public class Movie implements Serializable {
         this.releaseDate = releaseDate;
     }
 
-    public String getImageAddress() {
-        return imageAddress;
+    public String getPosterAddress() {
+        return posterAddress;
     }
 
-    public void setImageAddress(String imageAddress) {
-        this.imageAddress = imageAddress;
+    public void setDuration(int duration){
+        this.duration = duration;
+    }
+
+    public int getDuration(){
+        return duration;
+    }
+
+    public void setPosterAddress(String imageAddress) {
+        this.posterAddress = imageAddress;
+    }
+
+    public String getBackdropAddress(){
+        return backdropAddress;
+    }
+
+    public void setBackdropAddress(String backdropAddress){
+        this.backdropAddress = backdropAddress;
     }
 
     public long getMdb_id() {
@@ -105,7 +148,7 @@ public class Movie implements Serializable {
                 ", overview='" + overview + '\'' +
                 ", rating=" + rating +
                 ", releaseDate='" + releaseDate + '\'' +
-                ", imageAddress='" + imageAddress + '\'' +
+                ", posterAddress='" + posterAddress + '\'' +
                 '}';
     }
 }

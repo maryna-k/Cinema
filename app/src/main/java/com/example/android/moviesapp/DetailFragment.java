@@ -61,11 +61,16 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
     //variables that represent movie object
     private Movie movie;
     private String mTitle;
+    private String mGenre;
     private String mOverview;
     private String mReleaseDate;
     private double mRating;
     private int mVoteCount;
-    private String mImageAddress;
+    private int mDuration;
+    private String mCountry;
+    private String mCompany;
+    private String mPosterAddress;
+    private String mBackDropAddress;
     private boolean favorite;
     private static long mTMDB_ID;
     private int db_id;
@@ -130,6 +135,7 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
 
         isTabletTwoPane = getResources().getBoolean(R.bool.isTabletTwoPane);
         isTabletPortrait = getResources().getBoolean(R.bool.isTabletPortrait);
+        themeColor = getResources().getColor(R.color.colorPrimary);
 
         //get Movie Object from the intent or bundle
         Bundle arguments = getArguments();
@@ -152,33 +158,24 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
             if(isTabletTwoPane) secondaryToolbar = ((MainActivity) getActivity()).getSecondaryToolbar();
             else toolbar = ((AppCompatActivity) getActivity()).getSupportActionBar();
 
-            mImageAddress = movie.getImageAddress();
+            mPosterAddress = movie.getPosterAddress();
+            mBackDropAddress = movie.getBackdropAddress();
+            if(mBackDropAddress.equals("null") || mBackDropAddress.equals("") || mBackDropAddress == null) {
+                mBackDropAddress = mPosterAddress;
+            }
             ImageView header = (ImageView) rootView.findViewById(R.id.header);
             titleView = (TextView) rootView.findViewById(R.id.title);
-            String headerImageAddress = KeysFinals.HEADER_POSTER_BASE_URL + mImageAddress;
+            String headerImageAddress = KeysFinals.HEADER_POSTER_BASE_URL + mBackDropAddress;
             Picasso.with(getContext()).load(headerImageAddress).into(header);
-            if(themeColor == 0) setColorTheme(headerImageAddress);
-            else setColorForTitleRatingViews(themeColor);
+            if(themeColor == getResources().getColor(R.color.colorPrimary)) {
+                setColorTheme(headerImageAddress);
+            } else setColorForTitleGenreViews(themeColor);
 
             ImageView small_poster = (ImageView) rootView.findViewById(R.id.small_poster);
-            String smallImageAddress = KeysFinals.HEADER_POSTER_BASE_URL + mImageAddress;
+            String smallImageAddress = KeysFinals.SMALL_POSTER_BASE_URL + mPosterAddress;
             Picasso.with(getContext()).load(smallImageAddress).into(small_poster);
 
-            mTitle = movie.getTitle();
-            TextView title = (TextView) rootView.findViewById(R.id.title);
-            title.setText(mTitle);
-
-            mReleaseDate = movie.getReleaseDate();
-            TextView release = (TextView) rootView.findViewById(R.id.release_date);
-            release.setText(mReleaseDate);
-
-            mRating = movie.getRating();
-            TextView rating = (TextView) rootView.findViewById(R.id.rating);
-            rating.setText(Double.toString(mRating) + "/10");
-
-            mOverview = movie.getOverview();
-            TextView overview = (TextView) rootView.findViewById(R.id.overview);
-            overview.setText(mOverview);
+            setDetailFragmentTextFields();
 
             mRecyclerView = (RecyclerView) rootView.findViewById(R.id.trailers_recycler_view);
             mLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
@@ -321,11 +318,48 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
             if (toolbar != null) {
                 toolbar.getMenu().clear();
                 toolbar.setBackground(getResources().getDrawable(R.drawable.background_toolbar_translucent));
+                toolbar.setTitle("");
             }
         }
         if(scrollView != null && scrollView.getViewTreeObserver().isAlive()) {
             scrollView.getViewTreeObserver().removeOnScrollChangedListener(mOnScrollChangeListener);
         }
+    }
+
+    private void setDetailFragmentTextFields(){
+        mTitle = movie.getTitle();
+        TextView title = (TextView) rootView.findViewById(R.id.title);
+        title.setText(mTitle);
+
+        mRating = movie.getRating();
+        mVoteCount = movie.getVoteCount();
+        TextView rating = (TextView) rootView.findViewById(R.id.rating);
+        rating.setText(Double.toString(mRating) + "/10" + " (" + mVoteCount + " Votes)");
+
+        mReleaseDate = movie.getReleaseDate();
+        TextView release = (TextView) rootView.findViewById(R.id.release_date);
+        release.setText(mReleaseDate);
+
+        mDuration = movie.getDuration();
+        TextView durationView = (TextView) rootView.findViewById(R.id.duration);
+        durationView.setText(Integer.toString(mDuration) + " min.");
+
+        mGenre = movie.getGenre();
+        TextView genre = (TextView) rootView.findViewById(R.id.genre);
+        genre.setText(mGenre);
+
+        mCountry = movie.getCountry();
+        TextView countryView = (TextView) rootView.findViewById(R.id.country);
+        countryView.setText(mCountry);
+
+        mCompany = movie.getProductionCompanies();
+        TextView companyView = (TextView) rootView.findViewById(R.id.company);
+        companyView.setText(mCompany);
+
+        mOverview = movie.getOverview();
+        TextView overview = (TextView) rootView.findViewById(R.id.overview);
+        overview.setText(mOverview);
+
     }
 
     private void setColorTheme(String headerImageAddress){
@@ -337,7 +371,7 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
                             @Override
                             public void onGenerated(Palette palette) {
                                 themeColor = palette.getVibrantColor(getResources().getColor(R.color.colorPrimary));
-                                setColorForTitleRatingViews(themeColor);
+                                setColorForTitleGenreViews(themeColor);
                             }
                         });
             }
@@ -354,7 +388,7 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
         });
     }
 
-    private void setColorForTitleRatingViews(int themeColor){
+    private void setColorForTitleGenreViews(int themeColor){
         LinearLayout rating = (LinearLayout) rootView.findViewById(R.id.rating_layout);
         rating.setBackgroundColor(themeColor);
         titleView.setBackgroundColor(themeColor);
@@ -428,7 +462,7 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
         values.put(FavoriteMovieEntry.COLUMN_NAME_OVERVIEW, mOverview);
         values.put(FavoriteMovieEntry.COLUMN_NAME_RATING, mRating);
         values.put(FavoriteMovieEntry.COLUMN_NAME_RELEASE, mReleaseDate);
-        values.put(FavoriteMovieEntry.COLUMN_NAME_IMAGE_ADDRESS, mImageAddress);
+        values.put(FavoriteMovieEntry.COLUMN_NAME_IMAGE_ADDRESS, mPosterAddress);
         values.put(FavoriteMovieEntry.COLUMN_NAME_MDB_ID, mTMDB_ID);
 
         Uri uri = getContext().getContentResolver().insert(FavoriteMovieEntry.CONTENT_URI, values);

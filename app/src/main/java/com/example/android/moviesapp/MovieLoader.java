@@ -8,8 +8,10 @@ import org.json.JSONException;
 
 import java.util.ArrayList;
 
+import static com.example.android.moviesapp.utilities.JsonParser.getIDsFromJson;
 import static com.example.android.moviesapp.utilities.JsonParser.getMovieDataFromJson;
-import static com.example.android.moviesapp.utilities.MDBConnection.LOAD_MOVIES;
+import static com.example.android.moviesapp.utilities.MDBConnection.LOAD_MOVIE;
+import static com.example.android.moviesapp.utilities.MDBConnection.LOAD_MOVIES_IDS;
 import static com.example.android.moviesapp.utilities.MDBConnection.getJsonResponse;
 
 public class MovieLoader extends AsyncTaskLoader<ArrayList<Movie>> {
@@ -35,10 +37,17 @@ public class MovieLoader extends AsyncTaskLoader<ArrayList<Movie>> {
     @Override
     public ArrayList<Movie> loadInBackground(){
         Log.v(LOG_TAG, "Loader: loadInBackground");
-        String movieJsonStr = getJsonResponse(LOAD_MOVIES);
-
+        ArrayList<Movie> movieArrayList = new ArrayList<Movie>();
+        String idsJsonStr = getJsonResponse(LOAD_MOVIES_IDS, -1);
         try {
-            return getMovieDataFromJson(movieJsonStr);
+            ArrayList<Long> ids = getIDsFromJson(idsJsonStr);
+            for(int i = 0; i < ids.size(); i++){
+                long movie_id = ids.get(i);
+                String movieJsonStr = getJsonResponse(LOAD_MOVIE, movie_id);
+                Movie movie = getMovieDataFromJson(movieJsonStr);
+                movieArrayList.add(movie);
+            }
+            return movieArrayList;
         } catch (JSONException e) {
             Log.e(LOG_TAG, e.getMessage(), e);
             e.printStackTrace();

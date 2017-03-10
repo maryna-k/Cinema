@@ -13,44 +13,105 @@ import java.util.ArrayList;
 
 public class JsonParser {
 
-    private final String LOG_TAG = JsonParser.class.getSimpleName() + "LOG";
+    private static final String LOG_TAG = JsonParser.class.getSimpleName() + "LOG";
 
-    public static ArrayList<Movie> getMovieDataFromJson(String movieJsonStr) throws JSONException {
+    public static ArrayList<Long> getIDsFromJson(String movieJsonStr) throws JSONException {
+        if (movieJsonStr == null) return null;
 
-        if(movieJsonStr == null) return null;
-
-        final String RESULTS = "results";
-        final String TITLE = "title";
-        final String OVERVIEW = "overview";
-        final String RATING = "vote_average";
-        final String RELEASE_DATE = "release_date";
-        final String IMAGE_ADDRESS = "poster_path";
         final String TMDB_ID = "id";
+        final String RESULTS = "results";
 
         JSONObject movieJson = new JSONObject(movieJsonStr);
         JSONArray movieArray = movieJson.getJSONArray(RESULTS);
 
-        ArrayList<Movie> movieList = new ArrayList<>();
+        ArrayList<Long> idList = new ArrayList<>();
 
         for (int i = 0; i < movieArray.length(); i++) {
-
-            Movie movie = new Movie();
+            Long idStr;
             JSONObject movieObject = movieArray.getJSONObject(i);
-
-            movie.setTitle(movieObject.getString(TITLE));
-            movie.setOverview(movieObject.getString(OVERVIEW));
-            movie.setRating(movieObject.getDouble(RATING));
-            movie.setReleaseDate(movieObject.getString(RELEASE_DATE));
-            movie.setImageAddress(movieObject.getString(IMAGE_ADDRESS));
-            movie.setMdb_id(movieObject.getLong(TMDB_ID));
-
-            movieList.add(i, movie);
-            //Log.v(LOG_TAG, movie.toString());
+            idStr = movieObject.getLong(TMDB_ID);
+            idList.add(i, idStr);
         }
-        return movieList;
+        return idList;
     }
 
-    public static ArrayList<YouTubeTrailer> getTrailerDataFromJson(String trailerJsonStr) throws JSONException{
+    public static Movie getMovieDataFromJson(String movieJsonStr) throws JSONException {
+
+        if (movieJsonStr == null) return null;
+
+        final String RESULTS = "results";
+        final String TITLE = "title";
+        final String OVERVIEW = "overview";
+        final String VOTE_AVERAGE = "vote_average";
+        final String VOTE_COUNT = "vote_count";
+        final String RELEASE_DATE = "release_date";
+        final String DURATION = "runtime";
+        final String POSTER_ADDRESS = "poster_path";
+        final String BACKDROP_ADDRESS = "backdrop_path";
+        final String COUNTRIES = "production_countries";
+        final String GENRES = "genres";
+        final String PRODUCTION_COMPANIES = "production_companies";
+        final String TMDB_ID = "id";
+
+        JSONObject movieJson = new JSONObject(movieJsonStr);
+        Movie movie = new Movie();
+
+        movie.setTitle(movieJson.getString(TITLE));
+        movie.setOverview(movieJson.getString(OVERVIEW));
+        movie.setRating(movieJson.getDouble(VOTE_AVERAGE));
+        movie.setVoteCount(movieJson.getInt(VOTE_COUNT));
+        movie.setReleaseDate(movieJson.getString(RELEASE_DATE));
+        movie.setDuration(movieJson.getInt(DURATION));
+        movie.setPosterAddress(movieJson.getString(POSTER_ADDRESS));
+        movie.setBackdropAddress(movieJson.getString(BACKDROP_ADDRESS));
+        movie.setMdb_id(movieJson.getLong(TMDB_ID));
+
+        movie.setCountry(getAdditionalInfoFromJson(movieJson, COUNTRIES));
+        movie.setGenre(getAdditionalInfoFromJson(movieJson, GENRES));
+        movie.setProductionCompanies(getAdditionalInfoFromJson(movieJson, PRODUCTION_COMPANIES));
+
+        return movie;
+    }
+
+    private static String getAdditionalInfoFromJson(JSONObject movieJson, final String TYPE) throws JSONException{
+        final String NAME = "name";
+        String infoStr = "";
+        JSONArray infoArray = movieJson.getJSONArray(TYPE);
+        for(int i = 0; i < infoArray.length(); i++){
+            JSONObject infoObject = infoArray.getJSONObject(i);
+            infoStr = infoStr + infoObject.getString(NAME);
+            if(i < infoArray.length() - 1) {
+                infoStr = infoStr + ", ";
+            }
+        }
+        return infoStr;
+    }
+
+    /*public static String[] getCountryAndGenreDataFromJson(String movieJsonStr) {
+        if (movieJsonStr == null) return null;
+
+        final String COUNTRIES = "country";
+        final String GENRES = "genre_ids";
+        final String PRODUCTION_COMPANIES = "production_companies";
+
+        try {
+            JSONObject movieJsonObject = new JSONObject(movieJsonStr);
+
+            String[] additionalMovieInfoArray = new String[3];
+
+            additionalMovieInfoArray[0] = getAdditionalInfoFromJson(movieJsonObject, COUNTRIES);
+            additionalMovieInfoArray[1] = getAdditionalInfoFromJson(movieJsonObject, GENRES);
+            additionalMovieInfoArray[2] = getAdditionalInfoFromJson(movieJsonObject, PRODUCTION_COMPANIES);
+
+            return additionalMovieInfoArray;
+        } catch (JSONException e) {
+            Log.e(LOG_TAG, e.getMessage(), e);
+            e.printStackTrace();
+        }
+        return null;
+    } */
+
+    public static ArrayList<YouTubeTrailer> getTrailerDataFromJson(String trailerJsonStr) throws JSONException {
 
         if (trailerJsonStr == null) return null;
 
@@ -66,7 +127,7 @@ public class JsonParser {
 
             JSONObject trailerObject = trailerArray.getJSONObject(i);
 
-            if(trailerObject.getString(TYPE).equals("Trailer")){
+            if (trailerObject.getString(TYPE).equals("Trailer")) {
                 YouTubeTrailer trailer = new YouTubeTrailer(trailerObject.getString(KEY));
                 trailerList.add(trailer);
                 //Log.v(LOG_TAG, "Trailer key: " +  trailer.getKey());
@@ -75,7 +136,7 @@ public class JsonParser {
         return trailerList;
     }
 
-    public static ArrayList<Review> getReviewDataFromJson(String reviewJsonStr) throws JSONException{
+    public static ArrayList<Review> getReviewDataFromJson(String reviewJsonStr) throws JSONException {
 
         if (reviewJsonStr == null) return null;
 
