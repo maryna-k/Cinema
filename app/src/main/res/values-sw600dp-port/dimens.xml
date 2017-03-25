@@ -16,6 +16,7 @@
     <dimen name="genre_left_padding">230dp</dimen>
 
     <dimen name="movie_title_padding">10dp</dimen>
+    <dimen name="small_poster_base_width">30dp</dimen>
     <dimen name="movie_title_size">28sp</dimen>
     <dimen name="detail_text_size">18sp</dimen>
 

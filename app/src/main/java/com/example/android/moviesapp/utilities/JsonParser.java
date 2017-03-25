@@ -9,33 +9,16 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Map;
+
+import static com.example.android.moviesapp.utilities.MDBConnection.searchCategories;
 
 
 public class JsonParser {
 
     private static final String LOG_TAG = JsonParser.class.getSimpleName() + "LOG";
 
-    public static ArrayList<Long> getIDsFromJson(String movieJsonStr) throws JSONException {
-        if (movieJsonStr == null) return null;
-
-        final String TMDB_ID = "id";
-        final String RESULTS = "results";
-
-        JSONObject movieJson = new JSONObject(movieJsonStr);
-        JSONArray movieArray = movieJson.getJSONArray(RESULTS);
-
-        ArrayList<Long> idList = new ArrayList<>();
-
-        for (int i = 0; i < movieArray.length(); i++) {
-            Long idStr;
-            JSONObject movieObject = movieArray.getJSONObject(i);
-            idStr = movieObject.getLong(TMDB_ID);
-            idList.add(i, idStr);
-        }
-        return idList;
-    }
-
-    public static Movie getMovieDataFromJson(String movieJsonStr) throws JSONException {
+    public static ArrayList<Movie> getMovieDataFromJson(String movieJsonStr) throws JSONException {
 
         if (movieJsonStr == null) return null;
 
@@ -48,68 +31,52 @@ public class JsonParser {
         final String DURATION = "runtime";
         final String POSTER_ADDRESS = "poster_path";
         final String BACKDROP_ADDRESS = "backdrop_path";
-        final String COUNTRIES = "production_countries";
-        final String GENRES = "genres";
-        final String PRODUCTION_COMPANIES = "production_companies";
         final String TMDB_ID = "id";
 
         JSONObject movieJson = new JSONObject(movieJsonStr);
-        Movie movie = new Movie();
+        JSONArray movieArray = movieJson.getJSONArray(RESULTS);
 
-        movie.setTitle(movieJson.getString(TITLE));
-        movie.setOverview(movieJson.getString(OVERVIEW));
-        movie.setRating(movieJson.getDouble(VOTE_AVERAGE));
-        movie.setVoteCount(movieJson.getInt(VOTE_COUNT));
-        movie.setReleaseDate(movieJson.getString(RELEASE_DATE));
-        movie.setDuration(movieJson.getInt(DURATION));
-        movie.setPosterAddress(movieJson.getString(POSTER_ADDRESS));
-        movie.setBackdropAddress(movieJson.getString(BACKDROP_ADDRESS));
-        movie.setMdb_id(movieJson.getLong(TMDB_ID));
+        ArrayList<Movie> movieList = new ArrayList<>();
 
-        movie.setCountry(getAdditionalInfoFromJson(movieJson, COUNTRIES));
-        movie.setGenre(getAdditionalInfoFromJson(movieJson, GENRES));
-        movie.setProductionCompanies(getAdditionalInfoFromJson(movieJson, PRODUCTION_COMPANIES));
+        for (int i = 0; i < movieArray.length(); i++) {
 
-        return movie;
+            Movie movie = new Movie();
+            JSONObject movieObject = movieArray.getJSONObject(i);
+
+            movie.setTitle(movieObject.getString(TITLE));
+            movie.setOverview(movieObject.getString(OVERVIEW));
+            movie.setRating(movieObject.getDouble(VOTE_AVERAGE));
+            movie.setVoteCount(movieObject.getInt(VOTE_COUNT));
+            movie.setReleaseDate(movieObject.getString(RELEASE_DATE));
+            movie.setPosterAddress(movieObject.getString(POSTER_ADDRESS));
+            movie.setBackdropAddress(movieObject.getString(BACKDROP_ADDRESS));
+            movie.setMdb_id(movieObject.getLong(TMDB_ID));
+            movie.setGenre(getGenresFromJson(movieObject));
+
+            movieList.add(i, movie);
+            //Log.v(LOG_TAG, movie.toString());
+        }
+        return movieList;
     }
 
-    private static String getAdditionalInfoFromJson(JSONObject movieJson, final String TYPE) throws JSONException{
-        final String NAME = "name";
+    private static String getGenresFromJson(JSONObject movieObject) throws JSONException{
+        final String GENRE_ID = "genre_ids";
         String infoStr = "";
-        JSONArray infoArray = movieJson.getJSONArray(TYPE);
-        for(int i = 0; i < infoArray.length(); i++){
-            JSONObject infoObject = infoArray.getJSONObject(i);
-            infoStr = infoStr + infoObject.getString(NAME);
-            if(i < infoArray.length() - 1) {
-                infoStr = infoStr + ", ";
+        JSONArray genreArray = movieObject.getJSONArray(GENRE_ID);
+        for(int i = 0; i < genreArray.length(); i++){
+            int id = genreArray.getInt(i);
+
+            for (Map.Entry<String, String> entry : searchCategories.entrySet()) {
+                if ((Integer.toString(id)).equals(entry.getValue())) {
+                    infoStr = infoStr + entry.getKey();
+                    if(i < genreArray.length() - 1) {
+                        infoStr = infoStr + ", ";
+                    }
+                }
             }
         }
         return infoStr;
     }
-
-    /*public static String[] getCountryAndGenreDataFromJson(String movieJsonStr) {
-        if (movieJsonStr == null) return null;
-
-        final String COUNTRIES = "country";
-        final String GENRES = "genre_ids";
-        final String PRODUCTION_COMPANIES = "production_companies";
-
-        try {
-            JSONObject movieJsonObject = new JSONObject(movieJsonStr);
-
-            String[] additionalMovieInfoArray = new String[3];
-
-            additionalMovieInfoArray[0] = getAdditionalInfoFromJson(movieJsonObject, COUNTRIES);
-            additionalMovieInfoArray[1] = getAdditionalInfoFromJson(movieJsonObject, GENRES);
-            additionalMovieInfoArray[2] = getAdditionalInfoFromJson(movieJsonObject, PRODUCTION_COMPANIES);
-
-            return additionalMovieInfoArray;
-        } catch (JSONException e) {
-            Log.e(LOG_TAG, e.getMessage(), e);
-            e.printStackTrace();
-        }
-        return null;
-    } */
 
     public static ArrayList<YouTubeTrailer> getTrailerDataFromJson(String trailerJsonStr) throws JSONException {
 

@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.example.android.moviesapp.utilities.Keys;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -82,9 +83,9 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof ViewHolder) {
             final Movie movie = mList.get(position);
-            String imageAddress = movie.getImageAddress();
+            String imageAddress = movie.getPosterAddress();
             Log.v(LOG_TAG, "Poster address: " + imageAddress);
-            String fullImageAddress = "http://image.tmdb.org/t/p/w780/" + movie.getImageAddress();
+            String fullImageAddress = Keys.SMALL_POSTER_BASE_URL + movie.getPosterAddress();
             Picasso.with(((ViewHolder) holder).itemView.getContext()).load(fullImageAddress).into(((ViewHolder) holder).imageViewItem);
             if (imageAddress.equals("null")) {
                 ((ViewHolder) holder).titleView.setText(movie.getTitle());

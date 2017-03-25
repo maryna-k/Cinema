@@ -4,7 +4,6 @@ import android.content.Context;
 import android.support.v4.content.AsyncTaskLoader;
 import android.util.Log;
 
-import com.example.android.moviesapp.DetailFragment;
 import com.example.android.moviesapp.trailer.TrailerInfoLoader;
 
 import org.json.JSONException;
@@ -40,7 +39,7 @@ public class ReviewLoader extends AsyncTaskLoader<ArrayList<Review>> {
     @Override
     public ArrayList<Review> loadInBackground() {
         Log.v(LOG_TAG, "Loader: LoadInBackground");
-        String reviewJsonStr = getJsonResponse(LOAD_REVIEWS, DetailFragment.getmTMDB_ID());
+        String reviewJsonStr = getJsonResponse(LOAD_REVIEWS);
 
         try {
             return getReviewDataFromJson(reviewJsonStr);

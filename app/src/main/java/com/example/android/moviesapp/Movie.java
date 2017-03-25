@@ -8,11 +8,8 @@ public class Movie implements Serializable {
     private String overview; //string for synopsis
     private double rating;
     private int voteCount;
-    private String country;
     private String genre;
-    private String productionCompanies;
     private String releaseDate;
-    private int duration;
     private String posterAddress; //small poster image
     private String backdropAddress; //header image
     private long mdb_id;
@@ -21,17 +18,14 @@ public class Movie implements Serializable {
     public Movie() {
     }
 
-    public Movie(String title, String overview, double rating, int voteCount, String country, String genre, String productionCompanies,
-                 String releaseDate, int duration, String posterAddress, String backdropAddress, Long mdb_id) {
+    public Movie(String title, String overview, double rating, int voteCount, String genre,
+                 String releaseDate, String posterAddress, String backdropAddress, Long mdb_id) {
         this.title = title;
         this.overview = overview;
         this.rating = rating;
         this.voteCount = voteCount;
-        this.country = country;
         this.genre = genre;
-        this.productionCompanies = productionCompanies;
         this.releaseDate = releaseDate;
-        this.duration = duration;
         this.posterAddress = posterAddress;
         this.backdropAddress = backdropAddress;
         this.mdb_id = mdb_id;
@@ -65,16 +59,8 @@ public class Movie implements Serializable {
         return voteCount;
     }
 
-    public void setVoteCount(int vote_count) {
-        this.voteCount = vote_count;
-    }
-
-    public String getCountry(){
-        return country;
-    }
-
-    public void setCountry(String country){
-        this.country = country;
+    public void setVoteCount(int voteCount) {
+        this.voteCount = voteCount;
     }
 
     public String getGenre(){
@@ -83,14 +69,6 @@ public class Movie implements Serializable {
 
     public void setGenre(String genre){
         this.genre = genre;
-    }
-
-    public String getProductionCompanies(){
-        return productionCompanies;
-    }
-
-    public void setProductionCompanies(String productionCompanies){
-        this.productionCompanies = productionCompanies;
     }
 
     public String getReleaseDate() {
@@ -103,14 +81,6 @@ public class Movie implements Serializable {
 
     public String getPosterAddress() {
         return posterAddress;
-    }
-
-    public void setDuration(int duration){
-        this.duration = duration;
-    }
-
-    public int getDuration(){
-        return duration;
     }
 
     public void setPosterAddress(String imageAddress) {

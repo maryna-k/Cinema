@@ -33,9 +33,9 @@ public class CursorMovieAdapter extends RecyclerView.Adapter<CursorMovieAdapter.
         }
 
         public void bind(final Movie movie, final MovieAdapter.OnItemClickListener listener) {
-            String imageAddress = movie.getImageAddress();
+            String imageAddress = movie.getPosterAddress();
             Log.v(LOG_TAG, "Poster address: " + imageAddress);
-            String fullImageAddress = "http://image.tmdb.org/t/p/w780/" + movie.getImageAddress();
+            String fullImageAddress = "http://image.tmdb.org/t/p/w780/" + movie.getPosterAddress();
             Picasso.with(itemView.getContext()).load(fullImageAddress).into(imageViewItem);
             if(imageAddress.equals("null")){
                 titleView.setText(movie.getTitle());
@@ -79,7 +79,7 @@ public class CursorMovieAdapter extends RecyclerView.Adapter<CursorMovieAdapter.
                 mCursor.getColumnIndex(FavoriteMovieEntry.COLUMN_NAME_RATING));
         long tmdb_id = mCursor.getLong(
                 mCursor.getColumnIndex(FavoriteMovieEntry.COLUMN_NAME_MDB_ID));
-        Movie movie = new Movie(title, overview, rating, releaseDay, imageAddress, tmdb_id);
+        Movie movie = new Movie(title, overview, rating, 0, null, releaseDay, imageAddress, null, tmdb_id);
 
         //set tag for tmdb_id (it will be used in FavoriteGridFragment to delete Movie object)
         holder.itemView.setTag(tmdb_id);

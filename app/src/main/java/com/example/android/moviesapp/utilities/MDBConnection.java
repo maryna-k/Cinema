@@ -6,6 +6,7 @@ import android.net.NetworkInfo;
 import android.util.Log;
 
 import com.example.android.moviesapp.BuildConfig;
+import com.example.android.moviesapp.DetailFragment;
 import com.example.android.moviesapp.EndlessRecyclerViewScrollListener;
 
 import java.io.BufferedReader;
@@ -22,8 +23,7 @@ public class MDBConnection {
 
     private final static String LOG_TAG = MDBConnection.class.getSimpleName() + "LOG";
 
-    public final static int LOAD_MOVIES_IDS = 0;
-    public final static int LOAD_MOVIE = 1;
+    public final static int LOAD_MOVIES = 1;
     public final static int LOAD_TRAILER_INFO = 2;
     public final static int LOAD_REVIEWS = 3;
 
@@ -31,25 +31,23 @@ public class MDBConnection {
     private final static String API_KEY = "?api_key=" + BuildConfig.TMDb_API_KEY;
 
 
-    public static String getJsonResponse(int requestType, long movie_id){
+    public static String getJsonResponse(int requestType){
 
         HttpURLConnection urlConnection = null;
         BufferedReader reader = null;
+
         String jsonString = null;
         String urlString;
 
         switch (requestType){
-            case LOAD_MOVIES_IDS:
+            case LOAD_MOVIES:
                 urlString = buildMovieUrl(getMoviesToSearch());
                 break;
-            case LOAD_MOVIE:
-                urlString = buildAdditionalInfoUrl(movie_id, LOAD_MOVIE);
-                break;
             case LOAD_TRAILER_INFO:
-                urlString = buildAdditionalInfoUrl(movie_id, LOAD_TRAILER_INFO);
+                urlString = buildTrailerReviewUrl(DetailFragment.getmTMDB_ID(), LOAD_TRAILER_INFO);
                 break;
             case LOAD_REVIEWS:
-                urlString = buildAdditionalInfoUrl(movie_id, LOAD_REVIEWS);
+                urlString = buildTrailerReviewUrl(DetailFragment.getmTMDB_ID(), LOAD_REVIEWS);
                 break;
             default: return null;
         }
@@ -124,18 +122,12 @@ public class MDBConnection {
                 .append(page).toString();
     }
 
-    private static String buildAdditionalInfoUrl(long movieId, int infoType){
+    private static String buildTrailerReviewUrl(long movieId, int infoType){
         String type = "";
-        switch (infoType){
-            case LOAD_MOVIE:
-                type = null;
-                break;
-            case LOAD_TRAILER_INFO:
-                type = "/videos";
-                break;
-            case LOAD_REVIEWS:
-                type = "/reviews";
-                break;
+        if(infoType == LOAD_TRAILER_INFO) {
+            type = "/videos";
+        } else if (infoType == LOAD_REVIEWS) {
+            type = "/reviews";
         }
 
         return new StringBuilder()
@@ -184,22 +176,4 @@ public class MDBConnection {
         searchCategories.put("War", "10752");
         searchCategories.put("Western", "37");
     }
-
-    /*public static final HashMap<String, String> genreById = new HashMap<>();
-    static {
-        genreById.put("28", "Action");
-        genreById.put("12", "Adventure");
-        genreById.put("16", "Animation");
-        genreById.put("35", "Comedy");
-        genreById.put("80", "Crime");
-        genreById.put("Comedy", "35");
-        genreById.put("Crime", "80");
-        genreById.put("Documentary", "99");
-        genreById.put("Drama", "18");
-        genreById.put("Family", "10751");
-        genreById.put("Fantasy", "14");
-        genreById.put("Foreign", "10769");
-        genreById.put("Horror", "27");
-        genreById.put("Music", "10402");
-    }*/
 }

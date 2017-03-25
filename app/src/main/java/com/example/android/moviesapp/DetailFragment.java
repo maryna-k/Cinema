@@ -46,7 +46,7 @@ import com.example.android.moviesapp.review.ReviewLoader;
 import com.example.android.moviesapp.trailer.TrailerAdapter;
 import com.example.android.moviesapp.trailer.TrailerInfoLoader;
 import com.example.android.moviesapp.trailer.YouTubeTrailer;
-import com.example.android.moviesapp.utilities.KeysFinals;
+import com.example.android.moviesapp.utilities.Keys;
 import com.google.android.youtube.player.YouTubeStandalonePlayer;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
@@ -66,9 +66,6 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
     private String mReleaseDate;
     private double mRating;
     private int mVoteCount;
-    private int mDuration;
-    private String mCountry;
-    private String mCompany;
     private String mPosterAddress;
     private String mBackDropAddress;
     private boolean favorite;
@@ -165,14 +162,14 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
             }
             ImageView header = (ImageView) rootView.findViewById(R.id.header);
             titleView = (TextView) rootView.findViewById(R.id.title);
-            String headerImageAddress = KeysFinals.HEADER_POSTER_BASE_URL + mBackDropAddress;
+            String headerImageAddress = Keys.HEADER_POSTER_BASE_URL + mBackDropAddress;
             Picasso.with(getContext()).load(headerImageAddress).into(header);
             if(themeColor == getResources().getColor(R.color.colorPrimary)) {
                 setColorTheme(headerImageAddress);
-            } else setColorForTitleGenreViews(themeColor);
+            } else setColorForTitleView(themeColor);
 
             ImageView small_poster = (ImageView) rootView.findViewById(R.id.small_poster);
-            String smallImageAddress = KeysFinals.SMALL_POSTER_BASE_URL + mPosterAddress;
+            String smallImageAddress = Keys.SMALL_POSTER_BASE_URL + mPosterAddress;
             Picasso.with(getContext()).load(smallImageAddress).into(small_poster);
 
             setDetailFragmentTextFields();
@@ -332,29 +329,20 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
         title.setText(mTitle);
 
         mRating = movie.getRating();
-        mVoteCount = movie.getVoteCount();
         TextView rating = (TextView) rootView.findViewById(R.id.rating);
-        rating.setText(Double.toString(mRating) + "/10" + " (" + mVoteCount + " Votes)");
+        rating.setText(mRating + " out of 10");
+
+        mVoteCount = movie.getVoteCount();
+        TextView voteCount = (TextView) rootView.findViewById(R.id.vote_count);
+        voteCount.setText(mVoteCount + " votes");
 
         mReleaseDate = movie.getReleaseDate();
         TextView release = (TextView) rootView.findViewById(R.id.release_date);
         release.setText(mReleaseDate);
 
-        mDuration = movie.getDuration();
-        TextView durationView = (TextView) rootView.findViewById(R.id.duration);
-        durationView.setText(Integer.toString(mDuration) + " min.");
-
         mGenre = movie.getGenre();
         TextView genre = (TextView) rootView.findViewById(R.id.genre);
         genre.setText(mGenre);
-
-        mCountry = movie.getCountry();
-        TextView countryView = (TextView) rootView.findViewById(R.id.country);
-        countryView.setText(mCountry);
-
-        mCompany = movie.getProductionCompanies();
-        TextView companyView = (TextView) rootView.findViewById(R.id.company);
-        companyView.setText(mCompany);
 
         mOverview = movie.getOverview();
         TextView overview = (TextView) rootView.findViewById(R.id.overview);
@@ -371,7 +359,7 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
                             @Override
                             public void onGenerated(Palette palette) {
                                 themeColor = palette.getVibrantColor(getResources().getColor(R.color.colorPrimary));
-                                setColorForTitleGenreViews(themeColor);
+                                setColorForTitleView(themeColor);
                             }
                         });
             }
@@ -388,9 +376,9 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
         });
     }
 
-    private void setColorForTitleGenreViews(int themeColor){
-        LinearLayout rating = (LinearLayout) rootView.findViewById(R.id.rating_layout);
-        rating.setBackgroundColor(themeColor);
+    private void setColorForTitleView(int themeColor){
+        LinearLayout base = (LinearLayout) rootView.findViewById(R.id.small_poster_base);
+        base.setBackgroundColor(themeColor);
         titleView.setBackgroundColor(themeColor);
     }
 

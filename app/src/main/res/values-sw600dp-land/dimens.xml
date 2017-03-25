@@ -14,7 +14,10 @@
     <dimen name="genre_left_padding">165dp</dimen>
 
     <dimen name="movie_title_padding">10dp</dimen>
+    <dimen name="small_poster_base_width">30dp</dimen>
 
     <dimen name="fragmentDivider_margin">15dp</dimen>
+
+    <dimen name="grid_poster_height">270dp</dimen>
 
 </resources>
