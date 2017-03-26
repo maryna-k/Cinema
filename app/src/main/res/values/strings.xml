@@ -17,9 +17,9 @@
     <!---->
 
     <!--Empty view strings-->
-    <string name="empty_movie_detail">Please, select a movie to see details</string>
+    <string name="empty_movie_detail">Please, select a movie to see its details</string>
     <string name="empty_movie_gridview">Please, connect to the Internet to load movies</string>
-    <string name="empty_favorite_movie_gridview">You have no favorite movies so far</string>
+    <string name="empty_favorite_movie_gridview">There are no favorite movies to show...</string>
 
     <string name="pref_search_key">search_value</string>
     <string name="pref_search_default" translatable="false">Popular</string>

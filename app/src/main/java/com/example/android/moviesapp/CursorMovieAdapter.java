@@ -3,8 +3,8 @@ package com.example.android.moviesapp;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.android.moviesapp.database.MovieContract.FavoriteMovieEntry;
-import com.squareup.picasso.Picasso;
+import com.example.android.moviesapp.utilities.ImageUtils;
 
 
 public class CursorMovieAdapter extends RecyclerView.Adapter<CursorMovieAdapter.ViewHolder>{
@@ -33,14 +33,14 @@ public class CursorMovieAdapter extends RecyclerView.Adapter<CursorMovieAdapter.
         }
 
         public void bind(final Movie movie, final MovieAdapter.OnItemClickListener listener) {
-            String imageAddress = movie.getPosterAddress();
-            Log.v(LOG_TAG, "Poster address: " + imageAddress);
-            String fullImageAddress = "http://image.tmdb.org/t/p/w780/" + movie.getPosterAddress();
-            Picasso.with(itemView.getContext()).load(fullImageAddress).into(imageViewItem);
-            if(imageAddress.equals("null")){
+            final String posterPath = movie.getPosterStoragePath();
+            final Bitmap posterBitmap = ImageUtils.getPosterFromStorage(posterPath, Long.toString(movie.getMdb_id()));
+            imageViewItem.setImageBitmap(posterBitmap);
+            if(posterPath == null) {
                 titleView.setText(movie.getTitle());
                 titleView.setVisibility(View.VISIBLE);
-            } else titleView.setVisibility(View.GONE);
+                imageViewItem.setVisibility(View.INVISIBLE);
+            }
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -49,7 +49,6 @@ public class CursorMovieAdapter extends RecyclerView.Adapter<CursorMovieAdapter.
             });
         }
     }
-
 
     public CursorMovieAdapter(Cursor mCursor, MovieAdapter.OnItemClickListener listener){
         this.mCursor = mCursor;
@@ -67,19 +66,28 @@ public class CursorMovieAdapter extends RecyclerView.Adapter<CursorMovieAdapter.
     @Override
     public void onBindViewHolder(ViewHolder holder, int position){
         mCursor.moveToPosition(position);
-        String imageAddress = mCursor.getString(
-                mCursor.getColumnIndex(FavoriteMovieEntry.COLUMN_NAME_IMAGE_ADDRESS));
-        String title = mCursor.getString(
-                mCursor.getColumnIndex(FavoriteMovieEntry.COLUMN_NAME_TITLE));
-        String overview = mCursor.getString(
-                mCursor.getColumnIndex(FavoriteMovieEntry.COLUMN_NAME_OVERVIEW));
-        String releaseDay = mCursor.getString(
-                mCursor.getColumnIndex(FavoriteMovieEntry.COLUMN_NAME_RELEASE));
-        double rating = mCursor.getDouble(
-                mCursor.getColumnIndex(FavoriteMovieEntry.COLUMN_NAME_RATING));
-        long tmdb_id = mCursor.getLong(
-                mCursor.getColumnIndex(FavoriteMovieEntry.COLUMN_NAME_MDB_ID));
-        Movie movie = new Movie(title, overview, rating, 0, null, releaseDay, imageAddress, null, tmdb_id);
+        String posterAddress = mCursor.getString
+                (mCursor.getColumnIndex(FavoriteMovieEntry.COLUMN_NAME_POSTER_ADDRESS));
+        String backdropAddress = mCursor.getString
+                (mCursor.getColumnIndex(FavoriteMovieEntry.COLUMN_NAME_BACKDROP_ADDRESS));
+        String title = mCursor.getString
+                (mCursor.getColumnIndex(FavoriteMovieEntry.COLUMN_NAME_TITLE));
+        String genre = mCursor.getString
+                (mCursor.getColumnIndex(FavoriteMovieEntry.COLUMN_NAME_GENRE));
+        String overview = mCursor.getString
+                (mCursor.getColumnIndex(FavoriteMovieEntry.COLUMN_NAME_OVERVIEW));
+        String releaseDay = mCursor.getString
+                (mCursor.getColumnIndex(FavoriteMovieEntry.COLUMN_NAME_RELEASE));
+        double rating = mCursor.getDouble
+                (mCursor.getColumnIndex(FavoriteMovieEntry.COLUMN_NAME_RATING));
+        int voteCount = mCursor.getInt
+                (mCursor.getColumnIndex(FavoriteMovieEntry.COLUMN_NAME_VOTE_COUNT));
+        long tmdb_id = mCursor.getLong
+                (mCursor.getColumnIndex(FavoriteMovieEntry.COLUMN_NAME_MDB_ID));
+        String posterStoragePath = mCursor.getString
+                (mCursor.getColumnIndex(FavoriteMovieEntry.COLUMN_NAME_POSTER_STORAGE_PATH));
+        Movie movie = new Movie(title, overview, rating, voteCount, genre, releaseDay,
+                posterAddress, posterStoragePath, backdropAddress, tmdb_id);
 
         //set tag for tmdb_id (it will be used in FavoriteGridFragment to delete Movie object)
         holder.itemView.setTag(tmdb_id);

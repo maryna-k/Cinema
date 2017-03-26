@@ -46,6 +46,7 @@ import com.example.android.moviesapp.review.ReviewLoader;
 import com.example.android.moviesapp.trailer.TrailerAdapter;
 import com.example.android.moviesapp.trailer.TrailerInfoLoader;
 import com.example.android.moviesapp.trailer.YouTubeTrailer;
+import com.example.android.moviesapp.utilities.ImageUtils;
 import com.example.android.moviesapp.utilities.Keys;
 import com.google.android.youtube.player.YouTubeStandalonePlayer;
 import com.squareup.picasso.Picasso;
@@ -71,6 +72,7 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
     private boolean favorite;
     private static long mTMDB_ID;
     private int db_id;
+    private String fullPosterAddress;
 
     //RecyclerView variables
     private TrailerAdapter mTrailerAdapter;
@@ -88,6 +90,7 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
     private ActionBar toolbar;
     private Toolbar secondaryToolbar;
     int themeColor;
+    int defaultColor;
     private TextView titleView;
     private int toolbarChangePoint = 0;
     private ViewTreeObserver.OnScrollChangedListener mOnScrollChangeListener;
@@ -105,12 +108,12 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
     private final String THEME_COLOR = "theme_color";
 
 
-    //FragmentCallback for when Show more reviews button is clicked.
+    //Fragment сallback for when Show more reviews button is clicked.
     public interface ReviewFragmentCallback {
         public void onMoreReviewsSelected(ArrayList<Review> reviewList, String title, int themeColor);
     }
 
-    //FragmentCallback for when Settings menu item is clicked
+    //Fragment сallback for when Settings menu item is clicked
     public interface SettingsFragmentCallback{
         public void onSettingsMenuItemSelected(boolean selected);
     }
@@ -132,7 +135,8 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
 
         isTabletTwoPane = getResources().getBoolean(R.bool.isTabletTwoPane);
         isTabletPortrait = getResources().getBoolean(R.bool.isTabletPortrait);
-        themeColor = getResources().getColor(R.color.colorPrimary);
+        defaultColor = getResources().getColor(R.color.colorPrimary);
+        themeColor = defaultColor;
 
         //get Movie Object from the intent or bundle
         Bundle arguments = getArguments();
@@ -164,13 +168,18 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
             titleView = (TextView) rootView.findViewById(R.id.title);
             String headerImageAddress = Keys.HEADER_POSTER_BASE_URL + mBackDropAddress;
             Picasso.with(getContext()).load(headerImageAddress).into(header);
-            if(themeColor == getResources().getColor(R.color.colorPrimary)) {
+            if(themeColor == defaultColor) {
                 setColorTheme(headerImageAddress);
             } else setColorForTitleView(themeColor);
 
-            ImageView small_poster = (ImageView) rootView.findViewById(R.id.small_poster);
-            String smallImageAddress = Keys.SMALL_POSTER_BASE_URL + mPosterAddress;
-            Picasso.with(getContext()).load(smallImageAddress).into(small_poster);
+            ImageView smallPosterView = (ImageView) rootView.findViewById(R.id.small_poster);
+            if(movie.getPosterStoragePath() != null){
+                Bitmap bitmap = ImageUtils.getPosterFromStorage(movie.getPosterStoragePath(), Long.toString(mTMDB_ID));
+                smallPosterView.setImageBitmap(bitmap);
+            } else {
+                fullPosterAddress = Keys.SMALL_POSTER_BASE_URL + mPosterAddress;
+                Picasso.with(getContext()).load(fullPosterAddress).into(smallPosterView);
+            }
 
             setDetailFragmentTextFields();
 
@@ -198,6 +207,8 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
             Log.v(LOG_TAG, "onCreateView");
             installConnectionListener();
         } else {
+            //if intent or bundle is empty, show the empty view
+            //used in two pane tablet layout when the program is first opened and no movie is selected
             rootView.setVisibility(View.GONE);
         }
         return rootView;
@@ -280,7 +291,7 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
                 if (removedNum > 0) {
                     favorite = false;
                     getActivity().invalidateOptionsMenu();
-                    Toast.makeText(getContext(), "Movie was removed from Favorite", Toast.LENGTH_LONG)
+                    Toast.makeText(getContext(), "Movie was removed from Favorites", Toast.LENGTH_LONG)
                             .show();
                 }
                 break;
@@ -358,7 +369,13 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
                         .generate(new Palette.PaletteAsyncListener() {
                             @Override
                             public void onGenerated(Palette palette) {
-                                themeColor = palette.getVibrantColor(getResources().getColor(R.color.colorPrimary));
+                                themeColor = palette.getVibrantColor(defaultColor);
+                                if (themeColor == defaultColor){
+                                    themeColor = palette.getDominantColor(defaultColor);
+                                }
+                                if (themeColor == defaultColor){
+                                    themeColor = palette.getMutedColor(defaultColor);
+                                }
                                 setColorForTitleView(themeColor);
                             }
                         });
@@ -445,12 +462,18 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
 
     //insert Movie object to favorite_movies table
     public boolean insertMovie() {
+        String posterPath = ImageUtils.savePosterToInternalStorage(fullPosterAddress, Long.toString(mTMDB_ID),
+                            getContext(), getActivity().getApplicationContext());
         ContentValues values = new ContentValues();
         values.put(FavoriteMovieEntry.COLUMN_NAME_TITLE, mTitle);
         values.put(FavoriteMovieEntry.COLUMN_NAME_OVERVIEW, mOverview);
+        values.put(FavoriteMovieEntry.COLUMN_NAME_GENRE, mGenre);
         values.put(FavoriteMovieEntry.COLUMN_NAME_RATING, mRating);
+        values.put(FavoriteMovieEntry.COLUMN_NAME_VOTE_COUNT, mVoteCount);
         values.put(FavoriteMovieEntry.COLUMN_NAME_RELEASE, mReleaseDate);
-        values.put(FavoriteMovieEntry.COLUMN_NAME_IMAGE_ADDRESS, mPosterAddress);
+        values.put(FavoriteMovieEntry.COLUMN_NAME_POSTER_ADDRESS, mPosterAddress);
+        values.put(FavoriteMovieEntry.COLUMN_NAME_POSTER_STORAGE_PATH, posterPath);
+        values.put(FavoriteMovieEntry.COLUMN_NAME_BACKDROP_ADDRESS, mBackDropAddress);
         values.put(FavoriteMovieEntry.COLUMN_NAME_MDB_ID, mTMDB_ID);
 
         Uri uri = getContext().getContentResolver().insert(FavoriteMovieEntry.CONTENT_URI, values);
@@ -458,12 +481,12 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
             favorite = true;
             //set db_id from the uri, in case if user wants to remove item right away
             db_id = Integer.parseInt(uri.getPathSegments().get(1));
-            Toast.makeText(getContext(), "Movie is now in Favorite",
+            Toast.makeText(getContext(), "Movie was added to Favorites",
                     Toast.LENGTH_LONG)
                     .show();
             return true;
         } else {
-            Toast.makeText(getContext(), "Movie was not saved", Toast.LENGTH_LONG).show();
+            Toast.makeText(getContext(), "Oops... Movie was not saved", Toast.LENGTH_LONG).show();
             return false;
         }
     }

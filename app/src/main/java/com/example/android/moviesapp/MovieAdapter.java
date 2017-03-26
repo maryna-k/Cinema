@@ -86,7 +86,9 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             String imageAddress = movie.getPosterAddress();
             Log.v(LOG_TAG, "Poster address: " + imageAddress);
             String fullImageAddress = Keys.SMALL_POSTER_BASE_URL + movie.getPosterAddress();
-            Picasso.with(((ViewHolder) holder).itemView.getContext()).load(fullImageAddress).into(((ViewHolder) holder).imageViewItem);
+            Picasso mPicasso = Picasso.with(((ViewHolder) holder).itemView.getContext());
+            mPicasso.setIndicatorsEnabled(true);
+            mPicasso.load(fullImageAddress).into(((ViewHolder) holder).imageViewItem);
             if (imageAddress.equals("null")) {
                 ((ViewHolder) holder).titleView.setText(movie.getTitle());
                 ((ViewHolder) holder).titleView.setVisibility(View.VISIBLE);
