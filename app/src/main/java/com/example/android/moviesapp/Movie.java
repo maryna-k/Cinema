@@ -13,13 +13,14 @@ public class Movie implements Serializable {
     private String posterAddress; //small poster image
     private String backdropAddress; //header image
     private long mdb_id;
+    private String posterStoragePath;
     private boolean favorite;
 
     public Movie() {
     }
 
     public Movie(String title, String overview, double rating, int voteCount, String genre,
-                 String releaseDate, String posterAddress, String backdropAddress, Long mdb_id) {
+                 String releaseDate, String posterAddress, String posterStoragePath, String backdropAddress, Long mdb_id) {
         this.title = title;
         this.overview = overview;
         this.rating = rating;
@@ -29,6 +30,7 @@ public class Movie implements Serializable {
         this.posterAddress = posterAddress;
         this.backdropAddress = backdropAddress;
         this.mdb_id = mdb_id;
+        this.posterStoragePath = posterStoragePath;
     }
 
     public String getTitle() {
@@ -101,6 +103,14 @@ public class Movie implements Serializable {
 
     public void setMdb_id(long mdb_id) {
         this.mdb_id = mdb_id;
+    }
+
+    public void setPosterStoragePath(String path){
+        posterStoragePath = path;
+    }
+
+    public String getPosterStoragePath(){
+        return posterStoragePath;
     }
 
     public boolean isFavorite() {

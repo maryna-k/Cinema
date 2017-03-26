@@ -31,10 +31,13 @@ public final class MovieContract {
         public static final String TABLE_NAME = "favorite_movies";
         public static final String COLUMN_NAME_TITLE = "title";
         public static final String COLUMN_NAME_RATING = "rating";
+        public static final String COLUMN_NAME_VOTE_COUNT = "vote_count";
         public static final String COLUMN_NAME_GENRE = "genre";
         public static final String COLUMN_NAME_RELEASE = "release_date";
         public static final String COLUMN_NAME_OVERVIEW = "overview";
-        public static final String COLUMN_NAME_IMAGE_ADDRESS = "image_address";
+        public static final String COLUMN_NAME_POSTER_ADDRESS = "poster_address";
+        public static final String COLUMN_NAME_POSTER_STORAGE_PATH = "poster_storage_path";
+        public static final String COLUMN_NAME_BACKDROP_ADDRESS = "backdrop_address";
         public static final String COLUMN_NAME_MDB_ID = "mdb_id"; //movie database id
 
         public static final String PATH_FAVORITE_MOVIES_TMDB_ID = COLUMN_NAME_MDB_ID;

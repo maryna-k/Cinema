@@ -23,8 +23,11 @@ public class MovieDbHelper extends SQLiteOpenHelper {
                 MovieContract.FavoriteMovieEntry.COLUMN_NAME_GENRE + " TEXT," +
                 MovieContract.FavoriteMovieEntry.COLUMN_NAME_RELEASE + " TEXT," +
                 MovieContract.FavoriteMovieEntry.COLUMN_NAME_RATING + " DOUBLE," +
+                MovieContract.FavoriteMovieEntry.COLUMN_NAME_VOTE_COUNT + " INTEGER," +
                 MovieContract.FavoriteMovieEntry.COLUMN_NAME_OVERVIEW + " TEXT," +
-                MovieContract.FavoriteMovieEntry.COLUMN_NAME_IMAGE_ADDRESS + " TEXT)";
+                MovieContract.FavoriteMovieEntry.COLUMN_NAME_POSTER_ADDRESS + " TEXT," +
+                MovieContract.FavoriteMovieEntry.COLUMN_NAME_POSTER_STORAGE_PATH + " TEXT," +
+                MovieContract.FavoriteMovieEntry.COLUMN_NAME_BACKDROP_ADDRESS + " TEXT)";
 
         db.execSQL(SQL_CREATE_FAVORITES_TABLE);
     }
