@@ -71,7 +71,7 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
     private String mBackDropAddress;
     private boolean favorite;
     private static long mTMDB_ID;
-    private int db_id;
+    //private int db_id;
     private String fullPosterAddress;
 
     //RecyclerView variables
@@ -474,13 +474,11 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
         values.put(FavoriteMovieEntry.COLUMN_NAME_POSTER_ADDRESS, mPosterAddress);
         values.put(FavoriteMovieEntry.COLUMN_NAME_POSTER_STORAGE_PATH, posterPath);
         values.put(FavoriteMovieEntry.COLUMN_NAME_BACKDROP_ADDRESS, mBackDropAddress);
-        values.put(FavoriteMovieEntry.COLUMN_NAME_MDB_ID, mTMDB_ID);
+        values.put(FavoriteMovieEntry.COLUMN_NAME_TMDB_ID, mTMDB_ID);
 
         Uri uri = getContext().getContentResolver().insert(FavoriteMovieEntry.CONTENT_URI, values);
         if (uri != null) {
             favorite = true;
-            //set db_id from the uri, in case if user wants to remove item right away
-            db_id = Integer.parseInt(uri.getPathSegments().get(1));
             Toast.makeText(getContext(), "Movie was added to Favorites",
                     Toast.LENGTH_LONG)
                     .show();
@@ -491,7 +489,7 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
         }
     }
 
-    //uses mdb_id to check if the Movie object downloaded from remote database is already saved to favorite_movies table
+    //uses tmdb_id to check if the Movie object downloaded from remote database is already saved to favorite_movies table
     private boolean movieIsInFavorite(long tmdb_id) {
         Uri uri = FavoriteMovieEntry.CONTENT_URI.buildUpon()
                 .appendPath(FavoriteMovieEntry.PATH_FAVORITE_MOVIES_TMDB_ID).appendPath(Long.toString(tmdb_id)).build();
@@ -501,7 +499,6 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
             return false;
         }
         cursor.moveToFirst();
-        db_id = cursor.getInt(cursor.getColumnIndex(FavoriteMovieEntry._ID));
         return true;
     }
 

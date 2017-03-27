@@ -90,7 +90,7 @@ public class MovieProvider extends ContentProvider {
                 break;
             case FAVORITE_MOVIE_TMDB_ID:
                 String tmdb_id = uri.getPathSegments().get(2);
-                String tmdb_selection = FavoriteMovieEntry.COLUMN_NAME_MDB_ID + "=?";
+                String tmdb_selection = FavoriteMovieEntry.COLUMN_NAME_TMDB_ID + "=?";
                 String[] tmdb_selectionArgs = new String[]{tmdb_id};
                 returnCursor = db.query(
                         FavoriteMovieEntry.TABLE_NAME,
@@ -163,7 +163,7 @@ public class MovieProvider extends ContentProvider {
 
             case FAVORITE_MOVIE_TMDB_ID:
                 String tmdb_id = uri.getPathSegments().get(2);
-                String tmdb_Selection = FavoriteMovieEntry.COLUMN_NAME_MDB_ID + "=?";
+                String tmdb_Selection = FavoriteMovieEntry.COLUMN_NAME_TMDB_ID + "=?";
                 String[] tmdb_SelectionArgs = new String[]{tmdb_id};
                 moviesDeleted = db.delete(FavoriteMovieEntry.TABLE_NAME,
                         tmdb_Selection,

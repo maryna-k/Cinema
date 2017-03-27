@@ -83,7 +83,7 @@ public class CursorMovieAdapter extends RecyclerView.Adapter<CursorMovieAdapter.
         int voteCount = mCursor.getInt
                 (mCursor.getColumnIndex(FavoriteMovieEntry.COLUMN_NAME_VOTE_COUNT));
         long tmdb_id = mCursor.getLong
-                (mCursor.getColumnIndex(FavoriteMovieEntry.COLUMN_NAME_MDB_ID));
+                (mCursor.getColumnIndex(FavoriteMovieEntry.COLUMN_NAME_TMDB_ID));
         String posterStoragePath = mCursor.getString
                 (mCursor.getColumnIndex(FavoriteMovieEntry.COLUMN_NAME_POSTER_STORAGE_PATH));
         Movie movie = new Movie(title, overview, rating, voteCount, genre, releaseDay,
