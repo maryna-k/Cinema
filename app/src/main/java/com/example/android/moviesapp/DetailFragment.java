@@ -1,17 +1,14 @@
 package com.example.android.moviesapp;
 
 import android.content.BroadcastReceiver;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -40,12 +37,12 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.android.moviesapp.database.MovieContract.FavoriteMovieEntry;
 import com.example.android.moviesapp.review.Review;
 import com.example.android.moviesapp.review.ReviewLoader;
 import com.example.android.moviesapp.trailer.TrailerAdapter;
 import com.example.android.moviesapp.trailer.TrailerInfoLoader;
 import com.example.android.moviesapp.trailer.YouTubeTrailer;
+import com.example.android.moviesapp.utilities.DetailFragmentDatabaseUtils;
 import com.example.android.moviesapp.utilities.ImageUtils;
 import com.example.android.moviesapp.utilities.Keys;
 import com.google.android.youtube.player.YouTubeStandalonePlayer;
@@ -59,7 +56,7 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
 
     private final String LOG_TAG = DetailFragment.class.getSimpleName() + "LOG";
 
-    //variables that represent movie object
+    //variables from movie object
     private Movie movie;
     private String mTitle;
     private String mGenre;
@@ -72,7 +69,6 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
     private boolean favorite;
     private static long mTMDB_ID;
     //private int db_id;
-    private String fullPosterAddress;
 
     //RecyclerView variables
     private TrailerAdapter mTrailerAdapter;
@@ -83,6 +79,8 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
     private ProgressBar trailersProgressBar;
     private ProgressBar reviewsProgressBar;
     private ScrollView scrollView;
+
+    private ArrayList<Review> reviewList;
 
     private BroadcastReceiver mBroadcastReceiver;
     private IntentFilter mInternetFilter;
@@ -150,7 +148,7 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
             }
 
             mTMDB_ID = movie.getMdb_id();
-            favorite = movieIsInFavorite(mTMDB_ID);
+            favorite = DetailFragmentDatabaseUtils.movieIsInFavorite(mTMDB_ID, getContext());
 
             if(savedInstanceState != null){
                 toolbarChangePoint = savedInstanceState.getInt(TOOLBAR_CHANGE_POINT);
@@ -177,7 +175,7 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
                 Bitmap bitmap = ImageUtils.getPosterFromStorage(movie.getPosterStoragePath(), Long.toString(mTMDB_ID));
                 smallPosterView.setImageBitmap(bitmap);
             } else {
-                fullPosterAddress = Keys.SMALL_POSTER_BASE_URL + mPosterAddress;
+                String fullPosterAddress = Keys.SMALL_POSTER_BASE_URL + mPosterAddress;
                 Picasso.with(getContext()).load(fullPosterAddress).into(smallPosterView);
             }
 
@@ -279,15 +277,13 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
 
         switch (item.getItemId()) {
             case R.id.action_add_to_favorite:
-                boolean inserted = insertMovie();
-                if (inserted) {
+                favorite = DetailFragmentDatabaseUtils.saveFavoriteMovie(movie, reviewList, getContext());
+                if (favorite) {
                     getActivity().invalidateOptionsMenu();
                 }
                 break;
             case R.id.action_remove_from_favorite:
-                Uri uri = FavoriteMovieEntry.CONTENT_URI.buildUpon()
-                        .appendPath(FavoriteMovieEntry.PATH_FAVORITE_MOVIES_TMDB_ID).appendPath(Long.toString(mTMDB_ID)).build();
-                int removedNum = getContext().getContentResolver().delete(uri, null, null);
+                int removedNum = DetailFragmentDatabaseUtils.deleteFavoriteMovie(mTMDB_ID, getContext());
                 if (removedNum > 0) {
                     favorite = false;
                     getActivity().invalidateOptionsMenu();
@@ -460,48 +456,6 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
                 .startChooser();
     }
 
-    //insert Movie object to favorite_movies table
-    public boolean insertMovie() {
-        String posterPath = ImageUtils.savePosterToInternalStorage(fullPosterAddress, Long.toString(mTMDB_ID),
-                            getContext(), getActivity().getApplicationContext());
-        ContentValues values = new ContentValues();
-        values.put(FavoriteMovieEntry.COLUMN_NAME_TITLE, mTitle);
-        values.put(FavoriteMovieEntry.COLUMN_NAME_OVERVIEW, mOverview);
-        values.put(FavoriteMovieEntry.COLUMN_NAME_GENRE, mGenre);
-        values.put(FavoriteMovieEntry.COLUMN_NAME_RATING, mRating);
-        values.put(FavoriteMovieEntry.COLUMN_NAME_VOTE_COUNT, mVoteCount);
-        values.put(FavoriteMovieEntry.COLUMN_NAME_RELEASE, mReleaseDate);
-        values.put(FavoriteMovieEntry.COLUMN_NAME_POSTER_ADDRESS, mPosterAddress);
-        values.put(FavoriteMovieEntry.COLUMN_NAME_POSTER_STORAGE_PATH, posterPath);
-        values.put(FavoriteMovieEntry.COLUMN_NAME_BACKDROP_ADDRESS, mBackDropAddress);
-        values.put(FavoriteMovieEntry.COLUMN_NAME_TMDB_ID, mTMDB_ID);
-
-        Uri uri = getContext().getContentResolver().insert(FavoriteMovieEntry.CONTENT_URI, values);
-        if (uri != null) {
-            favorite = true;
-            Toast.makeText(getContext(), "Movie was added to Favorites",
-                    Toast.LENGTH_LONG)
-                    .show();
-            return true;
-        } else {
-            Toast.makeText(getContext(), "Oops... Movie was not saved", Toast.LENGTH_LONG).show();
-            return false;
-        }
-    }
-
-    //uses tmdb_id to check if the Movie object downloaded from remote database is already saved to favorite_movies table
-    private boolean movieIsInFavorite(long tmdb_id) {
-        Uri uri = FavoriteMovieEntry.CONTENT_URI.buildUpon()
-                .appendPath(FavoriteMovieEntry.PATH_FAVORITE_MOVIES_TMDB_ID).appendPath(Long.toString(tmdb_id)).build();
-        Cursor cursor = getContext().getContentResolver().query(uri, null, null, null, null);
-
-        if (cursor.getCount() == 0) {
-            return false;
-        }
-        cursor.moveToFirst();
-        return true;
-    }
-
     //anonymous class that implements LoaderCallbacks and loads trailers
     private LoaderManager.LoaderCallbacks<ArrayList<YouTubeTrailer>> trailerResultLoaderListener
             = new LoaderManager.LoaderCallbacks<ArrayList<YouTubeTrailer>>() {
@@ -561,6 +515,7 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
         @Override
         public void onLoadFinished(Loader<ArrayList<Review>> loader, final ArrayList<Review> reviewData) {
             Log.v(LOG_TAG, "Loader: onLoadFinished");
+            reviewList = reviewData;
             setReviewLayout(reviewData);
         }
 

@@ -19,7 +19,7 @@ public class ImageUtils {
 
     private static Bitmap posterBitmap;
 
-    public static String savePosterToInternalStorage(String posterAddress, String mdb_id, Context context, Context appContext){
+    public static String savePosterToInternalStorage(String posterAddress, String mdb_id, Context context){
         Picasso.with(context).load(posterAddress).into(new Target() {
             @Override
             public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
@@ -31,13 +31,14 @@ public class ImageUtils {
             public void onPrepareLoad(Drawable placeHolderDrawable) {}
         });
         if(posterBitmap != null) {
-            return saveToInternalStorageHelper(posterBitmap, appContext, mdb_id);
+            return saveToInternalStorageHelper(posterBitmap, context, mdb_id);
         }
         return null;
     }
 
-    private static String saveToInternalStorageHelper(Bitmap bitmapImage, Context appContext, String mdb_id){
-        ContextWrapper cw = new ContextWrapper(appContext);
+    private static String saveToInternalStorageHelper(Bitmap bitmapImage, Context context, String mdb_id){
+        context = context.getApplicationContext();
+        ContextWrapper cw = new ContextWrapper(context);
         File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
         File posterPath=new File(directory, "poster_" + mdb_id + ".jpg");
 
