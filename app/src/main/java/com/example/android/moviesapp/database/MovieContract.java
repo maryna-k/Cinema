@@ -42,8 +42,6 @@ public final class MovieContract {
         public static final String COLUMN_NAME_POSTER_STORAGE_PATH = "poster_storage_path";
         public static final String COLUMN_NAME_BACKDROP_ADDRESS = "backdrop_address";
         public static final String COLUMN_NAME_TMDB_ID = "tmdb_id"; //movie database id
-
-        //public static final String PATH_FAVORITE_MOVIES_TMDB_ID = COLUMN_NAME_TMDB_ID;
     }
 
     /* Inner class that defines the content of Reviews table */
@@ -59,8 +57,6 @@ public final class MovieContract {
         public static final String TABLE_NAME = "movie_reviews";
         public static final String COLUMN_NAME_REVIEWER_NAME = "reviewer_name";
         public static final String COLUMN_NAME_REVIEW_TEXT = "review_text";
-        public static final String COLUMN_NAME_TMDB_ID = "mdb_id"; //movie database id
-
-        //public static final String PATH_FAVORITE_MOVIES_TMDB_ID = COLUMN_NAME_TMDB_ID;
+        public static final String COLUMN_NAME_TMDB_ID = "tmdb_id"; //movie database id
     }
 }

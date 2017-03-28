@@ -80,14 +80,9 @@ public class FavoriteGridFragment extends Fragment
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
                 long tmdb_id = (long) viewHolder.itemView.getTag();
-                /*Uri uri = MovieContract.FavoriteMovieEntry.CONTENT_URI.buildUpon()
-                        .appendPath(MovieContract.FavoriteMovieEntry.PATH_FAVORITE_MOVIES_TMDB_ID)
-                        .appendPath(Long.toString(tmdb_id))
-                        .build();*/
                 Uri uri = MovieContract.FavoriteMovieEntry.CONTENT_URI.buildUpon()
                         .appendPath(Long.toString(tmdb_id))
                         .build();
-
                 getActivity().getContentResolver().delete(uri, null, null);
                 Fragment fragment = getActivity().getSupportFragmentManager().findFragmentByTag(DETAILFRAGMENT_TAG);
                 if(fragment != null) {

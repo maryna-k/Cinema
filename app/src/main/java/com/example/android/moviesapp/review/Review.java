@@ -9,6 +9,8 @@ public class Review implements Serializable{
     private String author;
     private String reviewContent;
 
+    public Review(){}
+
     public Review(String id, String author, String reviewContent) {
         this.reviewId = id;
         this.author = author;

@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -13,6 +14,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.app.ShareCompat;
+import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -37,6 +39,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.android.moviesapp.database.MovieContract;
 import com.example.android.moviesapp.review.Review;
 import com.example.android.moviesapp.review.ReviewLoader;
 import com.example.android.moviesapp.trailer.TrailerAdapter;
@@ -100,6 +103,7 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
 
     private final int TRAILER_LOADER_ID = 1;
     private final int REVIEW_LOADER_ID = 2;
+    private final int CURSOR_REVIEW_LOADER_ID = 3;
 
     public static final String MOVIE_DETAIL = "movie_detail";
     private final String TOOLBAR_CHANGE_POINT = "toolbar_change_point";
@@ -200,7 +204,11 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
             };
             scrollView.getViewTreeObserver().addOnScrollChangedListener(mOnScrollChangeListener);
 
-            getLoaderManager().initLoader(REVIEW_LOADER_ID, null, reviewResultLoaderListener);
+            if(!favorite) {
+                getLoaderManager().initLoader(REVIEW_LOADER_ID, null, reviewResultLoaderListener);
+            } else {
+                getLoaderManager().initLoader(CURSOR_REVIEW_LOADER_ID, null, reviewCursorLoaderListener);
+            }
             getLoaderManager().initLoader(TRAILER_LOADER_ID, null, trailerResultLoaderListener);
             Log.v(LOG_TAG, "onCreateView");
             installConnectionListener();
@@ -287,7 +295,7 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
                 if (removedNum > 0) {
                     favorite = false;
                     getActivity().invalidateOptionsMenu();
-                    Toast.makeText(getContext(), "Movie was removed from Favorites", Toast.LENGTH_LONG)
+                    Toast.makeText(getContext(), "Movie was removed from Favorites", Toast.LENGTH_SHORT)
                             .show();
                 }
                 break;
@@ -525,6 +533,48 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
         }
     };
 
+    //anonymous class that implements LoaderCallbacks and loads cursor with reviews
+    private LoaderManager.LoaderCallbacks<Cursor> reviewCursorLoaderListener
+            = new LoaderManager.LoaderCallbacks<Cursor>() {
+
+        @Override
+        public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+            if(id == CURSOR_REVIEW_LOADER_ID) {
+                Log.v(LOG_TAG, "Loader: onCreateLoader");
+                String selection = MovieContract.ReviewsTableEntry.COLUMN_NAME_TMDB_ID + "=?";
+                String[] selectionArgs = new String[]{Long.toString(mTMDB_ID)};
+                return new CursorLoader(getActivity(),
+                        MovieContract.ReviewsTableEntry.CONTENT_URI,
+                        null, selection, selectionArgs, null);
+            } else return null;
+        }
+
+        @Override
+        public void onLoadFinished(Loader<Cursor> loader, final Cursor cursor) {
+            Log.v(LOG_TAG, "Loader: onLoadFinished");
+            ArrayList<Review> reviewData = new ArrayList<>();
+            if(cursor != null){
+                cursor.moveToPosition(-1);
+                while (cursor.moveToNext()) {
+                    String rText = cursor.getString
+                            (cursor.getColumnIndex(MovieContract.ReviewsTableEntry.COLUMN_NAME_REVIEW_TEXT));
+                    String rName = cursor.getString
+                            (cursor.getColumnIndex(MovieContract.ReviewsTableEntry.COLUMN_NAME_REVIEWER_NAME));
+                    Review review = new Review("", rName, rText);
+                    reviewData.add(review);
+                }
+                reviewList = reviewData;
+            }
+            cursor.close();
+            setReviewLayout(reviewData);
+        }
+
+        @Override
+        public void onLoaderReset(Loader<Cursor> loader) {
+            Log.v(LOG_TAG, "Loader: onLoaderReset " + REVIEW_LOADER_ID);
+        }
+    };
+
     private void installConnectionListener() {
         if (mBroadcastReceiver == null) {
             mBroadcastReceiver = new BroadcastReceiver() {
@@ -536,7 +586,7 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
                     if (state == NetworkInfo.State.CONNECTED && trailersProgressBar.getVisibility() == View.VISIBLE) {
                         getLoaderManager().restartLoader(TRAILER_LOADER_ID, null, trailerResultLoaderListener);
                     }
-                    if (state == NetworkInfo.State.CONNECTED && reviewsProgressBar.getVisibility() == View.VISIBLE) {
+                    if (state == NetworkInfo.State.CONNECTED && reviewsProgressBar.getVisibility() == View.VISIBLE && !favorite) {
                         getLoaderManager().restartLoader(REVIEW_LOADER_ID, null, reviewResultLoaderListener);
                     }
                 }
