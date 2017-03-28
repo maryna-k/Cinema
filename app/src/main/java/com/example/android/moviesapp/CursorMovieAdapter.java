@@ -34,12 +34,13 @@ public class CursorMovieAdapter extends RecyclerView.Adapter<CursorMovieAdapter.
 
         public void bind(final Movie movie, final MovieAdapter.OnItemClickListener listener) {
             final String posterPath = movie.getPosterStoragePath();
-            final Bitmap posterBitmap = ImageUtils.getPosterFromStorage(posterPath, Long.toString(movie.getMdb_id()));
-            imageViewItem.setImageBitmap(posterBitmap);
-            if(posterPath == null) {
+            if(posterPath == null || posterPath.equals("")) {
                 titleView.setText(movie.getTitle());
                 titleView.setVisibility(View.VISIBLE);
-                imageViewItem.setVisibility(View.INVISIBLE);
+                imageViewItem.setVisibility(View.GONE);
+            } else {
+                final Bitmap posterBitmap = ImageUtils.getPosterFromStorage(posterPath, Long.toString(movie.getMdb_id()));
+                imageViewItem.setImageBitmap(posterBitmap);
             }
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
