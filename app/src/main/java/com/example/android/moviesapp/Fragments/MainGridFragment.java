@@ -32,10 +32,10 @@ import com.example.android.moviesapp.utilities.MDBConnection;
 
 import java.util.ArrayList;
 
-public class MovieGridFragment extends Fragment
+public class MainGridFragment extends Fragment
         implements LoaderManager.LoaderCallbacks<ArrayList<Movie>>{
 
-    private final String LOG_TAG = MovieGridFragment.class.getSimpleName();
+    private final String LOG_TAG = MainGridFragment.class.getSimpleName();
 
     private MovieAdapter mAdapter;
     private RecyclerView mRecyclerView;
@@ -57,7 +57,7 @@ public class MovieGridFragment extends Fragment
     private final int PRIMARY_LOADER_ID = 0;
     private final int SECONDARY_LOADER_ID = 1;
 
-    public MovieGridFragment() {}
+    public MainGridFragment() {}
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

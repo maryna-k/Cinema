@@ -24,7 +24,7 @@ import android.widget.TextView;
 import com.example.android.moviesapp.Fragments.DetailFragment;
 import com.example.android.moviesapp.Fragments.FavoriteGridFragment;
 import com.example.android.moviesapp.Objects.Movie;
-import com.example.android.moviesapp.Fragments.MovieGridFragment;
+import com.example.android.moviesapp.Fragments.MainGridFragment;
 import com.example.android.moviesapp.R;
 import com.example.android.moviesapp.Objects.Review;
 import com.example.android.moviesapp.Fragments.ReviewDialogFragment;
@@ -95,7 +95,7 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback,
         if (savedInstanceState == null) {
             moviesToSearch = preferenceMoviesToSearch;
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.movie_grid_container, new MovieGridFragment(), GRIDFRAGMENT_TAG).commit();
+                    .add(R.id.movie_grid_container, new MainGridFragment(), GRIDFRAGMENT_TAG).commit();
         } else {
             moviesToSearch = savedInstanceState.getString("searchCategory");
         }
@@ -191,7 +191,7 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback,
         }
     }
 
-    //method from callback interface between MovieGridFragment, FavoriteMovieFragment and activities
+    //method from callback interface between MainGridFragment, FavoriteMovieFragment and activities
     @Override
     public void onItemSelected(Movie movie) {
         lastViewedMovie = movie;
@@ -236,8 +236,8 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback,
         if (menuItem.getItemId() == R.id.nav_favorite_fragment) {
             fragmentClass = FavoriteGridFragment.class;
         } else {
-            //MovieGridFragment.moviesToSearch = title;
-            fragmentClass = MovieGridFragment.class;
+            //MainGridFragment.moviesToSearch = title;
+            fragmentClass = MainGridFragment.class;
         }
         try {
             fragment = (Fragment) fragmentClass.newInstance();

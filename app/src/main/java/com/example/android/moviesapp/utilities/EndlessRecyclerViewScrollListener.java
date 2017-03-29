@@ -7,7 +7,7 @@ import android.widget.Toast;
 
 import com.example.android.moviesapp.R;
 
-import static com.example.android.moviesapp.Fragments.MovieGridFragment.setLoadMoreMovies;
+import static com.example.android.moviesapp.Fragments.MainGridFragment.setLoadMoreMovies;
 
 /*Based on the interface from https://gist.github.com/nesquena/d09dc68ff07e845cc622 as a part of the
 tutorial Endless Scrolling with AdapterViews and RecyclerView

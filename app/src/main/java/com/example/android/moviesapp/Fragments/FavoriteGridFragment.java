@@ -31,7 +31,7 @@ import static com.example.android.moviesapp.Activities.MainActivity.DETAILFRAGME
 public class FavoriteGridFragment extends Fragment
         implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    private final String LOG_TAG = MovieGridFragment.class.getSimpleName();
+    private final String LOG_TAG = MainGridFragment.class.getSimpleName();
 
     private CursorMovieAdapter mCursorAdapter;
     private RecyclerView mRecyclerView;
