@@ -1,13 +1,13 @@
-package com.example.android.moviesapp;
+package com.example.android.moviesapp.utilities;
 
 import android.content.Context;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.Toast;
 
-import com.example.android.moviesapp.utilities.MDBConnection;
+import com.example.android.moviesapp.R;
 
-import static com.example.android.moviesapp.MovieGridFragment.setLoadMoreMovies;
+import static com.example.android.moviesapp.Fragments.MovieGridFragment.setLoadMoreMovies;
 
 /*Based on the interface from https://gist.github.com/nesquena/d09dc68ff07e845cc622 as a part of the
 tutorial Endless Scrolling with AdapterViews and RecyclerView

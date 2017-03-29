@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentTop="true"
-        tools:context="com.example.android.moviesapp.DetailActivity"
+        tools:context="com.example.android.moviesapp.Activities.DetailActivity"
         tools:ignore="MergeRootFrame">
     </FrameLayout>
 

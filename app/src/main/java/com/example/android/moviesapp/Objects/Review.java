@@ -1,4 +1,4 @@
-package com.example.android.moviesapp.review;
+package com.example.android.moviesapp.Objects;
 
 
 import java.io.Serializable;

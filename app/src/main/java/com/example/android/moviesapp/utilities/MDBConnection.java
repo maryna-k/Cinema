@@ -6,8 +6,7 @@ import android.net.NetworkInfo;
 import android.util.Log;
 
 import com.example.android.moviesapp.BuildConfig;
-import com.example.android.moviesapp.DetailFragment;
-import com.example.android.moviesapp.EndlessRecyclerViewScrollListener;
+import com.example.android.moviesapp.Fragments.DetailFragment;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -17,7 +16,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
 
-import static com.example.android.moviesapp.MainActivity.getMoviesToSearch;
+import static com.example.android.moviesapp.Activities.MainActivity.getMoviesToSearch;
 
 public class MDBConnection {
 
@@ -79,8 +78,6 @@ public class MDBConnection {
                 return null;
             }
             jsonString = buffer.toString();
-            //Log.v(LOG_TAG, "TMDb JSON string: " + jsonString);
-
         } catch (IOException e) {
             Log.e(LOG_TAG, "Error ", e);
             return null;

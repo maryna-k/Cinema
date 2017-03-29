@@ -1,4 +1,4 @@
-package com.example.android.moviesapp;
+package com.example.android.moviesapp.Fragments;
 
 import android.database.Cursor;
 import android.net.Uri;
@@ -10,7 +10,6 @@ import android.support.v4.content.Loader;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,17 +18,20 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.example.android.moviesapp.Adapters.CursorMovieAdapter;
+import com.example.android.moviesapp.Objects.Movie;
+import com.example.android.moviesapp.Adapters.MovieAdapter;
+import com.example.android.moviesapp.R;
 import com.example.android.moviesapp.database.MovieContract;
 import com.example.android.moviesapp.utilities.FragmentCallback;
 
-import static android.content.ContentValues.TAG;
-import static com.example.android.moviesapp.MainActivity.DETAILFRAGMENT_TAG;
+import static com.example.android.moviesapp.Activities.MainActivity.DETAILFRAGMENT_TAG;
 
 
 public class FavoriteGridFragment extends Fragment
         implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    private final String LOG_TAG = MovieGridFragment.class.getSimpleName() + " LOG";
+    private final String LOG_TAG = MovieGridFragment.class.getSimpleName();
 
     private CursorMovieAdapter mCursorAdapter;
     private RecyclerView mRecyclerView;
@@ -51,7 +53,6 @@ public class FavoriteGridFragment extends Fragment
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        Log.v(LOG_TAG, "onCreate");
     }
 
     @Override
@@ -91,26 +92,22 @@ public class FavoriteGridFragment extends Fragment
                 getLoaderManager().restartLoader(PRIMARY_LOADER_ID, null, FavoriteGridFragment.this);
             }
         }).attachToRecyclerView(mRecyclerView);
-        Log.v(LOG_TAG, "onCreateView");
         return rootView;
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        Log.v(LOG_TAG, "onSaveInstanceState");
     }
 
     @Override
     public void onResume() {
         super.onResume();
         getLoaderManager().restartLoader(PRIMARY_LOADER_ID, null, this);
-        Log.v(TAG, "onResume(): restartLoader");
     }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        Log.v(LOG_TAG, "Loader: onCreateLoader");
         return new CursorLoader(getActivity(),
                 MovieContract.FavoriteMovieEntry.CONTENT_URI,
                 null, null, null, null);
@@ -118,7 +115,6 @@ public class FavoriteGridFragment extends Fragment
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor result) {
-        Log.v(LOG_TAG, "Loader: onLoadFinished");
         if (result != null) {
             setEmptyGridViewVisible(false);
             mCursorMovieData = result;
@@ -136,7 +132,6 @@ public class FavoriteGridFragment extends Fragment
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-        Log.v(LOG_TAG, "Loader: onLoaderReset");
         if (mCursorMovieData != null) {
             mCursorAdapter.swapCursor(null);
         }

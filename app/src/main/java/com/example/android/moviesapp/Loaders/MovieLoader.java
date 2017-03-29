@@ -1,8 +1,10 @@
-package com.example.android.moviesapp;
+package com.example.android.moviesapp.Loaders;
 
 import android.content.Context;
 import android.support.v4.content.AsyncTaskLoader;
 import android.util.Log;
+
+import com.example.android.moviesapp.Objects.Movie;
 
 import org.json.JSONException;
 
@@ -14,7 +16,7 @@ import static com.example.android.moviesapp.utilities.MDBConnection.getJsonRespo
 
 public class MovieLoader extends AsyncTaskLoader<ArrayList<Movie>> {
 
-    private final String LOG_TAG = MovieLoader.class.getSimpleName() + "LOG";
+    private final String LOG_TAG = MovieLoader.class.getSimpleName();
     private ArrayList<Movie> movieArrayList;
 
     public MovieLoader(Context context){
@@ -24,17 +26,14 @@ public class MovieLoader extends AsyncTaskLoader<ArrayList<Movie>> {
     @Override
     public void onStartLoading(){
         if(movieArrayList == null){
-            Log.v(LOG_TAG, "Loader: onStartLoading");
             forceLoad();
         } else {
-            Log.v(LOG_TAG, "Loader: onStartLoading");
             deliverResult(movieArrayList);
         }
     }
 
     @Override
     public ArrayList<Movie> loadInBackground(){
-        Log.v(LOG_TAG, "Loader: loadInBackground");
         String movieJsonStr = getJsonResponse(LOAD_MOVIES);
 
         try {

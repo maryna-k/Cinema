@@ -1,8 +1,8 @@
 package com.example.android.moviesapp.utilities;
 
-import com.example.android.moviesapp.Movie;
-import com.example.android.moviesapp.review.Review;
-import com.example.android.moviesapp.trailer.YouTubeTrailer;
+import com.example.android.moviesapp.Objects.Movie;
+import com.example.android.moviesapp.Objects.Review;
+import com.example.android.moviesapp.Objects.YouTubeTrailer;
 
 import org.json.JSONArray;
 import org.json.JSONException;

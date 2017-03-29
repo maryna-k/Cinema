@@ -1,4 +1,4 @@
-package com.example.android.moviesapp;
+package com.example.android.moviesapp.Fragments;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -12,7 +12,6 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -23,6 +22,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.example.android.moviesapp.utilities.EndlessRecyclerViewScrollListener;
+import com.example.android.moviesapp.Objects.Movie;
+import com.example.android.moviesapp.Adapters.MovieAdapter;
+import com.example.android.moviesapp.Loaders.MovieLoader;
+import com.example.android.moviesapp.R;
 import com.example.android.moviesapp.utilities.FragmentCallback;
 import com.example.android.moviesapp.utilities.MDBConnection;
 
@@ -31,7 +35,7 @@ import java.util.ArrayList;
 public class MovieGridFragment extends Fragment
         implements LoaderManager.LoaderCallbacks<ArrayList<Movie>>{
 
-    private final String LOG_TAG = MovieGridFragment.class.getSimpleName() + " LOG";
+    private final String LOG_TAG = MovieGridFragment.class.getSimpleName();
 
     private MovieAdapter mAdapter;
     private RecyclerView mRecyclerView;
@@ -59,7 +63,6 @@ public class MovieGridFragment extends Fragment
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        Log.v(LOG_TAG, "OnCreate");
     }
 
     @Override
@@ -90,21 +93,18 @@ public class MovieGridFragment extends Fragment
         }
 
         installConnectionListener();
-        Log.v(LOG_TAG, "OnCreateView");
         return rootView;
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState){
         super.onSaveInstanceState(outState);
-        Log.v(LOG_TAG, "onSaveInstanceState");
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater){
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.menu_main_fragment, menu);
-        Log.v(LOG_TAG, "OnCreateOptionsMenu");
     }
 
     @Override
@@ -131,7 +131,6 @@ public class MovieGridFragment extends Fragment
     
     @Override
     public Loader<ArrayList<Movie>> onCreateLoader(int id, Bundle args){
-        Log.v(LOG_TAG, "Loader: OnCreateLoader, ID " + id);
         if (id == PRIMARY_LOADER_ID ) {
             mScrollListener.resetState();
         }
@@ -141,7 +140,6 @@ public class MovieGridFragment extends Fragment
 
     @Override
     public void onLoadFinished(Loader<ArrayList<Movie>> loader, ArrayList<Movie> result) {
-        Log.v(LOG_TAG, "Loader: OnLoadFinished, ID " + loader.getId());
         if (result != null){
             switch(loader.getId()){
                 case PRIMARY_LOADER_ID:
@@ -163,7 +161,6 @@ public class MovieGridFragment extends Fragment
 
     @Override
     public void onLoaderReset(Loader<ArrayList<Movie>> loader) {
-        Log.v(LOG_TAG, "Loader: OnLoaderReset");
     }
 
     private void installConnectionListener() {
@@ -223,7 +220,7 @@ public class MovieGridFragment extends Fragment
         }
     }
 
-    static void setLoadMoreMovies(boolean load){
+    public static void setLoadMoreMovies(boolean load){
         loadMoreMovies = load;
     }
 }

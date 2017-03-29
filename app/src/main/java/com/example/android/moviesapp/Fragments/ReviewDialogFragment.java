@@ -1,4 +1,4 @@
-package com.example.android.moviesapp.review;
+package com.example.android.moviesapp.Fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -9,10 +9,12 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.android.moviesapp.R;
+import com.example.android.moviesapp.Objects.Review;
+import com.example.android.moviesapp.Adapters.ReviewAdapter;
 
 import java.util.ArrayList;
 
-import static com.example.android.moviesapp.review.ReviewActivity.REVIEW_LIST;
+import static com.example.android.moviesapp.Activities.ReviewActivity.REVIEW_LIST;
 
 public class ReviewDialogFragment extends DialogFragment {
 

@@ -1,4 +1,4 @@
-package com.example.android.moviesapp;
+package com.example.android.moviesapp.Activities;
 
 import android.os.Bundle;
 import android.preference.ListPreference;
@@ -8,6 +8,8 @@ import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+
+import com.example.android.moviesapp.R;
 
 public class SettingsActivity extends AppCompatActivity {
 

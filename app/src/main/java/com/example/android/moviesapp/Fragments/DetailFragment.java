@@ -1,4 +1,4 @@
-package com.example.android.moviesapp;
+package com.example.android.moviesapp.Fragments;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -22,7 +22,6 @@ import android.support.v7.graphics.Palette;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -39,12 +38,16 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.android.moviesapp.Activities.MainActivity;
+import com.example.android.moviesapp.BuildConfig;
+import com.example.android.moviesapp.Objects.Movie;
+import com.example.android.moviesapp.R;
 import com.example.android.moviesapp.database.MovieContract;
-import com.example.android.moviesapp.review.Review;
-import com.example.android.moviesapp.review.ReviewLoader;
-import com.example.android.moviesapp.trailer.TrailerAdapter;
-import com.example.android.moviesapp.trailer.TrailerInfoLoader;
-import com.example.android.moviesapp.trailer.YouTubeTrailer;
+import com.example.android.moviesapp.Objects.Review;
+import com.example.android.moviesapp.Loaders.ReviewLoader;
+import com.example.android.moviesapp.Adapters.TrailerAdapter;
+import com.example.android.moviesapp.Loaders.TrailerInfoLoader;
+import com.example.android.moviesapp.Objects.YouTubeTrailer;
 import com.example.android.moviesapp.utilities.DetailFragmentDatabaseUtils;
 import com.example.android.moviesapp.utilities.ImageUtils;
 import com.example.android.moviesapp.utilities.Keys;
@@ -54,10 +57,9 @@ import com.squareup.picasso.Target;
 
 import java.util.ArrayList;
 
-
 public class DetailFragment extends Fragment implements FavoriteGridFragment.SwipeMovieCallback {
 
-    private final String LOG_TAG = DetailFragment.class.getSimpleName() + "LOG";
+    private final String LOG_TAG = DetailFragment.class.getSimpleName();
 
     //variables from movie object
     private Movie movie;
@@ -127,7 +129,6 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        Log.v(LOG_TAG, "onCreate");
     }
 
     @Override
@@ -210,7 +211,6 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
                 getLoaderManager().initLoader(CURSOR_REVIEW_LOADER_ID, null, reviewCursorLoaderListener);
             }
             getLoaderManager().initLoader(TRAILER_LOADER_ID, null, trailerResultLoaderListener);
-            Log.v(LOG_TAG, "onCreateView");
             installConnectionListener();
         } else {
             //if intent or bundle is empty, show the empty view
@@ -257,7 +257,6 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
         } else if (movie != null){
             inflater.inflate(R.menu.menu_detail_fragment, menu);
         }
-        Log.v(LOG_TAG, "onCreateOptionsMenu");
     }
 
     //change the icon of the favorite button depending on if the Movie object is favorite or not
@@ -504,7 +503,6 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
 
         @Override
         public void onLoaderReset(Loader<ArrayList<YouTubeTrailer>> loader) {
-            Log.v(LOG_TAG, "Loader: onLoaderReset " + TRAILER_LOADER_ID);
         }
     };
 
@@ -514,7 +512,6 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
 
         @Override
         public Loader<ArrayList<Review>> onCreateLoader(int id, Bundle args) {
-            Log.v(LOG_TAG, "Loader: onCreateLoader");
             if (id == REVIEW_LOADER_ID) {
                 return new ReviewLoader(getContext());
             } else return null;
@@ -522,14 +519,12 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
 
         @Override
         public void onLoadFinished(Loader<ArrayList<Review>> loader, final ArrayList<Review> reviewData) {
-            Log.v(LOG_TAG, "Loader: onLoadFinished");
             reviewList = reviewData;
             setReviewLayout(reviewData);
         }
 
         @Override
         public void onLoaderReset(Loader<ArrayList<Review>> loader) {
-            Log.v(LOG_TAG, "Loader: onLoaderReset " + REVIEW_LOADER_ID);
         }
     };
 
@@ -540,7 +535,6 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
         @Override
         public Loader<Cursor> onCreateLoader(int id, Bundle args) {
             if(id == CURSOR_REVIEW_LOADER_ID) {
-                Log.v(LOG_TAG, "Loader: onCreateLoader");
                 String selection = MovieContract.ReviewsTableEntry.COLUMN_NAME_TMDB_ID + "=?";
                 String[] selectionArgs = new String[]{Long.toString(mTMDB_ID)};
                 return new CursorLoader(getActivity(),
@@ -551,7 +545,6 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
 
         @Override
         public void onLoadFinished(Loader<Cursor> loader, final Cursor cursor) {
-            Log.v(LOG_TAG, "Loader: onLoadFinished");
             ArrayList<Review> reviewData = new ArrayList<>();
             if(cursor != null){
                 cursor.moveToPosition(-1);
@@ -571,7 +564,6 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
 
         @Override
         public void onLoaderReset(Loader<Cursor> loader) {
-            Log.v(LOG_TAG, "Loader: onLoaderReset " + REVIEW_LOADER_ID);
         }
     };
 

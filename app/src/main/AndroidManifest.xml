@@ -18,29 +18,29 @@
     If the parent activity has launch mode <standard>, and the up intent does not contain FLAG_ACTIVITY_CLEAR_TOP,
     the parent activity is popped off the stack, and a new instance of that activity is created on top of the stack to
     receive the intent.-->
-        <activity android:name=".MainActivity" android:launchMode="singleTop">
+        <activity android:name=".Activities.MainActivity" android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".DetailActivity"
+        <activity android:name=".Activities.DetailActivity"
             android:launchMode="singleTop"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName=".Activities.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
+                android:value=".Activities.MainActivity" />
         </activity>
-        <activity android:name=".review.ReviewActivity"
-            android:parentActivityName=".DetailActivity">
+        <activity android:name=".Activities.ReviewActivity"
+            android:parentActivityName=".Activities.DetailActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".DetailActivity" />
+                android:value=".Activities.DetailActivity" />
         </activity>
-        <activity android:name=".SettingsActivity">
+        <activity android:name=".Activities.SettingsActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
+                android:value=".Activities.MainActivity" />
         </activity>
         <provider
             android:name=".database.MovieProvider"

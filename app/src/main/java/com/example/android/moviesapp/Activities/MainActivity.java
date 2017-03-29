@@ -1,4 +1,4 @@
-package com.example.android.moviesapp;
+package com.example.android.moviesapp.Activities;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -12,7 +12,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -22,8 +21,13 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.example.android.moviesapp.review.Review;
-import com.example.android.moviesapp.review.ReviewDialogFragment;
+import com.example.android.moviesapp.Fragments.DetailFragment;
+import com.example.android.moviesapp.Fragments.FavoriteGridFragment;
+import com.example.android.moviesapp.Objects.Movie;
+import com.example.android.moviesapp.Fragments.MovieGridFragment;
+import com.example.android.moviesapp.R;
+import com.example.android.moviesapp.Objects.Review;
+import com.example.android.moviesapp.Fragments.ReviewDialogFragment;
 import com.example.android.moviesapp.utilities.FragmentCallback;
 
 import java.util.ArrayList;
@@ -51,7 +55,7 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback,
     public static final String DETAILFRAGMENT_TAG = "DFTAG";
     public static final String GRIDFRAGMENT_TAG = "GFTAG";
 
-    private final String LOG_TAG = MainActivity.class.getSimpleName() + " LOG";
+    private final String LOG_TAG = MainActivity.class.getSimpleName();
 
     /**Api for adding fragments at run-time:
      https://developer.android.com/training/basics/fragments/fragment-ui.html */
@@ -122,7 +126,6 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback,
                 lastViewedMovie = (Movie) savedInstanceState.getSerializable(LAST_VIEWED_MOVIE);
             }
         }
-        Log.v(LOG_TAG, "OnCreate");
     }
 
     @Override
@@ -132,7 +135,6 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback,
         if (lastViewedMovie != null) {
             outState.putSerializable(LAST_VIEWED_MOVIE, lastViewedMovie);
         }
-        Log.v(LOG_TAG, "OnSaveInstanceState");
     }
 
     @Override
@@ -146,7 +148,6 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback,
                 getSupportFragmentManager().beginTransaction().remove(detailFragment).commit();
             }
         }
-        Log.v(LOG_TAG, "OnConfigurationChanged");
     }
 
     @Override
@@ -154,7 +155,6 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback,
         super.onPostCreate(savedInstanceState);
         // Sync the toggle state after onRestoreInstanceState has occurred.
         mDrawerToggle.syncState();
-        Log.v(LOG_TAG, "OnPostCreate");
     }
 
     @Override
@@ -168,7 +168,6 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback,
         if(!isTabletTwoPaneLayout) {
             getMenuInflater().inflate(R.menu.menu_main, menu);
         }
-        Log.v(LOG_TAG, "OnCreateOptionsMenu");
         return true;
     }
 

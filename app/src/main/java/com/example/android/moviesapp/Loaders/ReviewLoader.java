@@ -1,10 +1,10 @@
-package com.example.android.moviesapp.review;
+package com.example.android.moviesapp.Loaders;
 
 import android.content.Context;
 import android.support.v4.content.AsyncTaskLoader;
 import android.util.Log;
 
-import com.example.android.moviesapp.trailer.TrailerInfoLoader;
+import com.example.android.moviesapp.Objects.Review;
 
 import org.json.JSONException;
 
@@ -18,7 +18,7 @@ import static com.example.android.moviesapp.utilities.MDBConnection.getJsonRespo
 public class ReviewLoader extends AsyncTaskLoader<ArrayList<Review>> {
 
 
-    private final String LOG_TAG = TrailerInfoLoader.class.getSimpleName() + "LOG";
+    private final String LOG_TAG = TrailerInfoLoader.class.getSimpleName();
     private ArrayList<Review> reviewArrayList;
 
     public ReviewLoader(Context context){
@@ -28,17 +28,14 @@ public class ReviewLoader extends AsyncTaskLoader<ArrayList<Review>> {
     @Override
     public void onStartLoading(){
         if(reviewArrayList == null) {
-            Log.v(LOG_TAG, "Loader: onStartLoading, forceLoad");
             forceLoad();
         } else {
-            Log.v(LOG_TAG, "Loader: onStartLoading, return");
             deliverResult(reviewArrayList);
         }
     }
 
     @Override
     public ArrayList<Review> loadInBackground() {
-        Log.v(LOG_TAG, "Loader: LoadInBackground");
         String reviewJsonStr = getJsonResponse(LOAD_REVIEWS);
 
         try {

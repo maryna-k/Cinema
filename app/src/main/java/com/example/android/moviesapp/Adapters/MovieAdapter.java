@@ -1,8 +1,7 @@
-package com.example.android.moviesapp;
+package com.example.android.moviesapp.Adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +9,8 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.example.android.moviesapp.Objects.Movie;
+import com.example.android.moviesapp.R;
 import com.example.android.moviesapp.utilities.Keys;
 import com.squareup.picasso.Picasso;
 
@@ -17,8 +18,9 @@ import java.util.ArrayList;
 
 public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
+    private static final String LOG_TAG = MovieAdapter.class.getSimpleName();
+
     private ArrayList<Movie> mList;
-    private static final String LOG_TAG = MovieAdapter.class.getSimpleName() + "LOG";
     private static Context context;
     private OnItemClickListener listener;
     private int extraItemsNum;
@@ -84,7 +86,6 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         if (holder instanceof ViewHolder) {
             final Movie movie = mList.get(position);
             String imageAddress = movie.getPosterAddress();
-            Log.v(LOG_TAG, "Poster address: " + imageAddress);
             String fullImageAddress = Keys.SMALL_POSTER_BASE_URL + movie.getPosterAddress();
             Picasso mPicasso = Picasso.with(((ViewHolder) holder).itemView.getContext());
             mPicasso.setIndicatorsEnabled(true);

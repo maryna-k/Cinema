@@ -1,4 +1,4 @@
-package com.example.android.moviesapp;
+package com.example.android.moviesapp.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -6,11 +6,11 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 
-import com.example.android.moviesapp.review.Review;
-import com.example.android.moviesapp.review.ReviewActivity;
-import com.example.android.moviesapp.review.ReviewDialogFragment;
+import com.example.android.moviesapp.Fragments.DetailFragment;
+import com.example.android.moviesapp.R;
+import com.example.android.moviesapp.Objects.Review;
+import com.example.android.moviesapp.Fragments.ReviewDialogFragment;
 
 import java.util.ArrayList;
 
@@ -43,7 +43,6 @@ public class DetailActivity extends AppCompatActivity implements DetailFragment.
                 getSupportFragmentManager().beginTransaction()
                         .add(R.id.detail_container_detail_activity, new DetailFragment()).commit();
             }
-            Log.v(LOG_TAG, "onCreate");
         }
     }
 

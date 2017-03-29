@@ -1,4 +1,4 @@
-package com.example.android.moviesapp.trailer;
+package com.example.android.moviesapp.Adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import com.example.android.moviesapp.BuildConfig;
 import com.example.android.moviesapp.R;
+import com.example.android.moviesapp.Objects.YouTubeTrailer;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubeThumbnailLoader;
 import com.google.android.youtube.player.YouTubeThumbnailView;
@@ -18,9 +19,10 @@ import java.util.ArrayList;
 
 public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.ViewHolder> {
 
+    private final String LOG_TAG = TrailerAdapter.class.getSimpleName();
+
     private static Context mContext;
     private ArrayList<YouTubeTrailer> trailerList;
-    private final String LOG_TAG = TrailerAdapter.class.getSimpleName();
     private OnItemClickListener listener;
     private static ProgressBar progressBar;
 

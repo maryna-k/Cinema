@@ -1,4 +1,4 @@
-package com.example.android.moviesapp.review;
+package com.example.android.moviesapp.Adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -10,6 +10,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.android.moviesapp.R;
+import com.example.android.moviesapp.Objects.Review;
 
 import java.util.ArrayList;
 
@@ -18,8 +19,9 @@ import static com.example.android.moviesapp.R.id.review_layout;
 
 public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder> {
 
+    private final String LOG_TAG = ReviewAdapter.class.getSimpleName();
+
     private ArrayList<Review> mList;
-    private final String LOG_TAG = ReviewAdapter.class.getSimpleName() + "LOG";
     private Context context;
     private static boolean[] isCollapsed;
     private static final int SUBSTRING_LENGTH = 400;

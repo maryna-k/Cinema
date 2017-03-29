@@ -7,10 +7,10 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.widget.Toast;
 
-import com.example.android.moviesapp.Movie;
+import com.example.android.moviesapp.Objects.Movie;
 import com.example.android.moviesapp.database.MovieContract.FavoriteMovieEntry;
 import com.example.android.moviesapp.database.MovieContract.ReviewsTableEntry;
-import com.example.android.moviesapp.review.Review;
+import com.example.android.moviesapp.Objects.Review;
 
 import java.util.ArrayList;
 
