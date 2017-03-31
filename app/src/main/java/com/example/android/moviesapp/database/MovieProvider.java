@@ -118,9 +118,7 @@ public class MovieProvider extends ContentProvider {
     @Override
     public Uri insert(@NonNull Uri uri, ContentValues values) {
         Uri returnedUri;
-
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
-
         final int match = sUriMatcher.match(uri);
 
         switch (match){
@@ -164,31 +162,91 @@ public class MovieProvider extends ContentProvider {
 
     @Override
     public int update(@NonNull Uri uri, ContentValues contentValues, String selection, String[] selectionArgs){
-        return 0;
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        int match = sUriMatcher.match(uri);
+        int itemsUpdated;
+
+        switch (match){
+            case FAVORITE_MOVIES:
+                itemsUpdated = db.update(FavoriteMovieEntry.TABLE_NAME,
+                        contentValues,
+                        selection,
+                        selectionArgs);
+                break;
+            case FAVORITE_MOVIE_TMDB_ID:
+                String tmdb_id = uri.getPathSegments().get(1);
+                String tmdb_Selection = FavoriteMovieEntry.COLUMN_NAME_TMDB_ID + "=?";
+                String[] tmdb_SelectionArgs = new String[]{tmdb_id};
+                itemsUpdated = db.update(FavoriteMovieEntry.TABLE_NAME,
+                        contentValues,
+                        tmdb_Selection,
+                        tmdb_SelectionArgs);
+                break;
+            case REVIEWS:
+                itemsUpdated = db.update(ReviewsTableEntry.TABLE_NAME,
+                        contentValues,
+                        selection,
+                        selectionArgs);
+                break;
+            case REVIEW_ID:
+                String review_id = uri.getPathSegments().get(1);
+                String review_selection = ReviewsTableEntry._ID + "=?";
+                String[] review_selectionArgs = new String[]{review_id};
+                itemsUpdated = db.update(
+                        ReviewsTableEntry.TABLE_NAME,
+                        contentValues,
+                        review_selection,
+                        review_selectionArgs);
+                break;
+            default:
+                throw new UnsupportedOperationException("Unknown uri: " + uri);
+        }
+        if (itemsUpdated != 0) getContext().getContentResolver().notifyChange(uri, null);
+        return itemsUpdated;
     }
 
     @Override
     public int delete(@NonNull Uri uri, String selection, String[] selectionArgs){
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
         int match = sUriMatcher.match(uri);
-        int moviesDeleted;
+        int itemsDeleted;
 
         switch (match){
+            case FAVORITE_MOVIES:
+                itemsDeleted = db.delete(FavoriteMovieEntry.TABLE_NAME,
+                        selection,
+                        selectionArgs);
+                break;
             case FAVORITE_MOVIE_TMDB_ID:
                 String tmdb_id = uri.getPathSegments().get(1);
                 String tmdb_Selection = FavoriteMovieEntry.COLUMN_NAME_TMDB_ID + "=?";
                 String[] tmdb_SelectionArgs = new String[]{tmdb_id};
-                moviesDeleted = db.delete(FavoriteMovieEntry.TABLE_NAME,
+                itemsDeleted = db.delete(
+                        FavoriteMovieEntry.TABLE_NAME,
                         tmdb_Selection,
                         tmdb_SelectionArgs);
+                break;
+            case REVIEWS:
+                itemsDeleted = db.delete(ReviewsTableEntry.TABLE_NAME,
+                        selection,
+                        selectionArgs);
+                break;
+            case REVIEW_ID:
+                String review_id = uri.getPathSegments().get(1);
+                String reviewID_selection = ReviewsTableEntry._ID + "=?";
+                String[] reviewID_selectionArgs = new String[]{review_id};
+                itemsDeleted = db.delete(
+                        ReviewsTableEntry.TABLE_NAME,
+                        reviewID_selection,
+                        reviewID_selectionArgs);
                 break;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
-        if (moviesDeleted > 0){
+        if (itemsDeleted > 0){
             getContext().getContentResolver().notifyChange(uri, null);
         }
-        return moviesDeleted;
+        return itemsDeleted;
     }
 
     @Override

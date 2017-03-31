@@ -10,7 +10,7 @@ import org.json.JSONException;
 
 import java.util.ArrayList;
 
-import static com.example.android.moviesapp.utilities.JsonParser.getMovieDataFromJson;
+import static com.example.android.moviesapp.utilities.JsonParser.getMovieArrayFromJson;
 import static com.example.android.moviesapp.utilities.MDBConnection.LOAD_MOVIES;
 import static com.example.android.moviesapp.utilities.MDBConnection.getJsonResponse;
 
@@ -34,10 +34,10 @@ public class MovieLoader extends AsyncTaskLoader<ArrayList<Movie>> {
 
     @Override
     public ArrayList<Movie> loadInBackground(){
-        String movieJsonStr = getJsonResponse(LOAD_MOVIES);
+        String movieJsonStr = getJsonResponse(LOAD_MOVIES, -1);
 
         try {
-            return getMovieDataFromJson(movieJsonStr);
+            return getMovieArrayFromJson(movieJsonStr);
         } catch (JSONException e) {
             Log.e(LOG_TAG, e.getMessage(), e);
             e.printStackTrace();

@@ -12,7 +12,7 @@ public class Movie implements Serializable {
     private String releaseDate;
     private String posterAddress; //small poster image
     private String backdropAddress; //header image
-    private long mdb_id;
+    private long tmdb_id;
     private String posterStoragePath;
     private boolean favorite;
 
@@ -29,8 +29,25 @@ public class Movie implements Serializable {
         this.releaseDate = releaseDate;
         this.posterAddress = posterAddress;
         this.backdropAddress = backdropAddress;
-        this.mdb_id = mdb_id;
+        this.tmdb_id = mdb_id;
         this.posterStoragePath = posterStoragePath;
+    }
+
+    @Override
+    public boolean equals(Object obj){
+        if (obj == null || this.getClass() != obj.getClass())
+            return false;
+        else {
+            Movie m = (Movie)obj;
+            return (this.title.equals(m.title) &&
+                    this.overview.equals(m.overview) &&
+                    this.rating == m.rating &&
+                    this.voteCount == m.voteCount &&
+                    this.genre == m.genre &&
+                    this.releaseDate == m.releaseDate &&
+                    this.posterAddress == m.posterAddress &&
+                    this.tmdb_id == m.tmdb_id);
+        }
     }
 
     public String getTitle() {
@@ -97,12 +114,12 @@ public class Movie implements Serializable {
         this.backdropAddress = backdropAddress;
     }
 
-    public long getMdb_id() {
-        return mdb_id;
+    public long getTmdb_id() {
+        return tmdb_id;
     }
 
-    public void setMdb_id(long mdb_id) {
-        this.mdb_id = mdb_id;
+    public void setTmdb_id(long tmdb_id) {
+        this.tmdb_id = tmdb_id;
     }
 
     public void setPosterStoragePath(String path){

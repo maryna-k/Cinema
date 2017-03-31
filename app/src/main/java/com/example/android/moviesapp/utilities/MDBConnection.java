@@ -6,7 +6,6 @@ import android.net.NetworkInfo;
 import android.util.Log;
 
 import com.example.android.moviesapp.BuildConfig;
-import com.example.android.moviesapp.Fragments.DetailFragment;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -25,12 +24,13 @@ public class MDBConnection {
     public final static int LOAD_MOVIES = 1;
     public final static int LOAD_TRAILER_INFO = 2;
     public final static int LOAD_REVIEWS = 3;
+    public final static int LOAD_MOVIE_BY_ID = 4;
 
     private final static String BASE_URL = "http://api.themoviedb.org/3/";
     private final static String API_KEY = "?api_key=" + BuildConfig.TMDb_API_KEY;
 
 
-    public static String getJsonResponse(int requestType){
+    public static String getJsonResponse(int requestType, long tmdb_id){
 
         HttpURLConnection urlConnection = null;
         BufferedReader reader = null;
@@ -40,13 +40,16 @@ public class MDBConnection {
 
         switch (requestType){
             case LOAD_MOVIES:
-                urlString = buildMovieUrl(getMoviesToSearch());
+                urlString = buildUrlBySearchCriteria(getMoviesToSearch());
                 break;
             case LOAD_TRAILER_INFO:
-                urlString = buildTrailerReviewUrl(DetailFragment.getmTMDB_ID(), LOAD_TRAILER_INFO);
+                urlString = buildUrlByMovieID(tmdb_id, LOAD_TRAILER_INFO);
                 break;
             case LOAD_REVIEWS:
-                urlString = buildTrailerReviewUrl(DetailFragment.getmTMDB_ID(), LOAD_REVIEWS);
+                urlString = buildUrlByMovieID(tmdb_id, LOAD_REVIEWS);
+                break;
+            case LOAD_MOVIE_BY_ID:
+                urlString = buildUrlByMovieID(tmdb_id, LOAD_MOVIE_BY_ID);
                 break;
             default: return null;
         }
@@ -97,7 +100,7 @@ public class MDBConnection {
         return jsonString;
     }
 
-    private static String buildMovieUrl(String category){
+    private static String buildUrlBySearchCriteria(String category){
         String url;
         if (category.equals("Popular") || category.equals("Top Rated")) {
             url = buildMovieUrlHelper(searchCategories.get(category), "",
@@ -119,14 +122,19 @@ public class MDBConnection {
                 .append(page).toString();
     }
 
-    private static String buildTrailerReviewUrl(long movieId, int infoType){
+    private static String buildUrlByMovieID(long movieId, int infoType){
         String type = "";
-        if(infoType == LOAD_TRAILER_INFO) {
-            type = "/videos";
-        } else if (infoType == LOAD_REVIEWS) {
-            type = "/reviews";
+        switch (infoType) {
+            case LOAD_MOVIE_BY_ID:
+                type = null;
+                break;
+            case LOAD_TRAILER_INFO:
+                type = "/videos";
+                break;
+            case LOAD_REVIEWS:
+                type = "/reviews";
+                break;
         }
-
         return new StringBuilder()
                 .append(BASE_URL)
                 .append("movie/")
@@ -146,9 +154,7 @@ public class MDBConnection {
             return false;
     }
 
-
-    /*since java has no map literals and searchCategories is a class variable, initialization
-      should be done in a static initializer */
+    /*key value pairs of genres and their ids as well as http requests for popular and top rated movies*/
     public static final HashMap<String, String> searchCategories = new HashMap<>();
     static {
         searchCategories.put("Popular", "movie/popular");

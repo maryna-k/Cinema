@@ -22,11 +22,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.example.android.moviesapp.utilities.EndlessRecyclerViewScrollListener;
-import com.example.android.moviesapp.Objects.Movie;
 import com.example.android.moviesapp.Adapters.MovieAdapter;
 import com.example.android.moviesapp.Loaders.MovieLoader;
+import com.example.android.moviesapp.Objects.Movie;
 import com.example.android.moviesapp.R;
+import com.example.android.moviesapp.utilities.EndlessRecyclerViewScrollListener;
 import com.example.android.moviesapp.utilities.FragmentCallback;
 import com.example.android.moviesapp.utilities.MDBConnection;
 

@@ -13,7 +13,7 @@ import android.widget.TextView;
 
 import com.example.android.moviesapp.Objects.Movie;
 import com.example.android.moviesapp.R;
-import com.example.android.moviesapp.database.MovieContract.FavoriteMovieEntry;
+import com.example.android.moviesapp.database.DatabaseUtilMethods;
 import com.example.android.moviesapp.utilities.ImageUtils;
 
 
@@ -41,7 +41,7 @@ public class CursorMovieAdapter extends RecyclerView.Adapter<CursorMovieAdapter.
                 titleView.setVisibility(View.VISIBLE);
                 imageViewItem.setVisibility(View.GONE);
             } else {
-                final Bitmap posterBitmap = ImageUtils.getPosterFromStorage(posterPath, Long.toString(movie.getMdb_id()));
+                final Bitmap posterBitmap = ImageUtils.getPosterFromStorage(posterPath, Long.toString(movie.getTmdb_id()));
                 imageViewItem.setImageBitmap(posterBitmap);
             }
             itemView.setOnClickListener(new View.OnClickListener() {
@@ -68,7 +68,7 @@ public class CursorMovieAdapter extends RecyclerView.Adapter<CursorMovieAdapter.
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position){
-        mCursor.moveToPosition(position);
+        /*mCursor.moveToPosition(position);
         String posterAddress = mCursor.getString
                 (mCursor.getColumnIndex(FavoriteMovieEntry.COLUMN_NAME_POSTER_ADDRESS));
         String backdropAddress = mCursor.getString
@@ -90,7 +90,10 @@ public class CursorMovieAdapter extends RecyclerView.Adapter<CursorMovieAdapter.
         String posterStoragePath = mCursor.getString
                 (mCursor.getColumnIndex(FavoriteMovieEntry.COLUMN_NAME_POSTER_STORAGE_PATH));
         Movie movie = new Movie(title, overview, rating, voteCount, genre, releaseDay,
-                posterAddress, posterStoragePath, backdropAddress, tmdb_id);
+                posterAddress, posterStoragePath, backdropAddress, tmdb_id);*/
+
+        Movie movie = DatabaseUtilMethods.getMovieFromCursor(position, mCursor);
+        long tmdb_id = movie.getTmdb_id();
 
         //set tag for tmdb_id (it will be used in FavoriteGridFragment to delete Movie object)
         holder.itemView.setTag(tmdb_id);

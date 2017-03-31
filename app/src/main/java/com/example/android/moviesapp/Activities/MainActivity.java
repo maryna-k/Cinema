@@ -236,7 +236,6 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback,
         if (menuItem.getItemId() == R.id.nav_favorite_fragment) {
             fragmentClass = FavoriteGridFragment.class;
         } else {
-            //MainGridFragment.moviesToSearch = title;
             fragmentClass = MainGridFragment.class;
         }
         try {

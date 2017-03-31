@@ -4,8 +4,6 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import static com.example.android.moviesapp.database.MovieContract.FavoriteMovieEntry.COLUMN_NAME_TITLE;
-
 public class MovieDbHelper extends SQLiteOpenHelper {
 
     public static final int DATABASE_VERSION = 1;
@@ -20,7 +18,7 @@ public class MovieDbHelper extends SQLiteOpenHelper {
         final String SQL_CREATE_FAVORITES_TABLE =
                 "CREATE TABLE " + MovieContract.FavoriteMovieEntry.TABLE_NAME + " (" +
                 MovieContract.FavoriteMovieEntry.COLUMN_NAME_TMDB_ID + " LONG PRIMARY KEY," +
-                COLUMN_NAME_TITLE + " TEXT NOT NULL," +
+                MovieContract.FavoriteMovieEntry.COLUMN_NAME_TITLE + " TEXT NOT NULL," +
                 MovieContract.FavoriteMovieEntry.COLUMN_NAME_GENRE + " TEXT," +
                 MovieContract.FavoriteMovieEntry.COLUMN_NAME_RELEASE + " TEXT," +
                 MovieContract.FavoriteMovieEntry.COLUMN_NAME_RATING + " DOUBLE," +

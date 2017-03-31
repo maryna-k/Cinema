@@ -48,7 +48,7 @@ import com.example.android.moviesapp.Loaders.ReviewLoader;
 import com.example.android.moviesapp.Adapters.TrailerAdapter;
 import com.example.android.moviesapp.Loaders.TrailerInfoLoader;
 import com.example.android.moviesapp.Objects.YouTubeTrailer;
-import com.example.android.moviesapp.utilities.DetailFragmentDatabaseUtils;
+import com.example.android.moviesapp.database.DatabaseUtilMethods;
 import com.example.android.moviesapp.utilities.ImageUtils;
 import com.example.android.moviesapp.utilities.Keys;
 import com.google.android.youtube.player.YouTubeStandalonePlayer;
@@ -152,8 +152,8 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
                 movie = (Movie) arguments.getSerializable(MOVIE_DETAIL);
             }
 
-            mTMDB_ID = movie.getMdb_id();
-            favorite = DetailFragmentDatabaseUtils.movieIsInFavorite(mTMDB_ID, getContext());
+            mTMDB_ID = movie.getTmdb_id();
+            favorite = DatabaseUtilMethods.movieIsInFavorite(mTMDB_ID, getContext());
 
             if(savedInstanceState != null){
                 toolbarChangePoint = savedInstanceState.getInt(TOOLBAR_CHANGE_POINT);
@@ -284,13 +284,13 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
 
         switch (item.getItemId()) {
             case R.id.action_add_to_favorite:
-                favorite = DetailFragmentDatabaseUtils.saveFavoriteMovie(movie, reviewList, getContext());
+                favorite = DatabaseUtilMethods.saveFavoriteMovie(movie, reviewList, getContext());
                 if (favorite) {
                     getActivity().invalidateOptionsMenu();
                 }
                 break;
             case R.id.action_remove_from_favorite:
-                int removedNum = DetailFragmentDatabaseUtils.deleteFavoriteMovie(mTMDB_ID, getContext());
+                int removedNum = DatabaseUtilMethods.deleteFavoriteMovie(mTMDB_ID, getContext());
                 if (removedNum > 0) {
                     favorite = false;
                     getActivity().invalidateOptionsMenu();
@@ -470,7 +470,7 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
         @Override
         public Loader<ArrayList<YouTubeTrailer>> onCreateLoader(int id, Bundle args) {
             if (id == TRAILER_LOADER_ID) {
-                return new TrailerInfoLoader(getContext());
+                return new TrailerInfoLoader(getContext(), mTMDB_ID);
             } else return null;
         }
 
@@ -513,7 +513,7 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
         @Override
         public Loader<ArrayList<Review>> onCreateLoader(int id, Bundle args) {
             if (id == REVIEW_LOADER_ID) {
-                return new ReviewLoader(getContext());
+                return new ReviewLoader(getContext(), mTMDB_ID);
             } else return null;
         }
 

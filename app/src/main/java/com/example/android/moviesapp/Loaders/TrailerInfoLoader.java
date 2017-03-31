@@ -20,9 +20,11 @@ public class TrailerInfoLoader extends AsyncTaskLoader<ArrayList<YouTubeTrailer>
 
     private final String LOG_TAG = TrailerInfoLoader.class.getSimpleName();
     private ArrayList<YouTubeTrailer> trailerArrayList;
+    private long tmdb_id;
 
-    public TrailerInfoLoader(Context context){
+    public TrailerInfoLoader(Context context, long tmdb_id){
         super(context);
+        this.tmdb_id = tmdb_id;
     }
 
     @Override
@@ -36,7 +38,7 @@ public class TrailerInfoLoader extends AsyncTaskLoader<ArrayList<YouTubeTrailer>
 
     @Override
     public ArrayList<YouTubeTrailer> loadInBackground() {
-        String trailerJsonStr = getJsonResponse(LOAD_TRAILER_INFO);
+        String trailerJsonStr = getJsonResponse(LOAD_TRAILER_INFO, tmdb_id);
 
         try {
             return getTrailerDataFromJson(trailerJsonStr);

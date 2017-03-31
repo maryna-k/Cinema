@@ -11,6 +11,8 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,10 +21,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.android.moviesapp.Adapters.CursorMovieAdapter;
-import com.example.android.moviesapp.Objects.Movie;
 import com.example.android.moviesapp.Adapters.MovieAdapter;
+import com.example.android.moviesapp.Objects.Movie;
 import com.example.android.moviesapp.R;
 import com.example.android.moviesapp.database.MovieContract;
+import com.example.android.moviesapp.sync.MovieSyncAdapter;
 import com.example.android.moviesapp.utilities.FragmentCallback;
 
 import static com.example.android.moviesapp.Activities.MainActivity.DETAILFRAGMENT_TAG;
@@ -138,8 +141,22 @@ public class FavoriteGridFragment extends Fragment
     }
 
     @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater){
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.menu_main_fragment, menu);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        if(item.getItemId() == R.id.action_refresh){
+            updateMovieList();
+            return true;
+        }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void updateMovieList(){
+        MovieSyncAdapter.syncImmediately(getContext());
     }
 
     private void setEmptyGridViewVisible(boolean visible){

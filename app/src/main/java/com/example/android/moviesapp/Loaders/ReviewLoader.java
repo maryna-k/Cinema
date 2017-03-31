@@ -20,9 +20,11 @@ public class ReviewLoader extends AsyncTaskLoader<ArrayList<Review>> {
 
     private final String LOG_TAG = TrailerInfoLoader.class.getSimpleName();
     private ArrayList<Review> reviewArrayList;
+    private long tmdb_id;
 
-    public ReviewLoader(Context context){
+    public ReviewLoader(Context context, long tmdb_id){
         super(context);
+        this.tmdb_id = tmdb_id;
     }
 
     @Override
@@ -36,7 +38,7 @@ public class ReviewLoader extends AsyncTaskLoader<ArrayList<Review>> {
 
     @Override
     public ArrayList<Review> loadInBackground() {
-        String reviewJsonStr = getJsonResponse(LOAD_REVIEWS);
+        String reviewJsonStr = getJsonResponse(LOAD_REVIEWS, tmdb_id);
 
         try {
             return getReviewDataFromJson(reviewJsonStr);
