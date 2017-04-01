@@ -5,8 +5,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
 
-import com.example.android.moviesapp.BuildConfig;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,7 +25,7 @@ public class MDBConnection {
     public final static int LOAD_MOVIE_BY_ID = 4;
 
     private final static String BASE_URL = "http://api.themoviedb.org/3/";
-    private final static String API_KEY = "?api_key=" + BuildConfig.TMDb_API_KEY;
+    private final static String API_KEY = "?api_key=" + Keys.TMDb_API_KEY;
 
 
     public static String getJsonResponse(int requestType, long tmdb_id){

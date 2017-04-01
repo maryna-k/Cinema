@@ -41,7 +41,6 @@ import android.widget.Toast;
 
 import com.example.android.moviesapp.Activities.MainActivity;
 import com.example.android.moviesapp.Adapters.TrailerAdapter;
-import com.example.android.moviesapp.BuildConfig;
 import com.example.android.moviesapp.Loaders.ReviewLoader;
 import com.example.android.moviesapp.Loaders.TrailerInfoLoader;
 import com.example.android.moviesapp.Objects.Movie;
@@ -498,7 +497,7 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
                     @Override
                     public void onItemClick(String keyStr) {
                         startActivity(YouTubeStandalonePlayer.createVideoIntent(getActivity(),
-                                BuildConfig.YOUTUBE_API_KEY, keyStr, 0, true, true));
+                                Keys.YOUTUBE_API_KEY, keyStr, 0, true, true));
                     }
                 });
                 mTrailerAdapter.setProgressBar(trailersProgressBar);

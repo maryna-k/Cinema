@@ -8,9 +8,9 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.example.android.moviesapp.BuildConfig;
-import com.example.android.moviesapp.R;
 import com.example.android.moviesapp.Objects.YouTubeTrailer;
+import com.example.android.moviesapp.R;
+import com.example.android.moviesapp.utilities.Keys;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubeThumbnailLoader;
 import com.google.android.youtube.player.YouTubeThumbnailView;
@@ -49,7 +49,7 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.ViewHold
             thumbView.setTag(R.id.thumbnail_loader, null);
             thumbView.setTag(R.id.trailer_key, "");
 
-            thumbView.initialize(BuildConfig.YOUTUBE_API_KEY, new YouTubeThumbnailView.OnInitializedListener() {
+            thumbView.initialize(Keys.YOUTUBE_API_KEY, new YouTubeThumbnailView.OnInitializedListener() {
                 @Override
                 public void onInitializationSuccess(YouTubeThumbnailView youTubeThumbnailView, YouTubeThumbnailLoader youTubeThumbnailLoader) {
                     thumbView.setTag(R.id.initialize, INITIALIZED);
