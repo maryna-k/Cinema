@@ -5,10 +5,10 @@
 
     <!--Strings for fragment_detail.xml-->
     <string name="movie_info">Movie info</string>
-    <string name="genre">Genre:</string>
-    <string name="release_date">Release:</string>
-    <string name="vote_count">Vote count:</string>
-    <string name="rating">Rating:</string>
+    <string name="genre">Genre: </string>
+    <string name="release_date">Release: </string>
+    <string name="vote_count">Vote count: </string>
+    <string name="rating">Rating: </string>
     <string name="overview">Storyline</string>
     <string name="reviews">Reviews</string>
     <string name="more_reviews">More reviews</string>
@@ -50,6 +50,14 @@
     <string name="nav_thriller">Thriller</string>
     <string name="nav_war">War</string>
     <string name="nav_western">Western</string>
+
+    <!--Share movie title-->
+    <string name="share_movie_message_title">Movie from Cinema</string>
+
+    <!--Toast messages-->
+    <string name="removed_from_db">Movie was removed from Favorites</string>
+    <string name="saved_to_db">Movie was added to Favorites</string>
+    <string name="couldnt_save_to_db">Oops... Movie was not saved</string>
 
     <!-- SyncAdapter related -->
     <string name="sync_account_type">moviesapp.example.com</string>

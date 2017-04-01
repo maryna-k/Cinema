@@ -288,7 +288,6 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
         switch (item.getItemId()) {
             case R.id.action_add_to_favorite:
                 favorite = DatabaseUtilMethods.saveFavoriteMovie(movie, reviewList, getContext());
@@ -301,7 +300,8 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
                 if (removedNum > 0) {
                     favorite = false;
                     getActivity().invalidateOptionsMenu();
-                    Toast.makeText(getContext(), "Movie was removed from Favorites", Toast.LENGTH_SHORT)
+                    String str = getContext().getResources().getString(R.string.removed_from_db);
+                    Toast.makeText(getContext(), str, Toast.LENGTH_SHORT)
                             .show();
                 }
                 break;
@@ -460,10 +460,12 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
 
     private void shareMovie() {
         String mimeType = "text/plain";
-        String title = "Movie from Cinema";
-        String textToShare = movie.getTitle() + "\n\n" + "Rating: " + movie.getRating() + "\n\n" +
-                "Release date: " + movie.getReleaseDate() + "\n\n" + "Overivew: " + "\n" + movie.getOverview();
-        String subject = "Cinema: " + movie.getTitle();
+        String title = getContext().getResources().getString(R.string.share_movie_message_title);
+        String textToShare = movie.getTitle() + "\n\n" +
+                getContext().getResources().getString(R.string.rating) + movie.getRating() + "\n\n" +
+                getContext().getResources().getString(R.string.release_date) + movie.getReleaseDate() + "\n\n" +
+                getContext().getResources().getString(R.string.overview) + "\n" + movie.getOverview();
+        String subject = getContext().getResources().getString(R.string.app_name) + ": " + movie.getTitle();
         ShareCompat.IntentBuilder
                 .from(getActivity())
                 .setType(mimeType)

@@ -8,9 +8,10 @@ import android.net.Uri;
 import android.widget.Toast;
 
 import com.example.android.moviesapp.Objects.Movie;
+import com.example.android.moviesapp.Objects.Review;
+import com.example.android.moviesapp.R;
 import com.example.android.moviesapp.database.MovieContract.FavoriteMovieEntry;
 import com.example.android.moviesapp.database.MovieContract.ReviewsTableEntry;
-import com.example.android.moviesapp.Objects.Review;
 import com.example.android.moviesapp.utilities.ImageUtils;
 import com.example.android.moviesapp.utilities.Keys;
 
@@ -57,12 +58,12 @@ public class DatabaseUtilMethods {
         Uri movieUri = context.getContentResolver().insert(FavoriteMovieEntry.CONTENT_URI, values);
         if (movieUri != null) {
             saveMovieReview(reviews, tmdb_id, context);
-            Toast.makeText(context, "Movie was added to Favorites",
-                    Toast.LENGTH_SHORT)
-                    .show();
+            String str = context.getResources().getString(R.string.saved_to_db);
+            Toast.makeText(context, str, Toast.LENGTH_SHORT).show();
             return true;
         } else {
-            Toast.makeText(context, "Oops... Movie was not saved", Toast.LENGTH_SHORT).show();
+            String str = context.getResources().getString(R.string.couldnt_save_to_db);
+            Toast.makeText(context, str, Toast.LENGTH_SHORT).show();
             return false;
         }
     }
@@ -116,5 +117,4 @@ public class DatabaseUtilMethods {
                 posterAddress, posterStoragePath, backdropAddress, tmdb_id);
         return movie;
     }
-
 }
