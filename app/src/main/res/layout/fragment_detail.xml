@@ -16,7 +16,7 @@
             android:layout_height="wrap_content">
 
             <ImageView
-                android:id="@+id/header"
+                android:id="@+id/backdrop"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/header_poster_height"
                 android:layout_alignParentTop="true"
@@ -27,7 +27,7 @@
                 android:id="@+id/small_poster_base"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/small_poster_base_width"
-                android:layout_below="@id/header"
+                android:layout_below="@id/backdrop"
                 android:background="@color/colorPrimary"
                 android:gravity="right"
                 android:orientation="horizontal"/>

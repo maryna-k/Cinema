@@ -41,6 +41,8 @@ public class CursorMovieAdapter extends RecyclerView.Adapter<CursorMovieAdapter.
                 titleView.setVisibility(View.VISIBLE);
                 imageViewItem.setVisibility(View.GONE);
             } else {
+                titleView.setVisibility(View.GONE);
+                imageViewItem.setVisibility(View.VISIBLE);
                 final Bitmap posterBitmap = ImageUtils.getPosterFromStorage(posterPath, Long.toString(movie.getTmdb_id()));
                 imageViewItem.setImageBitmap(posterBitmap);
             }
@@ -68,30 +70,6 @@ public class CursorMovieAdapter extends RecyclerView.Adapter<CursorMovieAdapter.
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position){
-        /*mCursor.moveToPosition(position);
-        String posterAddress = mCursor.getString
-                (mCursor.getColumnIndex(FavoriteMovieEntry.COLUMN_NAME_POSTER_ADDRESS));
-        String backdropAddress = mCursor.getString
-                (mCursor.getColumnIndex(FavoriteMovieEntry.COLUMN_NAME_BACKDROP_ADDRESS));
-        String title = mCursor.getString
-                (mCursor.getColumnIndex(FavoriteMovieEntry.COLUMN_NAME_TITLE));
-        String genre = mCursor.getString
-                (mCursor.getColumnIndex(FavoriteMovieEntry.COLUMN_NAME_GENRE));
-        String overview = mCursor.getString
-                (mCursor.getColumnIndex(FavoriteMovieEntry.COLUMN_NAME_OVERVIEW));
-        String releaseDay = mCursor.getString
-                (mCursor.getColumnIndex(FavoriteMovieEntry.COLUMN_NAME_RELEASE));
-        double rating = mCursor.getDouble
-                (mCursor.getColumnIndex(FavoriteMovieEntry.COLUMN_NAME_RATING));
-        int voteCount = mCursor.getInt
-                (mCursor.getColumnIndex(FavoriteMovieEntry.COLUMN_NAME_VOTE_COUNT));
-        long tmdb_id = mCursor.getLong
-                (mCursor.getColumnIndex(FavoriteMovieEntry.COLUMN_NAME_TMDB_ID));
-        String posterStoragePath = mCursor.getString
-                (mCursor.getColumnIndex(FavoriteMovieEntry.COLUMN_NAME_POSTER_STORAGE_PATH));
-        Movie movie = new Movie(title, overview, rating, voteCount, genre, releaseDay,
-                posterAddress, posterStoragePath, backdropAddress, tmdb_id);*/
-
         Movie movie = DatabaseUtilMethods.getMovieFromCursor(position, mCursor);
         long tmdb_id = movie.getTmdb_id();
 

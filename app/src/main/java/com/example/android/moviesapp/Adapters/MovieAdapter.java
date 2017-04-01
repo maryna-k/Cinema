@@ -94,7 +94,10 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 ((ViewHolder) holder).titleView.setText(movie.getTitle());
                 ((ViewHolder) holder).titleView.setVisibility(View.VISIBLE);
                 ((ViewHolder) holder).imageViewItem.setVisibility(View.GONE);
-            } else ((ViewHolder) holder).titleView.setVisibility(View.GONE);
+            } else {
+                ((ViewHolder) holder).titleView.setVisibility(View.GONE);
+                ((ViewHolder) holder).imageViewItem.setVisibility(View.VISIBLE);
+            }
             ((ViewHolder) holder).itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
