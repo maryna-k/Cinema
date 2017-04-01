@@ -7,9 +7,11 @@ import android.content.ContentProviderClient;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.SyncRequest;
 import android.content.SyncResult;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -34,6 +36,8 @@ import static com.example.android.moviesapp.utilities.MDBConnection.getJsonRespo
 public class MovieSyncAdapter extends AbstractThreadedSyncAdapter {
 
     public final String LOG_TAG = MovieSyncAdapter.class.getSimpleName();
+    public static final int SYNC_INTERVAL = 60*1140;// sync every 24 hours
+    public static final int SYNC_FLEXTIME = SYNC_INTERVAL/3;
 
     public MovieSyncAdapter(Context context, boolean autoInitialize) {
         super(context, autoInitialize);
@@ -91,8 +95,9 @@ public class MovieSyncAdapter extends AbstractThreadedSyncAdapter {
             values.put(FavoriteMovieEntry.COLUMN_NAME_VOTE_COUNT, m2.getVoteCount());
         if(!m1.getPosterAddress().equals(m2.getPosterAddress())) {
             values.put(FavoriteMovieEntry.COLUMN_NAME_POSTER_ADDRESS, m2.getPosterAddress());
-            //remove old poster from the file system
-            //insert new poster to the file system and save new posterStoratePath
+        }
+        if(!m1.getBackdropAddress().equals(m2.getBackdropAddress())) {
+            values.put(FavoriteMovieEntry.COLUMN_NAME_BACKDROP_ADDRESS, m2.getBackdropAddress());
         }
         if(values.size() > 1) {
             Uri uri = FavoriteMovieEntry.CONTENT_URI.buildUpon().appendPath
@@ -166,7 +171,37 @@ public class MovieSyncAdapter extends AbstractThreadedSyncAdapter {
             if (!accountManager.addAccountExplicitly(newAccount, "", null)) {
                 return null;
             }
+            onAccountCreated(newAccount, context);
         }
         return newAccount;
+    }
+
+    /**
+     * Helper method to schedule the sync adapter periodic execution
+     */
+    public static void configurePeriodicSync(Context context, int syncInterval, int flexTime) {
+        Account account = getSyncAccount(context);
+        String authority = context.getString(R.string.content_authority);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            // enable inexact timers in the periodic sync
+            SyncRequest request = new SyncRequest.Builder().
+                    syncPeriodic(syncInterval, flexTime).
+                    setSyncAdapter(account, authority).
+                    setExtras(new Bundle()).build();
+            ContentResolver.requestSync(request);
+        } else {
+            ContentResolver.addPeriodicSync(account,
+                    authority, new Bundle(), syncInterval);
+        }
+    }
+
+    private static void onAccountCreated(Account newAccount, Context context) {
+        MovieSyncAdapter.configurePeriodicSync(context, SYNC_INTERVAL, SYNC_FLEXTIME);
+        ContentResolver.setSyncAutomatically(newAccount, context.getString(R.string.content_authority), true);
+        syncImmediately(context);
+    }
+
+    public static void initializeSyncAdapter(Context context) {
+        getSyncAccount(context);
     }
 }

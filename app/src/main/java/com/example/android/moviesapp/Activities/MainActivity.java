@@ -23,11 +23,12 @@ import android.widget.TextView;
 
 import com.example.android.moviesapp.Fragments.DetailFragment;
 import com.example.android.moviesapp.Fragments.FavoriteGridFragment;
-import com.example.android.moviesapp.Objects.Movie;
 import com.example.android.moviesapp.Fragments.MainGridFragment;
-import com.example.android.moviesapp.R;
-import com.example.android.moviesapp.Objects.Review;
 import com.example.android.moviesapp.Fragments.ReviewDialogFragment;
+import com.example.android.moviesapp.Objects.Movie;
+import com.example.android.moviesapp.Objects.Review;
+import com.example.android.moviesapp.R;
+import com.example.android.moviesapp.sync.MovieSyncAdapter;
 import com.example.android.moviesapp.utilities.FragmentCallback;
 
 import java.util.ArrayList;
@@ -126,6 +127,7 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback,
                 lastViewedMovie = (Movie) savedInstanceState.getSerializable(LAST_VIEWED_MOVIE);
             }
         }
+        MovieSyncAdapter.initializeSyncAdapter(this);
     }
 
     @Override
