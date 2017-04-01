@@ -39,16 +39,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.android.moviesapp.Activities.MainActivity;
-import com.example.android.moviesapp.BuildConfig;
-import com.example.android.moviesapp.Objects.Movie;
-import com.example.android.moviesapp.R;
-import com.example.android.moviesapp.database.MovieContract;
-import com.example.android.moviesapp.Objects.Review;
-import com.example.android.moviesapp.Loaders.ReviewLoader;
 import com.example.android.moviesapp.Adapters.TrailerAdapter;
+import com.example.android.moviesapp.BuildConfig;
+import com.example.android.moviesapp.Loaders.ReviewLoader;
 import com.example.android.moviesapp.Loaders.TrailerInfoLoader;
+import com.example.android.moviesapp.Objects.Movie;
+import com.example.android.moviesapp.Objects.Review;
 import com.example.android.moviesapp.Objects.YouTubeTrailer;
+import com.example.android.moviesapp.R;
 import com.example.android.moviesapp.database.DatabaseUtilMethods;
+import com.example.android.moviesapp.database.MovieContract;
 import com.example.android.moviesapp.utilities.ImageUtils;
 import com.example.android.moviesapp.utilities.Keys;
 import com.google.android.youtube.player.YouTubeStandalonePlayer;
@@ -90,6 +90,7 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
     private BroadcastReceiver mBroadcastReceiver;
     private IntentFilter mInternetFilter;
 
+    //toolbar and colors
     private ActionBar toolbar;
     private Toolbar secondaryToolbar;
     int themeColor;
@@ -100,6 +101,16 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
 
     private boolean isTabletPortrait;
     private boolean isTabletTwoPane;
+
+    //review layout
+    String contentStr;
+    RelativeLayout layoutReviews;
+    TextView author;
+    TextView reviewContent;
+    Button showMoreReviewsButton;
+    ImageView expandReview;
+    ImageView collapseReview;
+    ImageView emptyReviews;
 
     private final int COLLAPSED_REVIEW_SIZE = 150;
 
@@ -590,51 +601,28 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
 
     //helper method that sets review layout
     private void setReviewLayout(final ArrayList<Review> reviewData) {
-        final String contentStr;
-        RelativeLayout layoutReviews = (RelativeLayout) rootView.findViewById(R.id.layout_reviews);
-
-        TextView author = (TextView) rootView.findViewById(R.id.reviewer_name);
-        final TextView reviewContent = (TextView) rootView.findViewById(R.id.review_text);
-        Button showMoreReviewsButton = (Button) rootView.findViewById(R.id.review_button);
-        final ImageView expandReview = (ImageView) rootView.findViewById(R.id.expand_review);
-        final ImageView collapseReview = (ImageView) rootView.findViewById(R.id.hide_review);
-        ImageView emptyReviews = (ImageView) rootView.findViewById(R.id.no_reviews_found_icon);
-
+        setReviewLayout();
         if (reviewData == null) {
-            layoutReviews.setVisibility(View.GONE);
-            showMoreReviewsButton.setVisibility(View.GONE);
-            emptyReviews.setVisibility(View.GONE);
-            reviewsProgressBar.setVisibility(View.VISIBLE);
+            showReviewProgressBar();
         } else if (reviewData.size() > 0) {
             contentStr = reviewData.get(0).getReviewContent();
             author.setText(reviewData.get(0).getAuthor());
-
-            layoutReviews.setVisibility(View.VISIBLE);
-            emptyReviews.setVisibility(View.GONE);
-            reviewsProgressBar.setVisibility(View.GONE);
+            showReviewLayout();
 
             if (contentStr.length() > COLLAPSED_REVIEW_SIZE) {
-                reviewContent.setText(contentStr.substring(0, COLLAPSED_REVIEW_SIZE) + "...");
-                expandReview.setVisibility(View.VISIBLE);
-                collapseReview.setVisibility(View.GONE);
+                showCollapseReviewLayout();
                 layoutReviews.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         if (expandReview.getVisibility() == View.VISIBLE && collapseReview.getVisibility() == View.GONE) {
-                            reviewContent.setText(contentStr);
-                            expandReview.setVisibility(View.GONE);
-                            collapseReview.setVisibility(View.VISIBLE);
+                            showExpandedReviewLayout();
                         } else if (expandReview.getVisibility() == View.GONE && collapseReview.getVisibility() == View.VISIBLE) {
-                            reviewContent.setText(contentStr.substring(0, COLLAPSED_REVIEW_SIZE) + "...");
-                            expandReview.setVisibility(View.VISIBLE);
-                            collapseReview.setVisibility(View.GONE);
+                            showCollapseReviewLayout();
                         }
                     }
                 });
             } else {
-                reviewContent.setText(contentStr);
-                expandReview.setVisibility(View.GONE);
-                collapseReview.setVisibility(View.GONE);
+                showFullTextReviewLayout();
             }
             if (reviewData.size() == 1) {
                 showMoreReviewsButton.setVisibility(View.GONE);
@@ -647,14 +635,55 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
                 });
             }
         } else if (reviewData.size() == 0) {
-            layoutReviews.setVisibility(View.GONE);
-            showMoreReviewsButton.setVisibility(View.GONE);
-            emptyReviews.setVisibility(View.VISIBLE);
-            reviewsProgressBar.setVisibility(View.GONE);
+            showEmptyReviewLayout();
         }
     }
 
-    public static long getmTMDB_ID() {
-        return mTMDB_ID;
+    private void setReviewLayout(){
+        layoutReviews = (RelativeLayout) rootView.findViewById(R.id.layout_reviews);
+        author = (TextView) rootView.findViewById(R.id.reviewer_name);
+        reviewContent = (TextView) rootView.findViewById(R.id.review_text);
+        showMoreReviewsButton = (Button) rootView.findViewById(R.id.review_button);
+        expandReview = (ImageView) rootView.findViewById(R.id.expand_review);
+        collapseReview = (ImageView) rootView.findViewById(R.id.hide_review);
+        emptyReviews = (ImageView) rootView.findViewById(R.id.no_reviews_found_icon);
+    }
+
+    private void showEmptyReviewLayout(){
+        layoutReviews.setVisibility(View.GONE);
+        showMoreReviewsButton.setVisibility(View.GONE);
+        emptyReviews.setVisibility(View.VISIBLE);
+        reviewsProgressBar.setVisibility(View.GONE);
+    }
+
+    private void showReviewProgressBar(){
+        layoutReviews.setVisibility(View.GONE);
+        showMoreReviewsButton.setVisibility(View.GONE);
+        emptyReviews.setVisibility(View.GONE);
+        reviewsProgressBar.setVisibility(View.VISIBLE);
+    }
+
+    private void showReviewLayout(){
+        layoutReviews.setVisibility(View.VISIBLE);
+        emptyReviews.setVisibility(View.GONE);
+        reviewsProgressBar.setVisibility(View.GONE);
+    }
+
+    private void showCollapseReviewLayout(){
+        reviewContent.setText(contentStr.substring(0, COLLAPSED_REVIEW_SIZE) + "...");
+        expandReview.setVisibility(View.VISIBLE);
+        collapseReview.setVisibility(View.GONE);
+    }
+
+    private void showExpandedReviewLayout(){
+        reviewContent.setText(contentStr);
+        expandReview.setVisibility(View.GONE);
+        collapseReview.setVisibility(View.VISIBLE);
+    }
+
+    private void showFullTextReviewLayout(){
+        reviewContent.setText(contentStr);
+        expandReview.setVisibility(View.GONE);
+        collapseReview.setVisibility(View.GONE);
     }
 }
