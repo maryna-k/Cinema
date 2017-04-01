@@ -1,5 +1,10 @@
 <resources>
-    <!-- Default screen margins, per the Android Design guidelines. -->
+                        <!--Dimens for MainGridFragment and FavoriteGridFragment-->
+    <dimen name="grid_poster_height">300dp</dimen>
+    <integer name="grid_columns">2</integer>
+
+                        <!--Dimens for DetailFragment-->
+    <!-- Screen margins -->
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="details_activity_margin_left">20dp</dimen>
@@ -7,25 +12,24 @@
     <dimen name="details_activity_margin_top">10dp</dimen>
     <dimen name="details_activity_margin_bottom">10dp</dimen>
 
+    <!-- Posters -->
     <dimen name="header_poster_height">250dp</dimen>
     <dimen name="small_poster_height">150dp</dimen>
     <dimen name="small_poster_width">100dp</dimen>
     <dimen name="small_poster_bottom_margin">10dp</dimen>
     <dimen name="small_poster_left_margin">@dimen/details_activity_margin_left</dimen>
-    <!--Genre left padding = small poster left padding + details activity left margin + 5dp-->
-    <dimen name="genre_left_padding">125dp</dimen>
 
+    <!-- Text elements -->
     <dimen name="movie_title_size">24sp</dimen>
     <dimen name="movie_title_padding">7dp</dimen>
-    <dimen name="small_poster_base_width">27dp</dimen>
     <dimen name="detail_text_size">16sp</dimen>
     <dimen name="infor_title_width">120dp</dimen>
     <dimen name="empty_view_message_size">24sp</dimen>
     <dimen name="empty_text_margins">15dp</dimen>
     <dimen name="title_to_the_middle_of_icon_margin">8dp</dimen>
+
+    <!-- Other elements-->
     <dimen name="empty_trailers_reviews_icon_size">100dp</dimen>
+    <dimen name="small_poster_base_width">27dp</dimen>
 
-    <dimen name="grid_poster_height">300dp</dimen>
-
-    <integer name="grid_columns">2</integer>
 </resources>
