@@ -22,6 +22,7 @@ import android.support.v7.graphics.Palette;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -73,7 +74,6 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
     private String mBackDropAddress;
     private boolean favorite;
     private static long mTMDB_ID;
-    //private int db_id;
 
     //RecyclerView variables
     private TrailerAdapter mTrailerAdapter;
@@ -178,13 +178,9 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
             if(mBackDropAddress.equals("null") || mBackDropAddress.equals("") || mBackDropAddress == null) {
                 mBackDropAddress = mPosterAddress;
             }
-            ImageView header = (ImageView) rootView.findViewById(R.id.header);
             titleView = (TextView) rootView.findViewById(R.id.title);
-            String headerImageAddress = Keys.HEADER_POSTER_BASE_URL + mBackDropAddress;
-            Picasso.with(getContext()).load(headerImageAddress).into(header);
-            if(themeColor == defaultColor) {
-                setColorTheme(headerImageAddress);
-            } else setColorForTitleView(themeColor);
+            String backdropImageAddress = Keys.BACKDROP_POSTER_BASE_URL + mBackDropAddress;
+            setColorThemeAndBackdrop(backdropImageAddress);
 
             ImageView smallPosterView = (ImageView) rootView.findViewById(R.id.small_poster);
             if(movie.getPosterStoragePath() != null){
@@ -375,10 +371,12 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
 
     }
 
-    private void setColorTheme(String headerImageAddress){
-        Picasso.with(getContext()).load(headerImageAddress).into(new Target() {
+    private void setColorThemeAndBackdrop(String headerImageAddress){
+        final ImageView backdropView = (ImageView) rootView.findViewById(R.id.backdrop);
+        Target target = new Target(){
             @Override
             public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                backdropView.setImageBitmap(bitmap);
                 Palette.from(bitmap)
                         .generate(new Palette.PaletteAsyncListener() {
                             @Override
@@ -397,14 +395,15 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
 
             @Override
             public void onBitmapFailed(Drawable errorDrawable) {
-
+                Log.v(LOG_TAG, "Bitmap failed");
             }
-
             @Override
             public void onPrepareLoad(Drawable placeHolderDrawable) {
-
+                Log.v(LOG_TAG, "Picasso: onPrepareLoad");
             }
-        });
+        };
+        Picasso.with(getContext()).load(headerImageAddress).into(target);
+        backdropView.setTag(target);
     }
 
     private void setColorForTitleView(int themeColor){
