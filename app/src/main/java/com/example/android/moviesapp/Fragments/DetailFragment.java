@@ -569,7 +569,6 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
                 }
                 reviewList = reviewData;
             }
-            cursor.close();
             setReviewLayout(reviewData);
         }
 
