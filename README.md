@@ -17,6 +17,18 @@ This is the second project for the Udacity Android Developer Nanodegree by Googl
 - Allows to add movie into favorites. Stores favorite movies in the internal database to allow offline access. Saves movie poster in the device's file system as a bitmap file and stores its path in the database. Saves movie reviews in a separate table of the database; 
 - Synchronizes database with the server each 24 hours.
 
+## Demo
+
+#### Phone layout
+<img src="https://drive.google.com/uc?export=view&id=0BzgPHmivHmCsWm44anYzUUFfTUk" height="500">
+</br>
+<img src="https://drive.google.com/uc?export=view&id=0BzgPHmivHmCsclVxd3QtX2JmT2c" height="500">
+</br></br>
+
+#### Tablet layout
+<img src="https://drive.google.com/uc?export=view&id=0BzgPHmivHmCsTTV0cW5GRGlPS3M" height="400" >
+</br></br>
+
 ## Libraries and APIs used
 
 - TMDb API;
