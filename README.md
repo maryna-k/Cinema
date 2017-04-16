@@ -1,7 +1,6 @@
 # Cinema
 
-Cinema is an Android application that allows to search movies by various categories, check movie details including its trailers and reviews and save the movie details and reviews to the device's internal database. The application works both on Android phones and tablets and allows the two-pane mode in the devices with wide screen. 
-This is the second project for the Udacity Android Developer Nanodegree by Google. 
+Cinema is an Android application that allows to search movies by various categories, check movie details including its trailers and reviews and save the movie details and reviews to the device's internal database. The application works both on Android phones and tablets and allows the two-pane mode in the devices with wide screens.  
 
 ## Functionality
 
@@ -35,6 +34,8 @@ This is the second project for the Udacity Android Developer Nanodegree by Googl
 - YouTube Android Player API;
 - Palette API;
 - Picasso library;
+- Okhttp library;
+- Gson library.
 
 ## Pre-requisites
 

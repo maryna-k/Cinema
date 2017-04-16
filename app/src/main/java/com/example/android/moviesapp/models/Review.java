@@ -1,4 +1,4 @@
-package com.example.android.moviesapp.Objects;
+package com.example.android.moviesapp.model;
 
 
 import java.io.Serializable;
