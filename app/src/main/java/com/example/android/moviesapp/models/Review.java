@@ -1,12 +1,16 @@
-package com.example.android.moviesapp.model;
+package com.example.android.moviesapp.models;
 
+
+import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 
 public class Review implements Serializable{
 
+    @SerializedName("id")
     private String reviewId;
     private String author;
+    @SerializedName("content")
     private String reviewContent;
 
     public Review(){}

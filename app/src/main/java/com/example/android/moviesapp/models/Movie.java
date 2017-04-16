@@ -1,4 +1,4 @@
-package com.example.android.moviesapp.model;
+package com.example.android.moviesapp.models;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -18,7 +18,8 @@ public class Movie implements Serializable {
     @SerializedName("vote_count")
     private int voteCount;
     @SerializedName("genre_ids")
-    private ArrayList<Integer> genreIds = new ArrayList<Integer>();
+    private ArrayList<Integer> genreIds = new ArrayList<Integer>(1);
+    private ArrayList<Genre> genres = new ArrayList<>(1);
     private String genre;
     @SerializedName("release_date")
     private String releaseDate;
@@ -29,10 +30,8 @@ public class Movie implements Serializable {
     @SerializedName("id")
     private long tmdb_id;
     private String posterStoragePath;
-    private boolean favorite;
 
-    public Movie() {
-    }
+    public Movie() {}
 
     public Movie(String title, String overview, double rating, int voteCount, String genre,
                  String releaseDate, String posterAddress, String posterStoragePath, String backdropAddress, Long mdb_id) {
@@ -49,11 +48,11 @@ public class Movie implements Serializable {
     }
 
     @Override
-    public boolean equals(Object obj){
+    public boolean equals(Object obj) {
         if (obj == null || this.getClass() != obj.getClass())
             return false;
         else {
-            Movie m = (Movie)obj;
+            Movie m = (Movie) obj;
             return (this.title.equals(m.title) &&
                     this.overview.equals(m.overview) &&
                     this.rating == m.rating &&
@@ -97,29 +96,45 @@ public class Movie implements Serializable {
         this.voteCount = voteCount;
     }
 
-    public String getGenre(){
+    public String getGenre() {
         return genre;
     }
 
-    public void setGenre(String genre){
+    public void setGenre(String genre) {
         this.genre = genre;
     }
 
-    public void setGenreString() {
+    //helper method that binds genre ids and their corresponding names and sets a genre String
+    public void setGenreStringById() {
         String genreStr = "";
-        for(int i = 0; i < genreIds.size(); i++){
+        for (int i = 0; i < genreIds.size(); i++) {
             int id = genreIds.get(i);
 
             for (Map.Entry<String, String> entry : searchCategories.entrySet()) {
                 if ((Integer.toString(id)).equals(entry.getValue())) {
                     genreStr = genreStr + entry.getKey();
-                    if(i < genreIds.size() - 1) {
+                    if (i < genreIds.size() - 1) {
                         genreStr = genreStr + ", ";
                     }
                 }
             }
         }
         this.genre = genreStr;
+        genreIds = null;
+    }
+
+    //helper method that sets a genre String from the arraylist of Genre objects
+    public void setGenreStringByName() {
+        String genreStr = "";
+        for (int i = 0; i < genres.size(); i++) {
+            String name = genres.get(i).getName();
+            genreStr += name;
+            if (i < genres.size() - 1) {
+                genreStr = genreStr + ", ";
+            }
+        }
+        this.genre = genreStr;
+        genreIds = null;
     }
 
     public String getReleaseDate() {
@@ -138,11 +153,11 @@ public class Movie implements Serializable {
         this.posterAddress = imageAddress;
     }
 
-    public String getBackdropAddress(){
+    public String getBackdropAddress() {
         return backdropAddress;
     }
 
-    public void setBackdropAddress(String backdropAddress){
+    public void setBackdropAddress(String backdropAddress) {
         this.backdropAddress = backdropAddress;
     }
 
@@ -154,20 +169,12 @@ public class Movie implements Serializable {
         this.tmdb_id = tmdb_id;
     }
 
-    public void setPosterStoragePath(String path){
+    public void setPosterStoragePath(String path) {
         posterStoragePath = path;
     }
 
-    public String getPosterStoragePath(){
+    public String getPosterStoragePath() {
         return posterStoragePath;
-    }
-
-    public boolean isFavorite() {
-        return favorite;
-    }
-
-    public void setFavorite(boolean favorite) {
-        this.favorite = favorite;
     }
 
     @Override

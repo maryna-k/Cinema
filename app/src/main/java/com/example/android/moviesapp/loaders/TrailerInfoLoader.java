@@ -1,18 +1,15 @@
-package com.example.android.moviesapp.Loaders;
+package com.example.android.moviesapp.loaders;
 
 import android.content.Context;
 import android.support.v4.content.AsyncTaskLoader;
-import android.util.Log;
 
-import com.example.android.moviesapp.Objects.YouTubeTrailer;
-
-import org.json.JSONException;
+import com.example.android.moviesapp.models.YouTubeTrailer;
 
 import java.util.ArrayList;
 
-import static com.example.android.moviesapp.utilities.JsonParser.getTrailerDataFromJson;
-import static com.example.android.moviesapp.utilities.MDBConnection.LOAD_TRAILER_INFO;
-import static com.example.android.moviesapp.utilities.MDBConnection.getJsonResponse;
+import static com.example.android.moviesapp.rest.JsonParser.getTrailerDataFromJson;
+import static com.example.android.moviesapp.rest.MDBConnection.LOAD_TRAILER_INFO;
+import static com.example.android.moviesapp.rest.MDBConnection.getApiResponse;
 
 
 public class TrailerInfoLoader extends AsyncTaskLoader<ArrayList<YouTubeTrailer>> {
@@ -22,35 +19,28 @@ public class TrailerInfoLoader extends AsyncTaskLoader<ArrayList<YouTubeTrailer>
     private ArrayList<YouTubeTrailer> trailerArrayList;
     private long tmdb_id;
 
-    public TrailerInfoLoader(Context context, long tmdb_id){
+    public TrailerInfoLoader(Context context, long tmdb_id) {
         super(context);
         this.tmdb_id = tmdb_id;
     }
 
     @Override
-    public void onStartLoading(){
-        if(trailerArrayList == null) {
+    public void onStartLoading() {
+        if (trailerArrayList == null) {
             forceLoad();
-        } else{
+        } else {
             deliverResult(trailerArrayList);
         }
     }
 
     @Override
     public ArrayList<YouTubeTrailer> loadInBackground() {
-        String trailerJsonStr = getJsonResponse(LOAD_TRAILER_INFO, tmdb_id);
-
-        try {
-            return getTrailerDataFromJson(trailerJsonStr);
-        } catch (JSONException e) {
-            Log.e(LOG_TAG, e.getMessage(), e);
-            e.printStackTrace();
-        }
-        return null;
+        String trailerJsonStr = getApiResponse(LOAD_TRAILER_INFO, tmdb_id);
+        return getTrailerDataFromJson(trailerJsonStr);
     }
 
     @Override
-    public void deliverResult(ArrayList<YouTubeTrailer> trailerList){
+    public void deliverResult(ArrayList<YouTubeTrailer> trailerList) {
         trailerArrayList = trailerList;
         super.deliverResult(trailerArrayList);
     }
