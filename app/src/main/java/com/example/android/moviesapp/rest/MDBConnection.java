@@ -1,19 +1,19 @@
-package com.example.android.moviesapp.utilities;
+package com.example.android.moviesapp.rest;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.util.Log;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import com.example.android.moviesapp.utilities.EndlessRecyclerViewScrollListener;
+import com.example.android.moviesapp.utilities.Keys;
+
 import java.util.HashMap;
 
-import static com.example.android.moviesapp.Activities.MainActivity.getMoviesToSearch;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+
+import static com.example.android.moviesapp.activities.MainActivity.getMoviesToSearch;
 
 public class MDBConnection {
 
@@ -28,15 +28,10 @@ public class MDBConnection {
     private final static String API_KEY = "?api_key=" + Keys.TMDb_API_KEY;
 
 
-    public static String getJsonResponse(int requestType, long tmdb_id){
+    public static String getApiResponse(int requestType, long tmdb_id) {
 
-        HttpURLConnection urlConnection = null;
-        BufferedReader reader = null;
-
-        String jsonString = null;
         String urlString;
-
-        switch (requestType){
+        switch (requestType) {
             case LOAD_MOVIES:
                 urlString = buildUrlBySearchCriteria(getMoviesToSearch());
                 break;
@@ -49,56 +44,23 @@ public class MDBConnection {
             case LOAD_MOVIE_BY_ID:
                 urlString = buildUrlByMovieID(tmdb_id, LOAD_MOVIE_BY_ID);
                 break;
-            default: return null;
+            default:
+                return null;
         }
-
-        Log.v(LOG_TAG, "Url: " + urlString);
-
+        OkHttpClient client = new OkHttpClient();
+        Request request = new Request.Builder()
+                .url(urlString)
+                .build();
         try {
-            URL url = new URL(urlString);
-
-            // Create the request to TMDb, and open the connection
-            urlConnection = (HttpURLConnection) url.openConnection();
-            urlConnection.setRequestMethod("GET");
-            urlConnection.connect();
-
-            // Read the input stream into a String
-            InputStream inputStream = urlConnection.getInputStream();
-            StringBuffer buffer = new StringBuffer();
-            if (inputStream == null) {
-                return null;
-            }
-            reader = new BufferedReader(new InputStreamReader(inputStream));
-
-            String line;
-            while ((line = reader.readLine()) != null) {
-                buffer.append(line + "\n");
-            }
-
-            if (buffer.length() == 0) {
-                return null;
-            }
-            jsonString = buffer.toString();
-        } catch (IOException e) {
-            Log.e(LOG_TAG, "Error ", e);
-            return null;
-
-        } finally {
-            if (urlConnection != null) {
-                urlConnection.disconnect();
-            }
-            if (reader != null) {
-                try {
-                    reader.close();
-                } catch (final IOException e) {
-                    Log.e(LOG_TAG, "Error closing stream", e);
-                }
-            }
+            Response response = client.newCall(request).execute();
+            return response.body().string();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        return jsonString;
+        return null;
     }
 
-    private static String buildUrlBySearchCriteria(String category){
+    private static String buildUrlBySearchCriteria(String category) {
         String url;
         if (category.equals("Popular") || category.equals("Top Rated")) {
             url = buildMovieUrlHelper(searchCategories.get(category), "",
@@ -120,7 +82,7 @@ public class MDBConnection {
                 .append(page).toString();
     }
 
-    private static String buildUrlByMovieID(long movieId, int infoType){
+    private static String buildUrlByMovieID(long movieId, int infoType) {
         String type = "";
         switch (infoType) {
             case LOAD_MOVIE_BY_ID:
@@ -154,6 +116,7 @@ public class MDBConnection {
 
     /*key value pairs of genres and their ids as well as http requests for popular and top rated movies*/
     public static final HashMap<String, String> searchCategories = new HashMap<>();
+
     static {
         searchCategories.put("Popular", "movie/popular");
         searchCategories.put("Top Rated", "movie/top_rated");

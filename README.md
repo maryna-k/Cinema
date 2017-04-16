@@ -51,3 +51,11 @@ To run the application, download the zip file, unzip it, import project to the A
 - https://developers.google.com/youtube/android/player/
 
 Save your keys at Keys.java file in the utilities package.
+
+## Acknowledgements
+
+The launcher icon was created by Flaticon website (author Dimi Kazak):
+<div>Icons made by <a href="http://www.flaticon.com/authors/dimi-kazak" title="Dimi Kazak">Dimi Kazak</a> from <a href="http://www.flaticon.com" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div>
+
+The backdrop background picture was created by Freepik website:
+<a href="http://www.freepik.com/free-photos-vectors/background">Background vector created by Freepik</a> 
