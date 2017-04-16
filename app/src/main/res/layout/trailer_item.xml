@@ -10,6 +10,9 @@
         android:layout_height="150dp"
         android:scaleType="centerCrop"
         android:visibility="invisible"
-        android:layout_marginRight="5dp"/>
+        android:layout_marginRight="5dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?attr/selectableItemBackground"/>
 
 </LinearLayout>
