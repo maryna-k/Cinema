@@ -1,10 +1,11 @@
-package com.example.android.moviesapp.Activities;
+package com.example.android.moviesapp.activities;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -21,34 +22,40 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.example.android.moviesapp.Fragments.DetailFragment;
-import com.example.android.moviesapp.Fragments.FavoriteGridFragment;
-import com.example.android.moviesapp.Fragments.MainGridFragment;
-import com.example.android.moviesapp.Fragments.ReviewDialogFragment;
-import com.example.android.moviesapp.Objects.Movie;
-import com.example.android.moviesapp.Objects.Review;
 import com.example.android.moviesapp.R;
+import com.example.android.moviesapp.fragments.DetailFragment;
+import com.example.android.moviesapp.fragments.FavoriteGridFragment;
+import com.example.android.moviesapp.fragments.MainGridFragment;
+import com.example.android.moviesapp.fragments.ReviewDialogFragment;
+import com.example.android.moviesapp.models.Movie;
+import com.example.android.moviesapp.models.Review;
 import com.example.android.moviesapp.sync.MovieSyncAdapter;
 import com.example.android.moviesapp.utilities.FragmentCallback;
 
 import java.util.ArrayList;
 
+import butterknife.BindBool;
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class MainActivity extends AppCompatActivity implements FragmentCallback,
         DetailFragment.ReviewFragmentCallback, DetailFragment.SettingsFragmentCallback {
 
-    private DrawerLayout mDrawerLayout;
-    private NavigationView mNavigationViewDrawer;
+    @BindBool(R.bool.isTabletTwoPane) boolean isTabletTwoPaneLayout;
+    @BindBool(R.bool.isTabletPortrait) boolean isTabletPortraitLayout;
+
+    @BindView(R.id.drawer_layout) DrawerLayout mDrawerLayout;
+    @BindView(R.id.navigation_view) NavigationView mNavigationViewDrawer;
+    @BindView(R.id.toolbar) Toolbar toolbar;
+    @BindView(R.id.movie_grid_container) FrameLayout movieGridContainet;
     private ActionBarDrawerToggle mDrawerToggle;
-    private Toolbar toolbar;
-    private Toolbar secondaryToolbar;
+    @Nullable @BindView(R.id.secondary_toolbar) Toolbar secondaryToolbar;
+    @Nullable @BindView(R.id.empty_movie_view_layout) LinearLayout emptyView;
+    @Nullable @BindView(R.id.empty_view_image) ImageView emptyViewImage;
+    @Nullable @BindView(R.id.empty_view_message) TextView emptyViewText;
+
     private static String preferenceMoviesToSearch;
     private static String moviesToSearch;
-
-    private LinearLayout emptyView;
-    private FrameLayout movieGridContainet;
-
-    private boolean isTabletTwoPaneLayout;
-    private boolean isTabletPortraitLayout;
 
     private Movie lastViewedMovie;
     private static final String LAST_VIEWED_MOVIE = "last_viewed";
@@ -58,7 +65,7 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback,
 
     private final String LOG_TAG = MainActivity.class.getSimpleName();
 
-    /**Api for adding fragments at run-time:
+    /**adding fragments at run-time:
      https://developer.android.com/training/basics/fragments/fragment-ui.html */
 
     /**
@@ -70,18 +77,13 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback,
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
 
-        isTabletTwoPaneLayout = getResources().getBoolean(R.bool.isTabletTwoPane);
-        isTabletPortraitLayout = getResources().getBoolean(R.bool.isTabletPortrait);
-
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         mDrawerToggle = setupDrawerToggle();
         mDrawerLayout.addDrawerListener(mDrawerToggle);
-        mNavigationViewDrawer = (NavigationView) findViewById(R.id.navigation_view);
         setupDrawerContent(mNavigationViewDrawer);
 
         // ensures that application is properly initialized with default settings
@@ -90,8 +92,6 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback,
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
         preferenceMoviesToSearch = settings.getString(getString(R.string.pref_search_key),
                 getString(R.string.pref_search_default));
-
-        movieGridContainet = (FrameLayout) findViewById(R.id.movie_grid_container);
 
         if (savedInstanceState == null) {
             moviesToSearch = preferenceMoviesToSearch;
@@ -103,8 +103,6 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback,
         this.setTitle(getString(R.string.app_name) + ": " + moviesToSearch);
 
         if (isTabletTwoPaneLayout) {
-            secondaryToolbar = (Toolbar) findViewById(R.id.secondary_toolbar);
-            emptyView = (LinearLayout) findViewById(R.id.empty_movie_view_layout);
             if (savedInstanceState == null || savedInstanceState.getSerializable(LAST_VIEWED_MOVIE) == null) {
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.detail_container_main_activity, new DetailFragment(), DETAILFRAGMENT_TAG)
@@ -265,8 +263,6 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback,
     private void setEmptyMovieDetailViewVisible(boolean visible) {
         if (visible) {
             emptyView.setVisibility(View.VISIBLE);
-            ImageView emptyViewImage = (ImageView) findViewById(R.id.empty_view_image);
-            TextView emptyViewText = (TextView) findViewById(R.id.empty_view_message);
             emptyViewImage.setImageDrawable(getResources().getDrawable(R.drawable.ic_empty_movie_detail));
             emptyViewText.setText(getText(R.string.empty_movie_detail));
         } else {

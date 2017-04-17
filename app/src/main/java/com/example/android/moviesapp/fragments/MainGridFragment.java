@@ -1,4 +1,4 @@
-package com.example.android.moviesapp.Fragments;
+package com.example.android.moviesapp.fragments;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -22,15 +22,20 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.example.android.moviesapp.Adapters.MovieAdapter;
-import com.example.android.moviesapp.Loaders.MovieLoader;
-import com.example.android.moviesapp.Objects.Movie;
 import com.example.android.moviesapp.R;
+import com.example.android.moviesapp.adapters.MovieAdapter;
+import com.example.android.moviesapp.loaders.MovieLoader;
+import com.example.android.moviesapp.models.Movie;
+import com.example.android.moviesapp.rest.MDBConnection;
 import com.example.android.moviesapp.utilities.EndlessRecyclerViewScrollListener;
 import com.example.android.moviesapp.utilities.FragmentCallback;
-import com.example.android.moviesapp.utilities.MDBConnection;
 
 import java.util.ArrayList;
+
+import butterknife.BindInt;
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
 public class MainGridFragment extends Fragment
         implements LoaderManager.LoaderCallbacks<ArrayList<Movie>>{
@@ -38,24 +43,28 @@ public class MainGridFragment extends Fragment
     private final String LOG_TAG = MainGridFragment.class.getSimpleName();
 
     private MovieAdapter mAdapter;
-    private RecyclerView mRecyclerView;
+    @BindView(R.id.recycler_view) RecyclerView mRecyclerView;
     private GridLayoutManager mLayoutManager;
     private String moviesToSearch;
-    private int GRID_COLUMNS_NUM;
+    @BindInt(R.integer.grid_columns) int GRID_COLUMNS_NUM;
     private View rootView;
     private MovieLoader loader;
     private EndlessRecyclerViewScrollListener mScrollListener;
 
-    private LinearLayout emptyMovieGridLayout;
+    @BindView(R.id.empty_grid_view_layout) LinearLayout emptyMovieGridLayout;
+    @BindView(R.id.empty_view_image) ImageView emptyImage;
+    @BindView(R.id.empty_view_message) TextView emptyText;
 
     private IntentFilter mInternetFilter;
     private BroadcastReceiver mBroadcastReceiver;
     private static boolean loadMoreMovies;
 
-    private int progressBarExtraItems;
+    @BindInt(R.integer.grid_columns) int progressBarExtraItems;
 
     private final int PRIMARY_LOADER_ID = 0;
     private final int SECONDARY_LOADER_ID = 1;
+
+    private Unbinder unbinder;
 
     public MainGridFragment() {}
 
@@ -69,14 +78,10 @@ public class MainGridFragment extends Fragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_main, container, false);
+        unbinder = ButterKnife.bind(this, rootView);
 
-        progressBarExtraItems = getContext().getResources().getInteger(R.integer.grid_columns);
-        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
-        GRID_COLUMNS_NUM = getResources().getInteger(R.integer.grid_columns);
         mLayoutManager = new GridLayoutManager(getContext(), GRID_COLUMNS_NUM);
         mRecyclerView.setLayoutManager(mLayoutManager);
-
-        emptyMovieGridLayout = (LinearLayout) rootView.findViewById(R.id.empty_grid_view_layout);
 
         mScrollListener = new EndlessRecyclerViewScrollListener(mLayoutManager, getContext()) {
             @Override
@@ -127,6 +132,12 @@ public class MainGridFragment extends Fragment
     public void onPause() {
         super.onPause();
         getActivity().unregisterReceiver(mBroadcastReceiver);
+    }
+
+    @Override
+    public void onDestroyView(){
+        super.onDestroyView();
+        unbinder.unbind();
     }
     
     @Override
@@ -208,11 +219,8 @@ public class MainGridFragment extends Fragment
     }
 
     private void setEmptyGridViewVisible(boolean visible){
-
         if(visible) {
             emptyMovieGridLayout.setVisibility(View.VISIBLE);
-            ImageView emptyImage = (ImageView) rootView.findViewById(R.id.empty_view_image);
-            TextView emptyText = (TextView) rootView.findViewById(R.id.empty_view_message);
             emptyImage.setImageDrawable(getResources().getDrawable(R.drawable.ic_empty_movie_grid));
             emptyText.setText(getText(R.string.empty_movie_gridview));
         } else{

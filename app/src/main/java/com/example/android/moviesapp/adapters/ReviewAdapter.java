@@ -1,4 +1,4 @@
-package com.example.android.moviesapp.Adapters;
+package com.example.android.moviesapp.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -10,11 +10,12 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.android.moviesapp.R;
-import com.example.android.moviesapp.Objects.Review;
+import com.example.android.moviesapp.models.Review;
 
 import java.util.ArrayList;
 
-import static com.example.android.moviesapp.R.id.review_layout;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 
 public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder> {
@@ -27,11 +28,11 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder
     private static final int SUBSTRING_LENGTH = 400;
 
     public static  class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
-        private TextView authorView;
-        private TextView contentView;
-        private ImageView expandReview;
-        private ImageView collapseReview;
-        private RelativeLayout reviewLayout;
+        @BindView(R.id.reviewer_name_activity) TextView authorView;
+        @BindView(R.id.review_content) TextView contentView;
+        @BindView(R.id.expand_review_activity) ImageView expandReview;
+        @BindView(R.id.collapse_review_activity) ImageView collapseReview;
+        @BindView(R.id.review_layout) RelativeLayout reviewLayout;
         private Context context;
         private String contentStr;
         private String contentStrSubstring;
@@ -39,11 +40,7 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder
         public ViewHolder(Context context, View view){
             super(view);
             this.context = context;
-            reviewLayout = (RelativeLayout) view.findViewById(review_layout);
-            authorView = (TextView) view.findViewById(R.id.reviewer_name_activity);
-            contentView = (TextView) view.findViewById(R.id.review_content);
-            expandReview = (ImageView) view.findViewById(R.id.expand_review_activity);
-            collapseReview = (ImageView) view.findViewById(R.id.collapse_review_activity);
+            ButterKnife.bind(this, view);
             reviewLayout.setOnClickListener(this);
         }
 

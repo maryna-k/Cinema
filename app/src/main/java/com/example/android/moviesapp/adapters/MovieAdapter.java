@@ -1,4 +1,4 @@
-package com.example.android.moviesapp.Adapters;
+package com.example.android.moviesapp.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -9,12 +9,15 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.example.android.moviesapp.Objects.Movie;
 import com.example.android.moviesapp.R;
+import com.example.android.moviesapp.models.Movie;
 import com.example.android.moviesapp.utilities.Keys;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -33,22 +36,21 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        private ImageView imageViewItem;
-        private TextView titleView;
+        @BindView(R.id.grid_poster) ImageView imageViewItem;
+        @BindView(R.id.title_without_poster) TextView titleView;
 
         public ViewHolder(View view) {
             super(view);
-            imageViewItem = (ImageView) view.findViewById(R.id.grid_poster);
-            titleView = (TextView) view.findViewById(R.id.title_without_poster);
+            ButterKnife.bind(this, view);
         }
     }
 
     public static class ProgressViewHolder extends RecyclerView.ViewHolder {
-        public ProgressBar progressBar;
+        @BindView(R.id.grid_item_progress_bar) ProgressBar progressBar;
 
         public ProgressViewHolder(View view) {
             super(view);
-            progressBar = (ProgressBar) view.findViewById(R.id.grid_item_progress_bar);
+            ButterKnife.bind(this, view);
         }
     }
 
@@ -90,7 +92,7 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             Picasso mPicasso = Picasso.with(((ViewHolder) holder).itemView.getContext());
             mPicasso.setIndicatorsEnabled(false);
             mPicasso.load(fullImageAddress).into(((ViewHolder) holder).imageViewItem);
-            if (imageAddress.equals("null")) {
+            if (imageAddress == null || imageAddress.equals("null")) {
                 ((ViewHolder) holder).titleView.setText(movie.getTitle());
                 ((ViewHolder) holder).titleView.setVisibility(View.VISIBLE);
                 ((ViewHolder) holder).imageViewItem.setVisibility(View.GONE);
@@ -101,6 +103,10 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             ((ViewHolder) holder).itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    //map genre ids to genre names
+                    if(movie.getGenre() == null || movie.getGenre().equals("")) {
+                        movie.setGenreStringById();
+                    }
                     listener.onItemClick(movie);
                 }
             });

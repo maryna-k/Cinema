@@ -23,29 +23,29 @@
     If the parent activity has launch mode <standard>, and the up intent does not contain FLAG_ACTIVITY_CLEAR_TOP,
     the parent activity is popped off the stack, and a new instance of that activity is created on top of the stack to
     receive the intent.-->
-        <activity android:name=".Activities.MainActivity" android:launchMode="singleTop">
+        <activity android:name=".activities.MainActivity" android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Activities.DetailActivity"
+        <activity android:name=".activities.DetailActivity"
             android:launchMode="singleTop"
-            android:parentActivityName=".Activities.MainActivity">
+            android:parentActivityName=".activities.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".Activities.MainActivity" />
+                android:value=".activities.MainActivity" />
         </activity>
-        <activity android:name=".Activities.ReviewActivity"
-            android:parentActivityName=".Activities.DetailActivity">
+        <activity android:name=".activities.ReviewActivity"
+            android:parentActivityName=".activities.DetailActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".Activities.DetailActivity" />
+                android:value=".activities.DetailActivity" />
         </activity>
-        <activity android:name=".Activities.SettingsActivity">
+        <activity android:name=".activities.SettingsActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".Activities.MainActivity" />
+                android:value=".activities.MainActivity" />
         </activity>
         <provider
             android:name=".database.MovieProvider"

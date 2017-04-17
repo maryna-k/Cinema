@@ -1,4 +1,4 @@
-package com.example.android.moviesapp.Fragments;
+package com.example.android.moviesapp.fragments;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -39,16 +39,16 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.android.moviesapp.Activities.MainActivity;
-import com.example.android.moviesapp.Adapters.TrailerAdapter;
-import com.example.android.moviesapp.Loaders.ReviewLoader;
-import com.example.android.moviesapp.Loaders.TrailerInfoLoader;
-import com.example.android.moviesapp.Objects.Movie;
-import com.example.android.moviesapp.Objects.Review;
-import com.example.android.moviesapp.Objects.YouTubeTrailer;
 import com.example.android.moviesapp.R;
+import com.example.android.moviesapp.activities.MainActivity;
+import com.example.android.moviesapp.adapters.TrailerAdapter;
 import com.example.android.moviesapp.database.DatabaseUtilMethods;
 import com.example.android.moviesapp.database.MovieContract;
+import com.example.android.moviesapp.loaders.ReviewLoader;
+import com.example.android.moviesapp.loaders.TrailerInfoLoader;
+import com.example.android.moviesapp.models.Movie;
+import com.example.android.moviesapp.models.Review;
+import com.example.android.moviesapp.models.YouTubeTrailer;
 import com.example.android.moviesapp.utilities.ImageUtils;
 import com.example.android.moviesapp.utilities.Keys;
 import com.google.android.youtube.player.YouTubeStandalonePlayer;
@@ -56,6 +56,12 @@ import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
 import java.util.ArrayList;
+
+import butterknife.BindBool;
+import butterknife.BindColor;
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
 public class DetailFragment extends Fragment implements FavoriteGridFragment.SwipeMovieCallback {
 
@@ -74,15 +80,26 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
     private boolean favorite;
     private static long mTMDB_ID;
 
+    @BindView(R.id.title) TextView title;
+    @BindView(R.id.rating) TextView rating;
+    @BindView(R.id.vote_count) TextView voteCount;
+    @BindView(R.id.release_date) TextView release;
+    @BindView(R.id.genre) TextView genre;
+    @BindView(R.id.overview) TextView overview;
+
+    @BindView(R.id.backdrop) ImageView backdropView;
+    @BindView(R.id.small_poster_base) LinearLayout smallPosterBase;
+    @BindView(R.id.no_trailers_found_icon) ImageView emptyTrailers;
+
     //RecyclerView variables
     private TrailerAdapter mTrailerAdapter;
-    private RecyclerView mRecyclerView;
+    @BindView(R.id.trailers_recycler_view) RecyclerView mRecyclerView;
     private LinearLayoutManager mLayoutManager;
     private TrailerInfoLoader loader;
     private View rootView;
-    private ProgressBar trailersProgressBar;
-    private ProgressBar reviewsProgressBar;
-    private ScrollView scrollView;
+    @BindView(R.id.trailer_progress_bar) ProgressBar trailersProgressBar;
+    @BindView(R.id.review_progress_bar) ProgressBar reviewsProgressBar;
+    @BindView(R.id.scrollView) ScrollView scrollView;
 
     private ArrayList<Review> reviewList;
 
@@ -93,23 +110,26 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
     private ActionBar toolbar;
     private Toolbar secondaryToolbar;
     int themeColor;
-    int defaultColor;
-    private TextView titleView;
+    @BindColor(R.color.colorPrimary) int defaultColor;
     private int toolbarChangePoint = 0;
     private ViewTreeObserver.OnScrollChangedListener mOnScrollChangeListener;
 
-    private boolean isTabletPortrait;
-    private boolean isTabletTwoPane;
+    @BindView(R.id.small_poster) ImageView smallPosterView;
+
+    @BindBool(R.bool.isTabletTwoPane) boolean isTabletTwoPane;
+    @BindBool(R.bool.isTabletPortrait) boolean isTabletPortrait;
 
     //review layout
     String contentStr;
-    RelativeLayout layoutReviews;
-    TextView author;
-    TextView reviewContent;
-    Button showMoreReviewsButton;
-    ImageView expandReview;
-    ImageView collapseReview;
-    ImageView emptyReviews;
+    @BindView(R.id.layout_reviews) RelativeLayout layoutReviews;
+    @BindView(R.id.reviewer_name) TextView author;
+    @BindView(R.id.review_text) TextView reviewContent;
+    @BindView(R.id.review_button) Button showMoreReviewsButton;
+    @BindView(R.id.expand_review) ImageView expandReview;
+    @BindView(R.id.hide_review) ImageView collapseReview;
+    @BindView(R.id.no_reviews_found_icon) ImageView emptyReviews;
+
+    private Unbinder unbinder;
 
     private final int COLLAPSED_REVIEW_SIZE = 150;
 
@@ -145,10 +165,10 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_detail, container, false);
+        unbinder = ButterKnife.bind(this, rootView);
 
         isTabletTwoPane = getResources().getBoolean(R.bool.isTabletTwoPane);
         isTabletPortrait = getResources().getBoolean(R.bool.isTabletPortrait);
-        defaultColor = getResources().getColor(R.color.colorPrimary);
         themeColor = defaultColor;
 
         //get Movie Object from the intent or bundle
@@ -174,14 +194,12 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
 
             mPosterAddress = movie.getPosterAddress();
             mBackDropAddress = movie.getBackdropAddress();
-            if(mBackDropAddress.equals("null") || mBackDropAddress.equals("") || mBackDropAddress == null) {
+            if(mBackDropAddress == null || mBackDropAddress.equals("null") || mBackDropAddress.equals("")) {
                 mBackDropAddress = mPosterAddress;
             }
-            titleView = (TextView) rootView.findViewById(R.id.title);
             String backdropImageAddress = Keys.BACKDROP_POSTER_BASE_URL + mBackDropAddress;
             setColorThemeAndBackdrop(backdropImageAddress);
 
-            ImageView smallPosterView = (ImageView) rootView.findViewById(R.id.small_poster);
             if(movie.getPosterStoragePath() != null){
                 Bitmap bitmap = ImageUtils.getPosterFromStorage(movie.getPosterStoragePath(), Long.toString(mTMDB_ID));
                 smallPosterView.setImageBitmap(bitmap);
@@ -192,19 +210,14 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
 
             setDetailFragmentTextFields();
 
-            mRecyclerView = (RecyclerView) rootView.findViewById(R.id.trailers_recycler_view);
             mLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
             mRecyclerView.setLayoutManager(mLayoutManager);
 
-            trailersProgressBar = (ProgressBar) rootView.findViewById(R.id.trailer_progress_bar);
-            reviewsProgressBar = (ProgressBar) rootView.findViewById(R.id.review_progress_bar);
-
-            scrollView = (ScrollView) rootView.findViewById(R.id.scrollView);
             mOnScrollChangeListener = new ViewTreeObserver.OnScrollChangedListener() {
                 @Override
                 public void onScrollChanged() {
                     if(toolbarChangePoint == 0) {
-                        toolbarChangePoint = getViewBottomCoordinates(titleView);
+                        toolbarChangePoint = getViewBottomCoordinates(title);
                     }
                     else measureToolbarPosition();
                 }
@@ -329,6 +342,7 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        unbinder.unbind();
         Toolbar toolbar;
         if (isTabletTwoPane) {
             toolbar = ((MainActivity) getActivity()).getSecondaryToolbar();
@@ -345,33 +359,26 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
 
     private void setDetailFragmentTextFields(){
         mTitle = movie.getTitle();
-        TextView title = (TextView) rootView.findViewById(R.id.title);
         title.setText(mTitle);
 
         mRating = movie.getRating();
-        TextView rating = (TextView) rootView.findViewById(R.id.rating);
         rating.setText(mRating + " out of 10");
 
         mVoteCount = movie.getVoteCount();
-        TextView voteCount = (TextView) rootView.findViewById(R.id.vote_count);
         voteCount.setText(mVoteCount + " votes");
 
         mReleaseDate = movie.getReleaseDate();
-        TextView release = (TextView) rootView.findViewById(R.id.release_date);
         release.setText(mReleaseDate);
 
         mGenre = movie.getGenre();
-        TextView genre = (TextView) rootView.findViewById(R.id.genre);
         genre.setText(mGenre);
 
         mOverview = movie.getOverview();
-        TextView overview = (TextView) rootView.findViewById(R.id.overview);
         overview.setText(mOverview);
 
     }
 
     private void setColorThemeAndBackdrop(String headerImageAddress){
-        final ImageView backdropView = (ImageView) rootView.findViewById(R.id.backdrop);
         Target target = new Target(){
             @Override
             public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
@@ -406,9 +413,8 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
     }
 
     private void setColorForTitleView(int themeColor){
-        LinearLayout base = (LinearLayout) rootView.findViewById(R.id.small_poster_base);
-        base.setBackgroundColor(themeColor);
-        titleView.setBackgroundColor(themeColor);
+        smallPosterBase.setBackgroundColor(themeColor);
+        title.setBackgroundColor(themeColor);
     }
 
     private int getViewBottomCoordinates(View view){
@@ -487,7 +493,6 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
 
         @Override
         public void onLoadFinished(Loader<ArrayList<YouTubeTrailer>> loader, ArrayList<YouTubeTrailer> trailerData) {
-            ImageView emptyTrailers = (ImageView) rootView.findViewById(R.id.no_trailers_found_icon);
             if (trailerData == null) {
                 mRecyclerView.setVisibility(View.GONE);
                 trailersProgressBar.setVisibility(View.VISIBLE);
@@ -600,7 +605,6 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
 
     //helper method that sets review layout
     private void setReviewLayout(final ArrayList<Review> reviewData) {
-        setReviewLayout();
         if (reviewData == null) {
             showReviewProgressBar();
         } else if (reviewData.size() > 0) {
@@ -636,16 +640,6 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
         } else if (reviewData.size() == 0) {
             showEmptyReviewLayout();
         }
-    }
-
-    private void setReviewLayout(){
-        layoutReviews = (RelativeLayout) rootView.findViewById(R.id.layout_reviews);
-        author = (TextView) rootView.findViewById(R.id.reviewer_name);
-        reviewContent = (TextView) rootView.findViewById(R.id.review_text);
-        showMoreReviewsButton = (Button) rootView.findViewById(R.id.review_button);
-        expandReview = (ImageView) rootView.findViewById(R.id.expand_review);
-        collapseReview = (ImageView) rootView.findViewById(R.id.hide_review);
-        emptyReviews = (ImageView) rootView.findViewById(R.id.no_reviews_found_icon);
     }
 
     private void showEmptyReviewLayout(){

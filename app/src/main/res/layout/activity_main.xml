@@ -24,7 +24,7 @@
             android:id="@+id/movie_grid_container"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            tools:context="com.example.android.moviesapp.Activities.MainActivity"/>
+            tools:context="com.example.android.moviesapp.activities.MainActivity"/>
     </LinearLayout>
 
     <!-- The navigation drawer that comes from the left -->

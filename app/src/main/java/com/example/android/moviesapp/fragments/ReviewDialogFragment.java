@@ -1,4 +1,4 @@
-package com.example.android.moviesapp.Fragments;
+package com.example.android.moviesapp.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -9,20 +9,25 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.android.moviesapp.R;
-import com.example.android.moviesapp.Objects.Review;
-import com.example.android.moviesapp.Adapters.ReviewAdapter;
+import com.example.android.moviesapp.models.Review;
+import com.example.android.moviesapp.adapters.ReviewAdapter;
 
 import java.util.ArrayList;
 
-import static com.example.android.moviesapp.Activities.ReviewActivity.REVIEW_LIST;
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
+
+import static com.example.android.moviesapp.activities.ReviewActivity.REVIEW_LIST;
 
 public class ReviewDialogFragment extends DialogFragment {
 
     private View rootView;
-    private RecyclerView mRecyclerView;
+    @BindView(R.id.review_recyclerview) RecyclerView mRecyclerView;
     private LinearLayoutManager mLayoutManager;
     private ReviewAdapter mAdapter;
     private ArrayList<Review> reviewList;
+    private Unbinder unbinder;
 
     public ReviewDialogFragment(){}
 
@@ -39,11 +44,12 @@ public class ReviewDialogFragment extends DialogFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_review, container, false);
+        unbinder = ButterKnife.bind(this, rootView);
+
         Bundle arguments = getArguments();
         if(arguments != null){
             reviewList = (ArrayList<Review>) arguments.getSerializable(REVIEW_LIST);
         }
-        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.review_recyclerview);
         mRecyclerView.setHasFixedSize(true);
         mLayoutManager = new LinearLayoutManager(getContext());
         mRecyclerView.setLayoutManager(mLayoutManager);
@@ -51,5 +57,11 @@ public class ReviewDialogFragment extends DialogFragment {
         mAdapter = new ReviewAdapter(reviewList);
         mRecyclerView.setAdapter(mAdapter);
         return rootView;
+    }
+
+    @Override
+    public void onDestroyView(){
+        super.onDestroyView();
+        unbinder.unbind();
     }
 }

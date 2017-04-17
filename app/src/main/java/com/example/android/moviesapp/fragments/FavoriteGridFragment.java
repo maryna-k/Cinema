@@ -1,4 +1,4 @@
-package com.example.android.moviesapp.Fragments;
+package com.example.android.moviesapp.fragments;
 
 import android.database.Cursor;
 import android.net.Uri;
@@ -20,15 +20,20 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.example.android.moviesapp.Adapters.CursorMovieAdapter;
-import com.example.android.moviesapp.Adapters.MovieAdapter;
-import com.example.android.moviesapp.Objects.Movie;
 import com.example.android.moviesapp.R;
+import com.example.android.moviesapp.adapters.CursorMovieAdapter;
+import com.example.android.moviesapp.adapters.MovieAdapter;
 import com.example.android.moviesapp.database.MovieContract;
+import com.example.android.moviesapp.models.Movie;
 import com.example.android.moviesapp.sync.MovieSyncAdapter;
 import com.example.android.moviesapp.utilities.FragmentCallback;
 
-import static com.example.android.moviesapp.Activities.MainActivity.DETAILFRAGMENT_TAG;
+import butterknife.BindInt;
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
+
+import static com.example.android.moviesapp.activities.MainActivity.DETAILFRAGMENT_TAG;
 
 
 public class FavoriteGridFragment extends Fragment
@@ -37,13 +42,16 @@ public class FavoriteGridFragment extends Fragment
     private final String LOG_TAG = MainGridFragment.class.getSimpleName();
 
     private CursorMovieAdapter mCursorAdapter;
-    private RecyclerView mRecyclerView;
+    @BindView(R.id.recycler_view) RecyclerView mRecyclerView;
     private GridLayoutManager mLayoutManager;
-    private int GRID_COLUMNS_NUM;
+    @BindInt(R.integer.grid_columns) int GRID_COLUMNS_NUM;
     private View rootView;
     private Loader loader;
     private final int PRIMARY_LOADER_ID = 0;
     private Cursor mCursorMovieData;
+    private Unbinder unbinder;
+    @BindView(R.id.empty_view_image) ImageView emptyImage;
+    @BindView(R.id.empty_view_message) TextView emptyText;
 
     public interface SwipeMovieCallback {
         public void onSwipeMovie(long tmdb_id);
@@ -62,9 +70,8 @@ public class FavoriteGridFragment extends Fragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_main, container, false);
+        unbinder = ButterKnife.bind(this, rootView);
 
-        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
-        GRID_COLUMNS_NUM = getResources().getInteger(R.integer.grid_columns);
         mLayoutManager = new GridLayoutManager(getContext(), GRID_COLUMNS_NUM);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
@@ -107,6 +114,12 @@ public class FavoriteGridFragment extends Fragment
     public void onResume() {
         super.onResume();
         getLoaderManager().restartLoader(PRIMARY_LOADER_ID, null, this);
+    }
+
+    @Override
+    public void onDestroyView(){
+        super.onDestroyView();
+        unbinder.unbind();
     }
 
     @Override
@@ -163,8 +176,6 @@ public class FavoriteGridFragment extends Fragment
         LinearLayout emptyFavoritesLayout = (LinearLayout) rootView.findViewById(R.id.empty_grid_view_layout);
         if(visible) {
             emptyFavoritesLayout.setVisibility(View.VISIBLE);
-            ImageView emptyImage = (ImageView) rootView.findViewById(R.id.empty_view_image);
-            TextView emptyText = (TextView) rootView.findViewById(R.id.empty_view_message);
             emptyImage.setImageDrawable(getResources().getDrawable(R.drawable.ic_empty_movie_grid));
             emptyText.setText(getText(R.string.empty_favorite_movie_gridview));
         } else{

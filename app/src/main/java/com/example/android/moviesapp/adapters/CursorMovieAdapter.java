@@ -1,4 +1,4 @@
-package com.example.android.moviesapp.Adapters;
+package com.example.android.moviesapp.adapters;
 
 
 import android.content.Context;
@@ -11,10 +11,13 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.android.moviesapp.Objects.Movie;
+import com.example.android.moviesapp.models.Movie;
 import com.example.android.moviesapp.R;
 import com.example.android.moviesapp.database.DatabaseUtilMethods;
 import com.example.android.moviesapp.utilities.ImageUtils;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 
 public class CursorMovieAdapter extends RecyclerView.Adapter<CursorMovieAdapter.ViewHolder>{
@@ -25,13 +28,12 @@ public class CursorMovieAdapter extends RecyclerView.Adapter<CursorMovieAdapter.
     private MovieAdapter.OnItemClickListener listener;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        private ImageView imageViewItem;
-        private TextView titleView;
+        @BindView(R.id.grid_poster) ImageView imageViewItem;
+        @BindView(R.id.title_without_poster) TextView titleView;
 
         public ViewHolder(View view) {
             super(view);
-            imageViewItem = (ImageView) view.findViewById(R.id.grid_poster);
-            titleView = (TextView) view.findViewById(R.id.title_without_poster);
+            ButterKnife.bind(this, view);
         }
 
         public void bind(final Movie movie, final MovieAdapter.OnItemClickListener listener) {
@@ -73,7 +75,7 @@ public class CursorMovieAdapter extends RecyclerView.Adapter<CursorMovieAdapter.
         Movie movie = DatabaseUtilMethods.getMovieFromCursor(position, mCursor);
         long tmdb_id = movie.getTmdb_id();
 
-        //set tag for tmdb_id (it will be used in FavoriteGridFragment to delete Movie object)
+        //set tag for tmdb_id that will be used in FavoriteGridFragment to delete Movie object
         holder.itemView.setTag(tmdb_id);
 
         holder.bind(movie, listener);

@@ -1,4 +1,4 @@
-package com.example.android.moviesapp.Activities;
+package com.example.android.moviesapp.activities;
 
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
@@ -10,10 +10,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.example.android.moviesapp.R;
-import com.example.android.moviesapp.Objects.Review;
-import com.example.android.moviesapp.Fragments.ReviewDialogFragment;
+import com.example.android.moviesapp.models.Review;
+import com.example.android.moviesapp.fragments.ReviewDialogFragment;
 
 import java.util.ArrayList;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 
 public class ReviewActivity extends AppCompatActivity{
@@ -22,14 +25,14 @@ public class ReviewActivity extends AppCompatActivity{
 
     private ArrayList<Review> reviewList;
     public static final String REVIEW_LIST = "review_list";
-    Toolbar toolbar;
+    @BindView(R.id.toolbar) Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_review);
+        ButterKnife.bind(this);
 
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 

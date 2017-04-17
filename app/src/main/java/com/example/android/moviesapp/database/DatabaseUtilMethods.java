@@ -7,8 +7,8 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.widget.Toast;
 
-import com.example.android.moviesapp.Objects.Movie;
-import com.example.android.moviesapp.Objects.Review;
+import com.example.android.moviesapp.models.Movie;
+import com.example.android.moviesapp.models.Review;
 import com.example.android.moviesapp.R;
 import com.example.android.moviesapp.database.MovieContract.FavoriteMovieEntry;
 import com.example.android.moviesapp.database.MovieContract.ReviewsTableEntry;

@@ -1,4 +1,4 @@
-package com.example.android.moviesapp.Adapters;
+package com.example.android.moviesapp.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.example.android.moviesapp.Objects.YouTubeTrailer;
+import com.example.android.moviesapp.models.YouTubeTrailer;
 import com.example.android.moviesapp.R;
 import com.example.android.moviesapp.utilities.Keys;
 import com.google.android.youtube.player.YouTubeInitializationResult;
@@ -16,6 +16,9 @@ import com.google.android.youtube.player.YouTubeThumbnailLoader;
 import com.google.android.youtube.player.YouTubeThumbnailView;
 
 import java.util.ArrayList;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.ViewHolder> {
 
@@ -36,11 +39,11 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.ViewHold
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
-        private YouTubeThumbnailView thumbView;
+        @BindView(R.id.trailer_thumbnail) YouTubeThumbnailView thumbView;
 
         public ViewHolder(View view, Context context) {
             super(view);
-            thumbView = (YouTubeThumbnailView) view.findViewById(R.id.trailer_thumbnail);
+            ButterKnife.bind(this, view);
             initialize();
         }
 
@@ -51,7 +54,7 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.ViewHold
 
             thumbView.initialize(Keys.YOUTUBE_API_KEY, new YouTubeThumbnailView.OnInitializedListener() {
                 @Override
-                public void onInitializationSuccess(YouTubeThumbnailView youTubeThumbnailView, YouTubeThumbnailLoader youTubeThumbnailLoader) {
+                public void onInitializationSuccess(YouTubeThumbnailView youTubeThumbnailView, final YouTubeThumbnailLoader youTubeThumbnailLoader) {
                     thumbView.setTag(R.id.initialize, INITIALIZED);
                     thumbView.setTag(R.id.thumbnail_loader, youTubeThumbnailLoader);
 
@@ -83,6 +86,7 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.ViewHold
                     Toast.makeText(mContext, errorMessage, Toast.LENGTH_LONG).show();
                 }
             });
+
         }
     }
 

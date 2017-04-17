@@ -1,4 +1,4 @@
-package com.example.android.moviesapp.Activities;
+package com.example.android.moviesapp.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,34 +7,35 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
-import com.example.android.moviesapp.Fragments.DetailFragment;
 import com.example.android.moviesapp.R;
-import com.example.android.moviesapp.Objects.Review;
-import com.example.android.moviesapp.Fragments.ReviewDialogFragment;
+import com.example.android.moviesapp.fragments.DetailFragment;
+import com.example.android.moviesapp.fragments.ReviewDialogFragment;
+import com.example.android.moviesapp.models.Review;
 
 import java.util.ArrayList;
+
+import butterknife.BindBool;
+import butterknife.ButterKnife;
 
 
 public class DetailActivity extends AppCompatActivity implements DetailFragment.ReviewFragmentCallback,
         DetailFragment.SettingsFragmentCallback {
 
     private final String LOG_TAG = DetailActivity.class.getSimpleName() + "LOG";
-    Toolbar toolbar;
-    private boolean isTabletTwoPane;
-    private boolean isTabletPortrait;
+    private Toolbar toolbar;
+    @BindBool(R.bool.isTabletTwoPane) boolean isTabletTwoPane;
+    @BindBool(R.bool.isTabletPortrait) boolean isTabletPortrait;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        isTabletTwoPane = getResources().getBoolean(R.bool.isTabletTwoPane);
-        isTabletPortrait = getResources().getBoolean(R.bool.isTabletPortrait);
+        ButterKnife.bind(this);
         if (isTabletTwoPane) {
             Fragment fr = getSupportFragmentManager().findFragmentById(R.id.detail_container_detail_activity);
             getSupportFragmentManager().beginTransaction().remove(fr).commit();
             this.finish();
         } else {
             setContentView(R.layout.activity_detail);
-
             toolbar = (Toolbar) findViewById(R.id.detail_activity_toolbar);
             setSupportActionBar(toolbar);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
