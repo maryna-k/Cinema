@@ -6,7 +6,7 @@ import android.support.v7.widget.RecyclerView;
 import android.widget.Toast;
 
 import com.example.android.moviesapp.R;
-import com.example.android.moviesapp.rest.MDBConnection;
+import com.example.android.moviesapp.rest.ApiConnection;
 
 import static com.example.android.moviesapp.fragments.MainGridFragment.setLoadMoreMovies;
 
@@ -30,7 +30,7 @@ public abstract class EndlessRecyclerViewScrollListener extends RecyclerView.OnS
     private int lastVisibleItemPosition;
     private int totalItemCount;
 
-    private GridLayoutManager mLayoutManager;
+    private GridLayoutManager layoutManager;
 
     private Context context;
 
@@ -39,15 +39,15 @@ public abstract class EndlessRecyclerViewScrollListener extends RecyclerView.OnS
     private final String LOG_TAG = EndlessRecyclerViewScrollListener.class.getSimpleName() + "LOG";
 
     public EndlessRecyclerViewScrollListener(GridLayoutManager layoutManager, Context context) {
-        this.mLayoutManager = layoutManager;
+        this.layoutManager = layoutManager;
         visibleThreshold = visibleThreshold * layoutManager.getSpanCount();
         this.context = context;
     }
 
     @Override
     public void onScrolled(RecyclerView view, int dx, int dy) {
-        lastVisibleItemPosition = mLayoutManager.findLastVisibleItemPosition();
-        totalItemCount = mLayoutManager.getItemCount();
+        lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition();
+        totalItemCount = layoutManager.getItemCount();
 
         // If the total item count is zero and the previous isn't, assume the
         // list is invalidated and should be reset back to initial state
@@ -70,7 +70,7 @@ public abstract class EndlessRecyclerViewScrollListener extends RecyclerView.OnS
         // the visibleThreshold is reached and more data need to be reload
         // which is done by onLoadMore.
         if (!loading && (lastVisibleItemPosition + visibleThreshold) > totalItemCount) {
-            if(MDBConnection.checkNetworkConnection(context)) {
+            if(ApiConnection.checkNetworkConnection(context)) {
                 currentPage++;
                 onLoadMore();
                 setLoadMoreMovies(false);

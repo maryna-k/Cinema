@@ -35,23 +35,26 @@ import butterknife.Unbinder;
 
 import static com.example.android.moviesapp.activities.MainActivity.DETAILFRAGMENT_TAG;
 
+/** This fragment displays favorite movies saved in the device's database*/
 
 public class FavoriteGridFragment extends Fragment
         implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private final String LOG_TAG = MainGridFragment.class.getSimpleName();
 
-    private CursorMovieAdapter mCursorAdapter;
-    @BindView(R.id.recycler_view) RecyclerView mRecyclerView;
-    private GridLayoutManager mLayoutManager;
-    @BindInt(R.integer.grid_columns) int GRID_COLUMNS_NUM;
+    @BindView(R.id.recycler_view) RecyclerView recyclerView;
+    private GridLayoutManager layoutManager;
     private View rootView;
     private Loader loader;
-    private final int PRIMARY_LOADER_ID = 0;
-    private Cursor mCursorMovieData;
+    private CursorMovieAdapter cursorAdapter;
+    private Cursor cursorMovieData;
     private Unbinder unbinder;
+
     @BindView(R.id.empty_view_image) ImageView emptyImage;
     @BindView(R.id.empty_view_message) TextView emptyText;
+
+    @BindInt(R.integer.grid_columns) int GRID_COLUMNS_NUM;
+    private final int PRIMARY_LOADER_ID = 0;
 
     public interface SwipeMovieCallback {
         public void onSwipeMovie(long tmdb_id);
@@ -72,8 +75,8 @@ public class FavoriteGridFragment extends Fragment
         rootView = inflater.inflate(R.layout.fragment_main, container, false);
         unbinder = ButterKnife.bind(this, rootView);
 
-        mLayoutManager = new GridLayoutManager(getContext(), GRID_COLUMNS_NUM);
-        mRecyclerView.setLayoutManager(mLayoutManager);
+        layoutManager = new GridLayoutManager(getContext(), GRID_COLUMNS_NUM);
+        recyclerView.setLayoutManager(layoutManager);
 
         if (savedInstanceState == null) {
             getLoaderManager().initLoader(PRIMARY_LOADER_ID, null, this);
@@ -101,7 +104,7 @@ public class FavoriteGridFragment extends Fragment
                 }
                 getLoaderManager().restartLoader(PRIMARY_LOADER_ID, null, FavoriteGridFragment.this);
             }
-        }).attachToRecyclerView(mRecyclerView);
+        }).attachToRecyclerView(recyclerView);
         return rootView;
     }
 
@@ -133,14 +136,14 @@ public class FavoriteGridFragment extends Fragment
     public void onLoadFinished(Loader<Cursor> loader, Cursor result) {
         if (result != null) {
             setEmptyGridViewVisible(false);
-            mCursorMovieData = result;
-            mCursorAdapter = new CursorMovieAdapter(mCursorMovieData, new MovieAdapter.OnItemClickListener() {
+            cursorMovieData = result;
+            cursorAdapter = new CursorMovieAdapter(cursorMovieData, new MovieAdapter.OnItemClickListener() {
                 @Override
                 public void onItemClick(Movie movie){
                     ((FragmentCallback) getActivity()).onItemSelected(movie);
                 }
             });
-            mRecyclerView.setAdapter(mCursorAdapter);
+            recyclerView.setAdapter(cursorAdapter);
         } if (result == null || result.getCount() == 0){
             setEmptyGridViewVisible(true);
         }
@@ -148,8 +151,8 @@ public class FavoriteGridFragment extends Fragment
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-        if (mCursorMovieData != null) {
-            mCursorAdapter.swapCursor(null);
+        if (cursorMovieData != null) {
+            cursorAdapter.swapCursor(null);
         }
     }
 

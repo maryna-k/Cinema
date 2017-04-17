@@ -67,57 +67,33 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
 
     private final String LOG_TAG = DetailFragment.class.getSimpleName();
 
-    //variables from movie object
+    //movie object variables
     private Movie movie;
-    private String mTitle;
-    private String mGenre;
-    private String mOverview;
-    private String mReleaseDate;
-    private double mRating;
-    private int mVoteCount;
-    private String mPosterAddress;
-    private String mBackDropAddress;
-    private boolean favorite;
-    private static long mTMDB_ID;
+    private String titleVal;
+    private String genreVal;
+    private String overviewVal;
+    private String releaseDateVal;
+    private double ratingVal;
+    private int voteCountVal;
+    private String posterAddressVal;
+    private String backDropAddressVal;
+    private boolean isFavorite;
+    private static long tmdbId;
 
-    @BindView(R.id.title) TextView title;
-    @BindView(R.id.rating) TextView rating;
-    @BindView(R.id.vote_count) TextView voteCount;
-    @BindView(R.id.release_date) TextView release;
-    @BindView(R.id.genre) TextView genre;
-    @BindView(R.id.overview) TextView overview;
-
-    @BindView(R.id.backdrop) ImageView backdropView;
-    @BindView(R.id.small_poster_base) LinearLayout smallPosterBase;
-    @BindView(R.id.no_trailers_found_icon) ImageView emptyTrailers;
-
-    //RecyclerView variables
-    private TrailerAdapter mTrailerAdapter;
-    @BindView(R.id.trailers_recycler_view) RecyclerView mRecyclerView;
-    private LinearLayoutManager mLayoutManager;
-    private TrailerInfoLoader loader;
+    //views
     private View rootView;
     @BindView(R.id.trailer_progress_bar) ProgressBar trailersProgressBar;
     @BindView(R.id.review_progress_bar) ProgressBar reviewsProgressBar;
-    @BindView(R.id.scrollView) ScrollView scrollView;
-
-    private ArrayList<Review> reviewList;
-
-    private BroadcastReceiver mBroadcastReceiver;
-    private IntentFilter mInternetFilter;
-
-    //toolbar and colors
-    private ActionBar toolbar;
-    private Toolbar secondaryToolbar;
-    int themeColor;
-    @BindColor(R.color.colorPrimary) int defaultColor;
-    private int toolbarChangePoint = 0;
-    private ViewTreeObserver.OnScrollChangedListener mOnScrollChangeListener;
-
+    @BindView(R.id.title) TextView titleView;
+    @BindView(R.id.rating) TextView ratingView;
+    @BindView(R.id.vote_count) TextView voteCountView;
+    @BindView(R.id.release_date) TextView releaseView;
+    @BindView(R.id.genre) TextView genreView;
+    @BindView(R.id.overview) TextView overviewView;
+    @BindView(R.id.backdrop) ImageView backdropView;
+    @BindView(R.id.small_poster_base) LinearLayout smallPosterBase;
+    @BindView(R.id.no_trailers_found_icon) ImageView emptyTrailerView;
     @BindView(R.id.small_poster) ImageView smallPosterView;
-
-    @BindBool(R.bool.isTabletTwoPane) boolean isTabletTwoPane;
-    @BindBool(R.bool.isTabletPortrait) boolean isTabletPortrait;
 
     //review layout
     String contentStr;
@@ -129,10 +105,32 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
     @BindView(R.id.hide_review) ImageView collapseReview;
     @BindView(R.id.no_reviews_found_icon) ImageView emptyReviews;
 
+    @BindBool(R.bool.isTabletTwoPane) boolean isTabletTwoPane;
+    @BindBool(R.bool.isTabletPortrait) boolean isTabletPortrait;
+
+    //RecyclerView variables
+    private TrailerAdapter trailerAdapter;
+    @BindView(R.id.trailers_recycler_view) RecyclerView recyclerView;
+    private LinearLayoutManager layoutManager;
+    private TrailerInfoLoader loader;
+    @BindView(R.id.scrollView) ScrollView scrollView;
+
+    private ArrayList<Review> reviewList;
+
+    private BroadcastReceiver broadcastReceiver;
+    private IntentFilter internetFilter;
+
+    //toolbar and colors
+    private ActionBar toolbar;
+    private Toolbar secondaryToolbar;
+    int themeColor;
+    @BindColor(R.color.colorPrimary) int defaultColor;
+    private int toolbarChangePoint = 0;
+    private ViewTreeObserver.OnScrollChangedListener onScrollChangeListener;
+
     private Unbinder unbinder;
 
     private final int COLLAPSED_REVIEW_SIZE = 150;
-
     private final int TRAILER_LOADER_ID = 1;
     private final int REVIEW_LOADER_ID = 2;
     private final int CURSOR_REVIEW_LOADER_ID = 3;
@@ -142,12 +140,12 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
     private final String THEME_COLOR = "theme_color";
 
 
-    //Fragment сallback for when Show more reviews button is clicked.
+    //Fragment сallback that controls communication between DetailFragment and activities when "More reviews" button is clicked.
     public interface ReviewFragmentCallback {
         public void onMoreReviewsSelected(ArrayList<Review> reviewList, String title, int themeColor);
     }
 
-    //Fragment сallback for when Settings menu item is clicked
+    //Fragment сallback that controls communication between DetailFragment and activities when Settings menu item is clicked
     public interface SettingsFragmentCallback{
         public void onSettingsMenuItemSelected(boolean selected);
     }
@@ -182,8 +180,8 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
                 movie = (Movie) arguments.getSerializable(MOVIE_DETAIL);
             }
 
-            mTMDB_ID = movie.getTmdb_id();
-            favorite = DatabaseUtilMethods.movieIsInFavorite(mTMDB_ID, getContext());
+            tmdbId = movie.getTmdbId();
+            isFavorite = DatabaseUtilMethods.movieIsInFavorite(tmdbId, getContext());
 
             if(savedInstanceState != null){
                 toolbarChangePoint = savedInstanceState.getInt(TOOLBAR_CHANGE_POINT);
@@ -192,39 +190,39 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
             if(isTabletTwoPane) secondaryToolbar = ((MainActivity) getActivity()).getSecondaryToolbar();
             else toolbar = ((AppCompatActivity) getActivity()).getSupportActionBar();
 
-            mPosterAddress = movie.getPosterAddress();
-            mBackDropAddress = movie.getBackdropAddress();
-            if(mBackDropAddress == null || mBackDropAddress.equals("null") || mBackDropAddress.equals("")) {
-                mBackDropAddress = mPosterAddress;
+            posterAddressVal = movie.getPosterAddress();
+            backDropAddressVal = movie.getBackdropAddress();
+            if(backDropAddressVal == null || backDropAddressVal.equals("null") || backDropAddressVal.equals("")) {
+                backDropAddressVal = posterAddressVal;
             }
-            String backdropImageAddress = Keys.BACKDROP_POSTER_BASE_URL + mBackDropAddress;
+            String backdropImageAddress = Keys.BACKDROP_POSTER_BASE_URL + backDropAddressVal;
             setColorThemeAndBackdrop(backdropImageAddress);
 
             if(movie.getPosterStoragePath() != null){
-                Bitmap bitmap = ImageUtils.getPosterFromStorage(movie.getPosterStoragePath(), Long.toString(mTMDB_ID));
+                Bitmap bitmap = ImageUtils.getPosterFromStorage(movie.getPosterStoragePath(), Long.toString(tmdbId));
                 smallPosterView.setImageBitmap(bitmap);
             } else {
-                String fullPosterAddress = Keys.SMALL_POSTER_BASE_URL + mPosterAddress;
+                String fullPosterAddress = Keys.SMALL_POSTER_BASE_URL + posterAddressVal;
                 Picasso.with(getContext()).load(fullPosterAddress).into(smallPosterView);
             }
 
             setDetailFragmentTextFields();
 
-            mLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
-            mRecyclerView.setLayoutManager(mLayoutManager);
+            layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+            recyclerView.setLayoutManager(layoutManager);
 
-            mOnScrollChangeListener = new ViewTreeObserver.OnScrollChangedListener() {
+            onScrollChangeListener = new ViewTreeObserver.OnScrollChangedListener() {
                 @Override
                 public void onScrollChanged() {
                     if(toolbarChangePoint == 0) {
-                        toolbarChangePoint = getViewBottomCoordinates(title);
+                        toolbarChangePoint = getViewBottomCoordinates(titleView);
                     }
                     else measureToolbarPosition();
                 }
             };
-            scrollView.getViewTreeObserver().addOnScrollChangedListener(mOnScrollChangeListener);
+            scrollView.getViewTreeObserver().addOnScrollChangedListener(onScrollChangeListener);
 
-            if(!favorite) {
+            if(!isFavorite) {
                 getLoaderManager().initLoader(REVIEW_LOADER_ID, null, reviewResultLoaderListener);
             } else {
                 getLoaderManager().initLoader(CURSOR_REVIEW_LOADER_ID, null, reviewCursorLoaderListener);
@@ -242,16 +240,16 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
     @Override
     public void onResume() {
         super.onResume();
-        if (mBroadcastReceiver != null && mInternetFilter != null) {
-            getActivity().registerReceiver(mBroadcastReceiver, mInternetFilter);
+        if (broadcastReceiver != null && internetFilter != null) {
+            getActivity().registerReceiver(broadcastReceiver, internetFilter);
         }
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        if (mBroadcastReceiver != null) {
-            getActivity().unregisterReceiver(mBroadcastReceiver);
+        if (broadcastReceiver != null) {
+            getActivity().unregisterReceiver(broadcastReceiver);
         }
     }
 
@@ -278,7 +276,7 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
         }
     }
 
-    //change the icon of the favorite button depending on if the Movie object is favorite or not
+    //change the icon of the isFavorite button depending on if the Movie object is is favorite or not
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         if (movie != null) {
@@ -288,7 +286,7 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
             MenuItem removeFromFavorite = menu.findItem(R.id.action_remove_from_favorite);
             MenuItem addToFavorite = menu.findItem(R.id.action_add_to_favorite);
 
-            if (favorite) {
+            if (isFavorite) {
                 addToFavorite.setVisible(false);
                 removeFromFavorite.setVisible(true);
             } else {
@@ -302,15 +300,15 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_add_to_favorite:
-                favorite = DatabaseUtilMethods.saveFavoriteMovie(movie, reviewList, getContext());
-                if (favorite) {
+                isFavorite = DatabaseUtilMethods.saveFavoriteMovie(movie, reviewList, getContext());
+                if (isFavorite) {
                     getActivity().invalidateOptionsMenu();
                 }
                 break;
             case R.id.action_remove_from_favorite:
-                int removedNum = DatabaseUtilMethods.deleteFavoriteMovie(mTMDB_ID, getContext());
+                int removedNum = DatabaseUtilMethods.deleteFavoriteMovie(tmdbId, getContext());
                 if (removedNum > 0) {
-                    favorite = false;
+                    isFavorite = false;
                     getActivity().invalidateOptionsMenu();
                     String str = getContext().getResources().getString(R.string.removed_from_db);
                     Toast.makeText(getContext(), str, Toast.LENGTH_SHORT)
@@ -333,8 +331,8 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
 
     @Override
     public void onSwipeMovie(long tmdb_id){
-        if(tmdb_id == mTMDB_ID){
-            favorite = false;
+        if(tmdb_id == tmdbId){
+            isFavorite = false;
             getActivity().invalidateOptionsMenu();
         }
     }
@@ -353,31 +351,32 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
             }
         }
         if(scrollView != null && scrollView.getViewTreeObserver().isAlive()) {
-            scrollView.getViewTreeObserver().removeOnScrollChangedListener(mOnScrollChangeListener);
+            scrollView.getViewTreeObserver().removeOnScrollChangedListener(onScrollChangeListener);
         }
     }
 
     private void setDetailFragmentTextFields(){
-        mTitle = movie.getTitle();
-        title.setText(mTitle);
+        titleVal = movie.getTitle();
+        titleView.setText(titleVal);
 
-        mRating = movie.getRating();
-        rating.setText(mRating + " out of 10");
+        ratingVal = movie.getRating();
+        ratingView.setText(ratingVal + " out of 10");
 
-        mVoteCount = movie.getVoteCount();
-        voteCount.setText(mVoteCount + " votes");
+        voteCountVal = movie.getVoteCount();
+        voteCountView.setText(voteCountVal + " votes");
 
-        mReleaseDate = movie.getReleaseDate();
-        release.setText(mReleaseDate);
+        releaseDateVal = movie.getReleaseDate();
+        releaseView.setText(releaseDateVal);
 
-        mGenre = movie.getGenre();
-        genre.setText(mGenre);
+        genreVal = movie.getGenre();
+        genreView.setText(genreVal);
 
-        mOverview = movie.getOverview();
-        overview.setText(mOverview);
+        overviewVal = movie.getOverview();
+        overviewView.setText(overviewVal);
 
     }
 
+    //gets backdrop image and retrieves a color palette from it
     private void setColorThemeAndBackdrop(String headerImageAddress){
         Target target = new Target(){
             @Override
@@ -414,7 +413,7 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
 
     private void setColorForTitleView(int themeColor){
         smallPosterBase.setBackgroundColor(themeColor);
-        title.setBackgroundColor(themeColor);
+        titleView.setBackgroundColor(themeColor);
     }
 
     private int getViewBottomCoordinates(View view){
@@ -431,6 +430,8 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
         return 0;
     }
 
+    /*set toolbar transparent if it is above the titleView bottom point or set its color to theme
+    color if it is below the titleView bottom point*/
     private void measureToolbarPosition(){
         if(scrollView != null) {
             int scrollViewPosition = scrollView.getScrollY();
@@ -449,7 +450,7 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
                 secondaryToolbar.setTitle("");
             } else {
                 secondaryToolbar.setBackgroundColor(themeColor);
-                secondaryToolbar.setTitle(mTitle);
+                secondaryToolbar.setTitle(titleVal);
             }
         } else {
             if(themeColor == -1) {
@@ -458,7 +459,7 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
             } else {
                 toolbar.setBackgroundDrawable(new ColorDrawable(themeColor));
                 toolbar.setDisplayShowTitleEnabled(true);
-                toolbar.setTitle(mTitle);
+                toolbar.setTitle(titleVal);
             }
         }
     }
@@ -487,33 +488,33 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
         @Override
         public Loader<ArrayList<YouTubeTrailer>> onCreateLoader(int id, Bundle args) {
             if (id == TRAILER_LOADER_ID) {
-                return new TrailerInfoLoader(getContext(), mTMDB_ID);
+                return new TrailerInfoLoader(getContext(), tmdbId);
             } else return null;
         }
 
         @Override
         public void onLoadFinished(Loader<ArrayList<YouTubeTrailer>> loader, ArrayList<YouTubeTrailer> trailerData) {
             if (trailerData == null) {
-                mRecyclerView.setVisibility(View.GONE);
+                recyclerView.setVisibility(View.GONE);
                 trailersProgressBar.setVisibility(View.VISIBLE);
-                emptyTrailers.setVisibility(View.GONE);
+                emptyTrailerView.setVisibility(View.GONE);
             } else if (trailerData.size() > 0) {
-                mTrailerAdapter = new TrailerAdapter(trailerData, new TrailerAdapter.OnItemClickListener() {
+                trailerAdapter = new TrailerAdapter(trailerData, new TrailerAdapter.OnItemClickListener() {
                     @Override
                     public void onItemClick(String keyStr) {
                         startActivity(YouTubeStandalonePlayer.createVideoIntent(getActivity(),
                                 Keys.YOUTUBE_API_KEY, keyStr, 0, true, true));
                     }
                 });
-                mTrailerAdapter.setProgressBar(trailersProgressBar);
-                mRecyclerView.setAdapter(mTrailerAdapter);
-                mRecyclerView.setVisibility(View.VISIBLE);
+                trailerAdapter.setProgressBar(trailersProgressBar);
+                recyclerView.setAdapter(trailerAdapter);
+                recyclerView.setVisibility(View.VISIBLE);
                 trailersProgressBar.setVisibility(View.GONE);
-                emptyTrailers.setVisibility(View.GONE);
+                emptyTrailerView.setVisibility(View.GONE);
             } else if (trailerData.size() == 0) {
-                mRecyclerView.setVisibility(View.GONE);
+                recyclerView.setVisibility(View.GONE);
                 trailersProgressBar.setVisibility(View.GONE);
-                emptyTrailers.setVisibility(View.VISIBLE);
+                emptyTrailerView.setVisibility(View.VISIBLE);
             }
         }
 
@@ -529,7 +530,7 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
         @Override
         public Loader<ArrayList<Review>> onCreateLoader(int id, Bundle args) {
             if (id == REVIEW_LOADER_ID) {
-                return new ReviewLoader(getContext(), mTMDB_ID);
+                return new ReviewLoader(getContext(), tmdbId);
             } else return null;
         }
 
@@ -552,7 +553,7 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
         public Loader<Cursor> onCreateLoader(int id, Bundle args) {
             if(id == CURSOR_REVIEW_LOADER_ID) {
                 String selection = MovieContract.ReviewsTableEntry.COLUMN_NAME_TMDB_ID + "=?";
-                String[] selectionArgs = new String[]{Long.toString(mTMDB_ID)};
+                String[] selectionArgs = new String[]{Long.toString(tmdbId)};
                 return new CursorLoader(getActivity(),
                         MovieContract.ReviewsTableEntry.CONTENT_URI,
                         null, selection, selectionArgs, null);
@@ -582,9 +583,10 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
         }
     };
 
+    //broadcast receiver that loads trailers and reviews as soon as internet connection is established
     private void installConnectionListener() {
-        if (mBroadcastReceiver == null) {
-            mBroadcastReceiver = new BroadcastReceiver() {
+        if (broadcastReceiver == null) {
+            broadcastReceiver = new BroadcastReceiver() {
                 @Override
                 public void onReceive(Context context, Intent intent) {
                     Bundle extras = intent.getExtras();
@@ -593,13 +595,13 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
                     if (state == NetworkInfo.State.CONNECTED && trailersProgressBar.getVisibility() == View.VISIBLE) {
                         getLoaderManager().restartLoader(TRAILER_LOADER_ID, null, trailerResultLoaderListener);
                     }
-                    if (state == NetworkInfo.State.CONNECTED && reviewsProgressBar.getVisibility() == View.VISIBLE && !favorite) {
+                    if (state == NetworkInfo.State.CONNECTED && reviewsProgressBar.getVisibility() == View.VISIBLE && !isFavorite) {
                         getLoaderManager().restartLoader(REVIEW_LOADER_ID, null, reviewResultLoaderListener);
                     }
                 }
             };
-            mInternetFilter = new IntentFilter();
-            mInternetFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+            internetFilter = new IntentFilter();
+            internetFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
         }
     }
 
@@ -633,7 +635,7 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
                 showMoreReviewsButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        ((ReviewFragmentCallback) getActivity()).onMoreReviewsSelected(reviewData, mTitle, themeColor);
+                        ((ReviewFragmentCallback) getActivity()).onMoreReviewsSelected(reviewData, titleVal, themeColor);
                     }
                 });
             }

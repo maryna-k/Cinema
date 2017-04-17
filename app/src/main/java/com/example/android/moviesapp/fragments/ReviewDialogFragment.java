@@ -20,12 +20,14 @@ import butterknife.Unbinder;
 
 import static com.example.android.moviesapp.activities.ReviewActivity.REVIEW_LIST;
 
+/** Displays reviews in a DialogFragment in tablet layout*/
+
 public class ReviewDialogFragment extends DialogFragment {
 
     private View rootView;
-    @BindView(R.id.review_recyclerview) RecyclerView mRecyclerView;
-    private LinearLayoutManager mLayoutManager;
-    private ReviewAdapter mAdapter;
+    @BindView(R.id.review_recyclerview) RecyclerView recyclerView;
+    private LinearLayoutManager layoutManager;
+    private ReviewAdapter adapter;
     private ArrayList<Review> reviewList;
     private Unbinder unbinder;
 
@@ -50,12 +52,12 @@ public class ReviewDialogFragment extends DialogFragment {
         if(arguments != null){
             reviewList = (ArrayList<Review>) arguments.getSerializable(REVIEW_LIST);
         }
-        mRecyclerView.setHasFixedSize(true);
-        mLayoutManager = new LinearLayoutManager(getContext());
-        mRecyclerView.setLayoutManager(mLayoutManager);
-        mRecyclerView.setNestedScrollingEnabled(false);
-        mAdapter = new ReviewAdapter(reviewList);
-        mRecyclerView.setAdapter(mAdapter);
+        recyclerView.setHasFixedSize(true);
+        layoutManager = new LinearLayoutManager(getContext());
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setNestedScrollingEnabled(false);
+        adapter = new ReviewAdapter(reviewList);
+        recyclerView.setAdapter(adapter);
         return rootView;
     }
 

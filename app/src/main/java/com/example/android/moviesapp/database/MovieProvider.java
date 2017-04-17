@@ -21,8 +21,8 @@ public class MovieProvider extends ContentProvider {
     public static final String LOG_TAG = MovieProvider.class.getSimpleName();
 
     //Database helper object
-    private MovieDbHelper mDbHelper;
-    public static UriMatcher sUriMatcher = buildUriMatcher();
+    private MovieDbHelper dbHelper;
+    public static UriMatcher uriMatcher = buildUriMatcher();
 
     //URI matcher code for the content URI for the favorites table
     private static final int FAVORITE_MOVIES = 100;
@@ -50,7 +50,7 @@ public class MovieProvider extends ContentProvider {
 
     @Override
     public boolean onCreate(){
-        mDbHelper = new MovieDbHelper(getContext());
+        dbHelper = new MovieDbHelper(getContext());
         return true;
     }
 
@@ -58,8 +58,8 @@ public class MovieProvider extends ContentProvider {
     @Override
     public Cursor query(@NonNull Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder){
         Cursor returnCursor;
-        SQLiteDatabase db = mDbHelper.getReadableDatabase();
-        int match = sUriMatcher.match(uri);
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        int match = uriMatcher.match(uri);
 
         switch (match){
             case FAVORITE_MOVIES:
@@ -118,8 +118,8 @@ public class MovieProvider extends ContentProvider {
     @Override
     public Uri insert(@NonNull Uri uri, ContentValues values) {
         Uri returnedUri;
-        SQLiteDatabase db = mDbHelper.getWritableDatabase();
-        final int match = sUriMatcher.match(uri);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        final int match = uriMatcher.match(uri);
 
         switch (match){
             case FAVORITE_MOVIES:
@@ -162,8 +162,8 @@ public class MovieProvider extends ContentProvider {
 
     @Override
     public int update(@NonNull Uri uri, ContentValues contentValues, String selection, String[] selectionArgs){
-        SQLiteDatabase db = mDbHelper.getWritableDatabase();
-        int match = sUriMatcher.match(uri);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        int match = uriMatcher.match(uri);
         int itemsUpdated;
 
         switch (match){
@@ -207,8 +207,8 @@ public class MovieProvider extends ContentProvider {
 
     @Override
     public int delete(@NonNull Uri uri, String selection, String[] selectionArgs){
-        SQLiteDatabase db = mDbHelper.getWritableDatabase();
-        int match = sUriMatcher.match(uri);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        int match = uriMatcher.match(uri);
         int itemsDeleted;
 
         switch (match){

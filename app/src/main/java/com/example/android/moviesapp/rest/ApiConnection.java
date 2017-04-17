@@ -15,9 +15,11 @@ import okhttp3.Response;
 
 import static com.example.android.moviesapp.activities.MainActivity.getMoviesToSearch;
 
-public class MDBConnection {
+/** Builds url string based on the user request and makes server calls*/
 
-    private final static String LOG_TAG = MDBConnection.class.getSimpleName() + "LOG";
+public class ApiConnection {
+
+    private final static String LOG_TAG = ApiConnection.class.getSimpleName() + "LOG";
 
     public final static int LOAD_MOVIES = 1;
     public final static int LOAD_TRAILER_INFO = 2;

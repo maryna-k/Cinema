@@ -6,7 +6,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Map;
 
-import static com.example.android.moviesapp.rest.MDBConnection.searchCategories;
+import static com.example.android.moviesapp.rest.ApiConnection.searchCategories;
 
 public class Movie implements Serializable {
 
@@ -28,7 +28,7 @@ public class Movie implements Serializable {
     @SerializedName("backdrop_path")
     private String backdropAddress; //header image
     @SerializedName("id")
-    private long tmdb_id;
+    private long tmdbId;
     private String posterStoragePath;
 
     public Movie() {}
@@ -43,7 +43,7 @@ public class Movie implements Serializable {
         this.releaseDate = releaseDate;
         this.posterAddress = posterAddress;
         this.backdropAddress = backdropAddress;
-        this.tmdb_id = mdb_id;
+        this.tmdbId = mdb_id;
         this.posterStoragePath = posterStoragePath;
     }
 
@@ -60,7 +60,7 @@ public class Movie implements Serializable {
                     this.genre == m.genre &&
                     this.releaseDate == m.releaseDate &&
                     this.posterAddress == m.posterAddress &&
-                    this.tmdb_id == m.tmdb_id);
+                    this.tmdbId == m.tmdbId);
         }
     }
 
@@ -161,12 +161,12 @@ public class Movie implements Serializable {
         this.backdropAddress = backdropAddress;
     }
 
-    public long getTmdb_id() {
-        return tmdb_id;
+    public long getTmdbId() {
+        return tmdbId;
     }
 
-    public void setTmdb_id(long tmdb_id) {
-        this.tmdb_id = tmdb_id;
+    public void setTmdbId(long tmdbId) {
+        this.tmdbId = tmdbId;
     }
 
     public void setPosterStoragePath(String path) {

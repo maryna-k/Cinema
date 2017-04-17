@@ -26,7 +26,7 @@ import com.example.android.moviesapp.R;
 import com.example.android.moviesapp.adapters.MovieAdapter;
 import com.example.android.moviesapp.loaders.MovieLoader;
 import com.example.android.moviesapp.models.Movie;
-import com.example.android.moviesapp.rest.MDBConnection;
+import com.example.android.moviesapp.rest.ApiConnection;
 import com.example.android.moviesapp.utilities.EndlessRecyclerViewScrollListener;
 import com.example.android.moviesapp.utilities.FragmentCallback;
 
@@ -37,29 +37,31 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
+/** This fragment displays movies received from the server call*/
+
 public class MainGridFragment extends Fragment
         implements LoaderManager.LoaderCallbacks<ArrayList<Movie>>{
 
     private final String LOG_TAG = MainGridFragment.class.getSimpleName();
 
-    private MovieAdapter mAdapter;
-    @BindView(R.id.recycler_view) RecyclerView mRecyclerView;
-    private GridLayoutManager mLayoutManager;
+    private MovieAdapter adapter;
+    @BindView(R.id.recycler_view) RecyclerView recyclerView;
+    private GridLayoutManager layoutManager;
     private String moviesToSearch;
-    @BindInt(R.integer.grid_columns) int GRID_COLUMNS_NUM;
-    private View rootView;
     private MovieLoader loader;
-    private EndlessRecyclerViewScrollListener mScrollListener;
+    private EndlessRecyclerViewScrollListener scrollListener;
 
+    private View rootView;
     @BindView(R.id.empty_grid_view_layout) LinearLayout emptyMovieGridLayout;
     @BindView(R.id.empty_view_image) ImageView emptyImage;
     @BindView(R.id.empty_view_message) TextView emptyText;
 
-    private IntentFilter mInternetFilter;
-    private BroadcastReceiver mBroadcastReceiver;
+    private IntentFilter internetFilter;
+    private BroadcastReceiver broadcastReceiver;
     private static boolean loadMoreMovies;
 
-    @BindInt(R.integer.grid_columns) int progressBarExtraItems;
+    @BindInt(R.integer.grid_columns) int GRID_COLUMNS_NUM;
+    private int progressBarExtraItems = GRID_COLUMNS_NUM;
 
     private final int PRIMARY_LOADER_ID = 0;
     private final int SECONDARY_LOADER_ID = 1;
@@ -80,18 +82,18 @@ public class MainGridFragment extends Fragment
         rootView = inflater.inflate(R.layout.fragment_main, container, false);
         unbinder = ButterKnife.bind(this, rootView);
 
-        mLayoutManager = new GridLayoutManager(getContext(), GRID_COLUMNS_NUM);
-        mRecyclerView.setLayoutManager(mLayoutManager);
+        layoutManager = new GridLayoutManager(getContext(), GRID_COLUMNS_NUM);
+        recyclerView.setLayoutManager(layoutManager);
 
-        mScrollListener = new EndlessRecyclerViewScrollListener(mLayoutManager, getContext()) {
+        scrollListener = new EndlessRecyclerViewScrollListener(layoutManager, getContext()) {
             @Override
             public void onLoadMore() {
                 loadNextDataFromApi();
             }
         };
-        mRecyclerView.addOnScrollListener(mScrollListener);
+        recyclerView.addOnScrollListener(scrollListener);
 
-        if(MDBConnection.checkNetworkConnection(getContext()) || savedInstanceState != null) {
+        if(ApiConnection.checkNetworkConnection(getContext()) || savedInstanceState != null) {
             getLoaderManager().initLoader(PRIMARY_LOADER_ID, null, this);
         } else {
             setEmptyGridViewVisible(true);
@@ -125,13 +127,13 @@ public class MainGridFragment extends Fragment
     @Override
     public void onResume(){
         super.onResume();
-        getActivity().registerReceiver(mBroadcastReceiver, mInternetFilter);
+        getActivity().registerReceiver(broadcastReceiver, internetFilter);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        getActivity().unregisterReceiver(mBroadcastReceiver);
+        getActivity().unregisterReceiver(broadcastReceiver);
     }
 
     @Override
@@ -143,7 +145,7 @@ public class MainGridFragment extends Fragment
     @Override
     public Loader<ArrayList<Movie>> onCreateLoader(int id, Bundle args){
         if (id == PRIMARY_LOADER_ID ) {
-            mScrollListener.resetState();
+            scrollListener.resetState();
         }
         loader = new MovieLoader(getContext());
         return loader;
@@ -154,15 +156,15 @@ public class MainGridFragment extends Fragment
         if (result != null){
             switch(loader.getId()){
                 case PRIMARY_LOADER_ID:
-                        if (mAdapter == null){
+                        if (adapter == null){
                             setEmptyGridViewVisible(false);
                             createAdapter(result);
-                            mRecyclerView.setAdapter(mAdapter);
+                            recyclerView.setAdapter(adapter);
                         }
-                    mRecyclerView.setAdapter(mAdapter);
+                    recyclerView.setAdapter(adapter);
                     break;
                 case SECONDARY_LOADER_ID:
-                    mAdapter.addData(result);
+                    adapter.addData(result);
                     getLoaderManager().destroyLoader(SECONDARY_LOADER_ID);
             }
         } else if (result == null && loader.getId() == PRIMARY_LOADER_ID){
@@ -174,9 +176,10 @@ public class MainGridFragment extends Fragment
     public void onLoaderReset(Loader<ArrayList<Movie>> loader) {
     }
 
+    //broadcast receiver that loads movies as soon as internet connection is established
     private void installConnectionListener() {
-        if (mBroadcastReceiver == null) {
-            mBroadcastReceiver = new BroadcastReceiver() {
+        if (broadcastReceiver == null) {
+            broadcastReceiver = new BroadcastReceiver() {
 
                 @Override
                 public void onReceive(Context context, Intent intent) {
@@ -188,13 +191,13 @@ public class MainGridFragment extends Fragment
                     }
                     if (state == NetworkInfo.State.CONNECTED && loadMoreMovies){
                         loadMoreMovies = false;
-                        mScrollListener.incrementCurrentPage();
+                        scrollListener.incrementCurrentPage();
                         loadNextDataFromApi();
                     }
                 }
             };
-            mInternetFilter = new IntentFilter();
-            mInternetFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+            internetFilter = new IntentFilter();
+            internetFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
         }
     }
 
@@ -203,12 +206,12 @@ public class MainGridFragment extends Fragment
     }
 
     private void updateMovieList(){
-        mAdapter = null;
+        adapter = null;
         getLoaderManager().restartLoader(PRIMARY_LOADER_ID, null, this);
     }
 
     private void createAdapter(ArrayList<Movie> data){
-        mAdapter = new MovieAdapter(progressBarExtraItems, data, new MovieAdapter.OnItemClickListener(){
+        adapter = new MovieAdapter(progressBarExtraItems, data, new MovieAdapter.OnItemClickListener(){
             @Override
             public void onItemClick(Movie movie){
                 /* false here just indicates that DetailFragment has to check the database,

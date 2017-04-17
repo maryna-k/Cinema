@@ -5,6 +5,8 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 
+/** Helper class needed to parse JSON array with trailer information*/
+
 public class TrailerResponse {
     @SerializedName("results")
     private ArrayList<YouTubeTrailer> results;

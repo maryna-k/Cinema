@@ -23,7 +23,7 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     private static final String LOG_TAG = MovieAdapter.class.getSimpleName();
 
-    private ArrayList<Movie> mList;
+    private ArrayList<Movie> list;
     private static Context context;
     private OnItemClickListener listener;
     private int extraItemsNum;
@@ -56,14 +56,14 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     public MovieAdapter(int extraItemsNum, ArrayList<Movie> mList, OnItemClickListener listener) {
         this.extraItemsNum = extraItemsNum;
-        this.mList = mList;
+        this.list = mList;
         this.listener = listener;
-        if(this.mList.size() == moviesNumPerPage) {
+        if(this.list.size() == moviesNumPerPage) {
             addProgressViews(extraItemsNum);
-        } else if(this.mList.size()%moviesNumPerPage < extraItemsNum){
-            addProgressViews(extraItemsNum - this.mList.size()%moviesNumPerPage);
-        } else if(this.mList.size()%moviesNumPerPage > extraItemsNum){
-            removeProgressViews(this.mList.size()%moviesNumPerPage - extraItemsNum);
+        } else if(this.list.size()%moviesNumPerPage < extraItemsNum){
+            addProgressViews(extraItemsNum - this.list.size()%moviesNumPerPage);
+        } else if(this.list.size()%moviesNumPerPage > extraItemsNum){
+            removeProgressViews(this.list.size()%moviesNumPerPage - extraItemsNum);
         }
     }
 
@@ -86,7 +86,7 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof ViewHolder) {
-            final Movie movie = mList.get(position);
+            final Movie movie = list.get(position);
             String imageAddress = movie.getPosterAddress();
             String fullImageAddress = Keys.SMALL_POSTER_BASE_URL + movie.getPosterAddress();
             Picasso mPicasso = Picasso.with(((ViewHolder) holder).itemView.getContext());
@@ -117,31 +117,31 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     @Override
     public int getItemViewType(int position) {
-        return mList.get(position) != null ? VIEW_ITEM : VIEW_PROGRESS;
+        return list.get(position) != null ? VIEW_ITEM : VIEW_PROGRESS;
     }
 
     @Override
     public int getItemCount() {
-        return mList.size();
+        return list.size();
     }
 
     public void addData(ArrayList<Movie> data) {
         removeProgressViews(extraItemsNum);
-        mList.addAll(data);
+        list.addAll(data);
         addProgressViews(extraItemsNum);
-        this.notifyItemRangeChanged(mList.size() + 1, data.size());
+        this.notifyItemRangeChanged(list.size() + 1, data.size());
         this.notifyDataSetChanged();
     }
 
     private void addProgressViews(int extraNum){
         for(int i = 0; i < extraNum; i++){
-            this.mList.add(null);
+            this.list.add(null);
         }
     }
 
     private void removeProgressViews(int extraNum){
         for(int i = 1; i <= extraNum; i++){
-            this.mList.remove(mList.size() - 1);
+            this.list.remove(list.size() - 1);
         }
     }
 }

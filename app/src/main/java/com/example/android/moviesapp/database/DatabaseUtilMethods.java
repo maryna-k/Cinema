@@ -33,7 +33,7 @@ public class DatabaseUtilMethods {
 
     //insert Movie object to favorite_movies table
     public static boolean saveFavoriteMovie(Movie movie, ArrayList<Review> reviews, Context context) {
-        Long tmdb_id = movie.getTmdb_id();
+        Long tmdb_id = movie.getTmdbId();
         String posterAddress = movie.getPosterAddress();
         String posterPath;
         if(posterAddress.equals("") || posterAddress.equals("null") || posterAddress == null) {

@@ -22,7 +22,7 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder
 
     private final String LOG_TAG = ReviewAdapter.class.getSimpleName();
 
-    private ArrayList<Review> mList;
+    private ArrayList<Review> list;
     private Context context;
     private static boolean[] isCollapsed;
     private static final int SUBSTRING_LENGTH = 400;
@@ -64,7 +64,7 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder
     }
 
     public ReviewAdapter(ArrayList<Review> mList){
-        this.mList = mList;
+        this.list = mList;
         isCollapsed = new boolean[mList.size()];
         for(int i = 0; i<mList.size(); i++){
             isCollapsed[i] = true;
@@ -81,7 +81,7 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position){
-        Review reviewItem = mList.get(position);
+        Review reviewItem = list.get(position);
         holder.contentStr = reviewItem.getReviewContent();
         holder.authorView.setText(reviewItem.getAuthor());
         holder.contentView.setText(holder.contentStr);
@@ -100,6 +100,6 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder
 
     @Override
     public int getItemCount(){
-        return mList.size();
+        return list.size();
     }
 }

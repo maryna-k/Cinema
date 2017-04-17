@@ -8,8 +8,8 @@ import com.example.android.moviesapp.models.YouTubeTrailer;
 import java.util.ArrayList;
 
 import static com.example.android.moviesapp.rest.JsonParser.getTrailerDataFromJson;
-import static com.example.android.moviesapp.rest.MDBConnection.LOAD_TRAILER_INFO;
-import static com.example.android.moviesapp.rest.MDBConnection.getApiResponse;
+import static com.example.android.moviesapp.rest.ApiConnection.LOAD_TRAILER_INFO;
+import static com.example.android.moviesapp.rest.ApiConnection.getApiResponse;
 
 
 public class TrailerInfoLoader extends AsyncTaskLoader<ArrayList<YouTubeTrailer>> {
@@ -17,11 +17,11 @@ public class TrailerInfoLoader extends AsyncTaskLoader<ArrayList<YouTubeTrailer>
 
     private final String LOG_TAG = TrailerInfoLoader.class.getSimpleName();
     private ArrayList<YouTubeTrailer> trailerArrayList;
-    private long tmdb_id;
+    private long tmdbId;
 
-    public TrailerInfoLoader(Context context, long tmdb_id) {
+    public TrailerInfoLoader(Context context, long tmdbId) {
         super(context);
-        this.tmdb_id = tmdb_id;
+        this.tmdbId = tmdbId;
     }
 
     @Override
@@ -35,7 +35,7 @@ public class TrailerInfoLoader extends AsyncTaskLoader<ArrayList<YouTubeTrailer>
 
     @Override
     public ArrayList<YouTubeTrailer> loadInBackground() {
-        String trailerJsonStr = getApiResponse(LOAD_TRAILER_INFO, tmdb_id);
+        String trailerJsonStr = getApiResponse(LOAD_TRAILER_INFO, tmdbId);
         return getTrailerDataFromJson(trailerJsonStr);
     }
 

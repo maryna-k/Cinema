@@ -8,8 +8,8 @@ import com.example.android.moviesapp.models.Review;
 import java.util.ArrayList;
 
 import static com.example.android.moviesapp.rest.JsonParser.getReviewDataFromJson;
-import static com.example.android.moviesapp.rest.MDBConnection.LOAD_REVIEWS;
-import static com.example.android.moviesapp.rest.MDBConnection.getApiResponse;
+import static com.example.android.moviesapp.rest.ApiConnection.LOAD_REVIEWS;
+import static com.example.android.moviesapp.rest.ApiConnection.getApiResponse;
 
 
 public class ReviewLoader extends AsyncTaskLoader<ArrayList<Review>> {
@@ -17,11 +17,11 @@ public class ReviewLoader extends AsyncTaskLoader<ArrayList<Review>> {
 
     private final String LOG_TAG = TrailerInfoLoader.class.getSimpleName();
     private ArrayList<Review> reviewArrayList;
-    private long tmdb_id;
+    private long tmdbId;
 
-    public ReviewLoader(Context context, long tmdb_id) {
+    public ReviewLoader(Context context, long tmdbId) {
         super(context);
-        this.tmdb_id = tmdb_id;
+        this.tmdbId = tmdbId;
     }
 
     @Override
@@ -35,7 +35,7 @@ public class ReviewLoader extends AsyncTaskLoader<ArrayList<Review>> {
 
     @Override
     public ArrayList<Review> loadInBackground() {
-        String reviewJsonStr = getApiResponse(LOAD_REVIEWS, tmdb_id);
+        String reviewJsonStr = getApiResponse(LOAD_REVIEWS, tmdbId);
         return getReviewDataFromJson(reviewJsonStr);
     }
 

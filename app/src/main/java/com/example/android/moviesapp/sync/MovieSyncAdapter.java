@@ -26,9 +26,9 @@ import static com.example.android.moviesapp.database.MovieContract.FavoriteMovie
 import static com.example.android.moviesapp.database.MovieContract.ReviewsTableEntry;
 import static com.example.android.moviesapp.rest.JsonParser.getReviewDataFromJson;
 import static com.example.android.moviesapp.rest.JsonParser.getSingleMovieFromJson;
-import static com.example.android.moviesapp.rest.MDBConnection.LOAD_MOVIE_BY_ID;
-import static com.example.android.moviesapp.rest.MDBConnection.LOAD_REVIEWS;
-import static com.example.android.moviesapp.rest.MDBConnection.getApiResponse;
+import static com.example.android.moviesapp.rest.ApiConnection.LOAD_MOVIE_BY_ID;
+import static com.example.android.moviesapp.rest.ApiConnection.LOAD_REVIEWS;
+import static com.example.android.moviesapp.rest.ApiConnection.getApiResponse;
 
 
 public class MovieSyncAdapter extends AbstractThreadedSyncAdapter {
@@ -54,7 +54,7 @@ public class MovieSyncAdapter extends AbstractThreadedSyncAdapter {
             while (cursor.moveToNext()) {
                 position++;
                 Movie dbMovie = DatabaseUtilMethods.getMovieFromCursor(position, cursor);
-                long tmdb_id = dbMovie.getTmdb_id();
+                long tmdb_id = dbMovie.getTmdbId();
                 Movie serverMovie = loadMovieFromServer(tmdb_id);
                 updateMovie(dbMovie, serverMovie);
                 updateMovieReviews(tmdb_id);
@@ -76,7 +76,7 @@ public class MovieSyncAdapter extends AbstractThreadedSyncAdapter {
         ContentValues values = new ContentValues();
 
         values.put(FavoriteMovieEntry.COLUMN_NAME_TITLE, m2.getTitle());
-        values.put(FavoriteMovieEntry.COLUMN_NAME_TMDB_ID, m2.getTmdb_id());
+        values.put(FavoriteMovieEntry.COLUMN_NAME_TMDB_ID, m2.getTmdbId());
         if (!m1.getOverview().equals(m2.getOverview()))
             values.put(FavoriteMovieEntry.COLUMN_NAME_OVERVIEW, m2.getOverview());
         if (!m1.getGenre().equals(m2.getGenre()))
@@ -95,7 +95,7 @@ public class MovieSyncAdapter extends AbstractThreadedSyncAdapter {
         }
         if (values.size() > 1) {
             Uri uri = FavoriteMovieEntry.CONTENT_URI.buildUpon().appendPath
-                    (Long.toString(m1.getTmdb_id())).build();
+                    (Long.toString(m1.getTmdbId())).build();
             getContext().getContentResolver().update(uri, values, null, null);
         }
     }

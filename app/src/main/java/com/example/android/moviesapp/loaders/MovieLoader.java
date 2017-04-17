@@ -8,8 +8,8 @@ import com.example.android.moviesapp.models.Movie;
 import java.util.ArrayList;
 
 import static com.example.android.moviesapp.rest.JsonParser.getMovieArrayFromJson;
-import static com.example.android.moviesapp.rest.MDBConnection.LOAD_MOVIES;
-import static com.example.android.moviesapp.rest.MDBConnection.getApiResponse;
+import static com.example.android.moviesapp.rest.ApiConnection.LOAD_MOVIES;
+import static com.example.android.moviesapp.rest.ApiConnection.getApiResponse;
 
 public class MovieLoader extends AsyncTaskLoader<ArrayList<Movie>> {
 

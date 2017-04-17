@@ -44,11 +44,11 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback,
     @BindBool(R.bool.isTabletTwoPane) boolean isTabletTwoPaneLayout;
     @BindBool(R.bool.isTabletPortrait) boolean isTabletPortraitLayout;
 
-    @BindView(R.id.drawer_layout) DrawerLayout mDrawerLayout;
-    @BindView(R.id.navigation_view) NavigationView mNavigationViewDrawer;
+    @BindView(R.id.drawer_layout) DrawerLayout drawerLayout;
+    @BindView(R.id.navigation_view) NavigationView navigationViewDrawer;
     @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.movie_grid_container) FrameLayout movieGridContainet;
-    private ActionBarDrawerToggle mDrawerToggle;
+    private ActionBarDrawerToggle drawerToggle;
     @Nullable @BindView(R.id.secondary_toolbar) Toolbar secondaryToolbar;
     @Nullable @BindView(R.id.empty_movie_view_layout) LinearLayout emptyView;
     @Nullable @BindView(R.id.empty_view_image) ImageView emptyViewImage;
@@ -65,9 +65,6 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback,
 
     private final String LOG_TAG = MainActivity.class.getSimpleName();
 
-    /**adding fragments at run-time:
-     https://developer.android.com/training/basics/fragments/fragment-ui.html */
-
     /**
      * Navigation drawer was created using the tutorial
      * https://github.com/codepath/android_guides/wiki/Fragment-Navigation-Drawer
@@ -82,13 +79,12 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback,
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        mDrawerToggle = setupDrawerToggle();
-        mDrawerLayout.addDrawerListener(mDrawerToggle);
-        setupDrawerContent(mNavigationViewDrawer);
+        drawerToggle = setupDrawerToggle();
+        drawerLayout.addDrawerListener(drawerToggle);
+        setupDrawerContent(navigationViewDrawer);
 
         // ensures that application is properly initialized with default settings
         PreferenceManager.setDefaultValues(this, R.xml.pref_general, false);
-        //get preferenceMoviesToSearch from shared preferences
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
         preferenceMoviesToSearch = settings.getString(getString(R.string.pref_search_key),
                 getString(R.string.pref_search_default));
@@ -141,7 +137,7 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback,
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         // Pass any configuration change to the drawer toggles
-        mDrawerToggle.onConfigurationChanged(newConfig);
+        drawerToggle.onConfigurationChanged(newConfig);
         if (isTabletTwoPaneLayout && newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
             Fragment detailFragment = getSupportFragmentManager().findFragmentById(R.id.detail_container_main_activity);
             if (detailFragment instanceof DetailFragment) {
@@ -154,7 +150,7 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback,
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
         // Sync the toggle state after onRestoreInstanceState has occurred.
-        mDrawerToggle.syncState();
+        drawerToggle.syncState();
     }
 
     @Override
@@ -173,7 +169,7 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback,
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (mDrawerToggle.onOptionsItemSelected(item)) {
+        if (drawerToggle.onOptionsItemSelected(item)) {
             return true;
         }
         switch (item.getItemId()) {
@@ -191,7 +187,7 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback,
         }
     }
 
-    //method from callback interface between MainGridFragment, FavoriteMovieFragment and activities
+    //method from FragmentCallback interface
     @Override
     public void onItemSelected(Movie movie) {
         lastViewedMovie = movie;
@@ -211,6 +207,7 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback,
         }
     }
 
+    //method from ReviewFragmentCallback interface
     @Override
     public void onMoreReviewsSelected(ArrayList<Review> reviewList, String title, int color) {
         DialogFragment newFragment = ReviewDialogFragment.newInstance(reviewList, title);
@@ -229,8 +226,7 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback,
     }
 
     private void selectDrawerItem(MenuItem menuItem) {
-        //Create a new fragment and specify the fragment to show based on
-        //the navigation item clicked
+        //Create a new fragment and specify the fragment to show based on the navigation item clicked
         Fragment fragment = null;
         Class fragmentClass;
         if (menuItem.getItemId() == R.id.nav_favorite_fragment) {
@@ -245,19 +241,18 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback,
         }
 
         getSupportFragmentManager().beginTransaction().replace(R.id.movie_grid_container, fragment).commit();
-        //Highlight selected item in the drawer
         menuItem.setChecked(true);
         //get title from the drawer and update moviesToSearch variable
         String title = menuItem.getTitle().toString();
         moviesToSearch = title;
         //Change the title of the ActionBar
         setTitle(getString(R.string.app_name) + ": " + title);
-        mDrawerLayout.closeDrawers();
+        drawerLayout.closeDrawers();
     }
 
     private ActionBarDrawerToggle setupDrawerToggle() {
         return new ActionBarDrawerToggle(
-                this, mDrawerLayout, R.string.drawer_open, R.string.drawer_close);
+                this, drawerLayout, R.string.drawer_open, R.string.drawer_close);
     }
 
     private void setEmptyMovieDetailViewVisible(boolean visible) {

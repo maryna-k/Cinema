@@ -11,16 +11,15 @@ import android.view.MenuItem;
 
 import com.example.android.moviesapp.R;
 
-import butterknife.BindView;
-
 public class SettingsActivity extends AppCompatActivity {
 
-    @BindView(R.id.toolbar) Toolbar toolbar;
+    private Toolbar toolbar;
 
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.settings);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(R.string.action_settings);

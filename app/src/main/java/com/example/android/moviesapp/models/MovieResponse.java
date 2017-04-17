@@ -4,6 +4,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 
+/** Helper class needed to parse JSON array with movie information*/
 
 public class MovieResponse {
     @SerializedName("page")

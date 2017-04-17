@@ -24,7 +24,7 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.ViewHold
 
     private final String LOG_TAG = TrailerAdapter.class.getSimpleName();
 
-    private static Context mContext;
+    private static Context context;
     private ArrayList<YouTubeTrailer> trailerList;
     private OnItemClickListener listener;
     private static ProgressBar progressBar;
@@ -83,7 +83,7 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.ViewHold
                     final String errorMessage = errorReason.toString();
                     progressBar.setVisibility(View.VISIBLE);
                     thumbView.setVisibility(View.INVISIBLE);
-                    Toast.makeText(mContext, errorMessage, Toast.LENGTH_LONG).show();
+                    Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show();
                 }
             });
 
@@ -97,10 +97,10 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.ViewHold
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        mContext = parent.getContext();
-        View trailerView = LayoutInflater.from(mContext)
+        context = parent.getContext();
+        View trailerView = LayoutInflater.from(context)
                 .inflate(R.layout.trailer_item, parent, false);
-        return new ViewHolder(trailerView, mContext);
+        return new ViewHolder(trailerView, context);
     }
 
     @Override

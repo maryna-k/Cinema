@@ -9,12 +9,12 @@ import android.os.IBinder;
  */
 public class MovieAuthenticatorService extends Service {
     // Instance field that stores the authenticator object
-    private MovieAuthenticator mAuthenticator;
+    private MovieAuthenticator authenticator;
 
     @Override
     public void onCreate() {
         // Create a new authenticator object
-        mAuthenticator = new MovieAuthenticator(this);
+        authenticator = new MovieAuthenticator(this);
     }
 
     /*
@@ -23,6 +23,6 @@ public class MovieAuthenticatorService extends Service {
      */
     @Override
     public IBinder onBind(Intent intent) {
-        return mAuthenticator.getIBinder();
+        return authenticator.getIBinder();
     }
 }

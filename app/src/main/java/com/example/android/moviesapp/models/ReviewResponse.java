@@ -5,6 +5,8 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 
+/** Helper class needed to parse JSON array with review information*/
+
 public class ReviewResponse {
 
     @SerializedName("results")

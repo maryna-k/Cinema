@@ -22,7 +22,7 @@ import butterknife.ButterKnife;
 
 public class CursorMovieAdapter extends RecyclerView.Adapter<CursorMovieAdapter.ViewHolder>{
 
-    private Cursor mCursor;
+    private Cursor cursor;
     private static final String LOG_TAG = CursorMovieAdapter.class.getSimpleName() + "LOG";
     private Context context;
     private MovieAdapter.OnItemClickListener listener;
@@ -45,7 +45,7 @@ public class CursorMovieAdapter extends RecyclerView.Adapter<CursorMovieAdapter.
             } else {
                 titleView.setVisibility(View.GONE);
                 imageViewItem.setVisibility(View.VISIBLE);
-                final Bitmap posterBitmap = ImageUtils.getPosterFromStorage(posterPath, Long.toString(movie.getTmdb_id()));
+                final Bitmap posterBitmap = ImageUtils.getPosterFromStorage(posterPath, Long.toString(movie.getTmdbId()));
                 imageViewItem.setImageBitmap(posterBitmap);
             }
             itemView.setOnClickListener(new View.OnClickListener() {
@@ -57,8 +57,8 @@ public class CursorMovieAdapter extends RecyclerView.Adapter<CursorMovieAdapter.
         }
     }
 
-    public CursorMovieAdapter(Cursor mCursor, MovieAdapter.OnItemClickListener listener){
-        this.mCursor = mCursor;
+    public CursorMovieAdapter(Cursor cursor, MovieAdapter.OnItemClickListener listener){
+        this.cursor = cursor;
         this.listener = listener;
     }
 
@@ -72,8 +72,8 @@ public class CursorMovieAdapter extends RecyclerView.Adapter<CursorMovieAdapter.
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position){
-        Movie movie = DatabaseUtilMethods.getMovieFromCursor(position, mCursor);
-        long tmdb_id = movie.getTmdb_id();
+        Movie movie = DatabaseUtilMethods.getMovieFromCursor(position, cursor);
+        long tmdb_id = movie.getTmdbId();
 
         //set tag for tmdb_id that will be used in FavoriteGridFragment to delete Movie object
         holder.itemView.setTag(tmdb_id);
@@ -83,7 +83,7 @@ public class CursorMovieAdapter extends RecyclerView.Adapter<CursorMovieAdapter.
 
     @Override
     public int getItemCount(){
-        return mCursor.getCount();
+        return cursor.getCount();
     }
 
     /**
@@ -91,12 +91,12 @@ public class CursorMovieAdapter extends RecyclerView.Adapter<CursorMovieAdapter.
      * with a newly updated Cursor (Cursor c) that is passed in.
      */
     public Cursor swapCursor(Cursor c) {
-        // check if this cursor is the same as the previous cursor (mCursor)
-        if (mCursor == c) {
+        // check if this cursor is the same as the previous cursor (cursor)
+        if (cursor == c) {
             return null; //nothing has changed
         }
-        Cursor temp = mCursor;
-        this.mCursor = c; // new cursor value assigned
+        Cursor temp = cursor;
+        this.cursor = c; // new cursor value assigned
 
         //check if this is a valid cursor, then update the cursor
         if (c != null) {
