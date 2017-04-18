@@ -473,12 +473,9 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
 
     private void shareMovie() {
         String mimeType = "text/plain";
-        String title = getContext().getResources().getString(R.string.share_movie_message_title);
-        String textToShare = movie.getTitle() + "\n\n" +
-                getContext().getResources().getString(R.string.rating) + movie.getRating() + "\n\n" +
-                getContext().getResources().getString(R.string.release_date) + movie.getReleaseDate() + "\n\n" +
-                getContext().getResources().getString(R.string.overview) + "\n" + movie.getOverview();
-        String subject = getContext().getResources().getString(R.string.app_name) + ": " + movie.getTitle();
+        String title = movie.getTitle();
+        String textToShare = "https://www.themoviedb.org/movie/" + movie.getTmdbId();
+        String subject = "TMDb: " + movie.getTitle();
         ShareCompat.IntentBuilder
                 .from(getActivity())
                 .setType(mimeType)
