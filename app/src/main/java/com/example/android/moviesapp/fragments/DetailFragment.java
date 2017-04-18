@@ -581,7 +581,9 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
                 }
                 reviewList = reviewData;
             }
-            setReviewLayout(reviewData);
+            if(layoutReviews != null) {
+                setReviewLayout(reviewData);
+            }
         }
 
         @Override
