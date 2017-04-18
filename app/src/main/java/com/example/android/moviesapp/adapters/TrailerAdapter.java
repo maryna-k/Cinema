@@ -5,11 +5,10 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.example.android.moviesapp.models.YouTubeTrailer;
 import com.example.android.moviesapp.R;
+import com.example.android.moviesapp.models.YouTubeTrailer;
 import com.example.android.moviesapp.utilities.Keys;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubeThumbnailLoader;
@@ -24,10 +23,10 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.ViewHold
 
     private final String LOG_TAG = TrailerAdapter.class.getSimpleName();
 
-    private static Context context;
+    private Context context;
     private ArrayList<YouTubeTrailer> trailerList;
+    private ArrayList <YouTubeThumbnailLoader> youTubeThumbnailLoaderList = new ArrayList<>();
     private OnItemClickListener listener;
-    private static ProgressBar progressBar;
 
     private static final int UNINITIALIZED = 1;
     private static final int INITIALIZING = 2;
@@ -37,7 +36,7 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.ViewHold
         void onItemClick(String key);
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.trailer_thumbnail) YouTubeThumbnailView thumbView;
 
@@ -61,18 +60,16 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.ViewHold
                     youTubeThumbnailLoader.setOnThumbnailLoadedListener(new YouTubeThumbnailLoader.OnThumbnailLoadedListener() {
                         @Override
                         public void onThumbnailLoaded(YouTubeThumbnailView youTubeThumbnailView, String loadedVideoId) {
-                            String currentVideoId = (String) thumbView.getTag(R.id.trailer_key);
                         }
 
                         @Override
                         public void onThumbnailError(YouTubeThumbnailView youTubeThumbnailView, YouTubeThumbnailLoader.ErrorReason errorReason) {
                         }
                     });
-
+                    youTubeThumbnailLoaderList.add(youTubeThumbnailLoader);
                     String videoId = (String) thumbView.getTag(R.id.trailer_key);
                     if(videoId != null && !videoId.isEmpty()){
                         youTubeThumbnailLoader.setVideo(videoId);
-                        progressBar.setVisibility(View.INVISIBLE);
                         thumbView.setVisibility(View.VISIBLE);
                     }
                 }
@@ -80,10 +77,9 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.ViewHold
                 @Override
                 public void onInitializationFailure(YouTubeThumbnailView youTubeThumbnailView, YouTubeInitializationResult errorReason) {
                     thumbView.setTag(R.id.initialize, UNINITIALIZED);
-                    final String errorMessage = errorReason.toString();
-                    progressBar.setVisibility(View.VISIBLE);
+                    final String errorMessage = context.getResources().getString(R.string.youtube_error_msg);
                     thumbView.setVisibility(View.INVISIBLE);
-                    Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show();
+                    Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show();
                 }
             });
 
@@ -126,12 +122,16 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.ViewHold
         });
     }
 
+    public void releaseLoaders() {
+        if(!youTubeThumbnailLoaderList.isEmpty()) {
+            for (int i = 0; i < youTubeThumbnailLoaderList.size(); i++) {
+                youTubeThumbnailLoaderList.get(i).release();
+            }
+        }
+    }
+
     @Override
     public int getItemCount(){
         return trailerList.size();
-    }
-
-    public void setProgressBar(View view){
-        progressBar = (ProgressBar) view;
     }
 }

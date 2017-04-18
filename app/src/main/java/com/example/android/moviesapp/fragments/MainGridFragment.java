@@ -61,7 +61,6 @@ public class MainGridFragment extends Fragment
     private static boolean loadMoreMovies;
 
     @BindInt(R.integer.grid_columns) int GRID_COLUMNS_NUM;
-    private int progressBarExtraItems = GRID_COLUMNS_NUM;
 
     private final int PRIMARY_LOADER_ID = 0;
     private final int SECONDARY_LOADER_ID = 1;
@@ -186,7 +185,8 @@ public class MainGridFragment extends Fragment
                     Bundle extras = intent.getExtras();
                     NetworkInfo info = (NetworkInfo) extras.getParcelable("networkInfo");
                     NetworkInfo.State state = info.getState();
-                    if (state == NetworkInfo.State.CONNECTED && emptyMovieGridLayout.getVisibility() == View.VISIBLE) {
+                    if (state == NetworkInfo.State.CONNECTED && emptyMovieGridLayout != null
+                            && emptyMovieGridLayout.getVisibility() == View.VISIBLE) {
                         updateMovieList();
                     }
                     if (state == NetworkInfo.State.CONNECTED && loadMoreMovies){
@@ -211,7 +211,7 @@ public class MainGridFragment extends Fragment
     }
 
     private void createAdapter(ArrayList<Movie> data){
-        adapter = new MovieAdapter(progressBarExtraItems, data, new MovieAdapter.OnItemClickListener(){
+        adapter = new MovieAdapter(GRID_COLUMNS_NUM, data, new MovieAdapter.OnItemClickListener(){
             @Override
             public void onItemClick(Movie movie){
                 /* false here just indicates that DetailFragment has to check the database,
@@ -222,12 +222,14 @@ public class MainGridFragment extends Fragment
     }
 
     private void setEmptyGridViewVisible(boolean visible){
-        if(visible) {
-            emptyMovieGridLayout.setVisibility(View.VISIBLE);
-            emptyImage.setImageDrawable(getResources().getDrawable(R.drawable.ic_empty_movie_grid));
-            emptyText.setText(getText(R.string.empty_movie_gridview));
-        } else{
-            emptyMovieGridLayout.setVisibility(View.GONE);
+        if(emptyMovieGridLayout != null) {
+            if (visible) {
+                emptyMovieGridLayout.setVisibility(View.VISIBLE);
+                emptyImage.setImageDrawable(getResources().getDrawable(R.drawable.ic_empty_movie_grid));
+                emptyText.setText(getText(R.string.empty_movie_gridview));
+            } else {
+                emptyMovieGridLayout.setVisibility(View.GONE);
+            }
         }
     }
 

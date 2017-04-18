@@ -341,6 +341,9 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
     public void onDestroyView() {
         super.onDestroyView();
         unbinder.unbind();
+        if(trailerAdapter != null) {
+            trailerAdapter.releaseLoaders();
+        }
         Toolbar toolbar;
         if (isTabletTwoPane) {
             toolbar = ((MainActivity) getActivity()).getSecondaryToolbar();
@@ -381,7 +384,9 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
         Target target = new Target(){
             @Override
             public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                backdropView.setImageBitmap(bitmap);
+                if(backdropView != null) {
+                    backdropView.setImageBitmap(bitmap);
+                }
                 Palette.from(bitmap)
                         .generate(new Palette.PaletteAsyncListener() {
                             @Override
@@ -412,8 +417,10 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
     }
 
     private void setColorForTitleView(int themeColor){
-        smallPosterBase.setBackgroundColor(themeColor);
-        titleView.setBackgroundColor(themeColor);
+        if(smallPosterBase != null && titleView != null) {
+            smallPosterBase.setBackgroundColor(themeColor);
+            titleView.setBackgroundColor(themeColor);
+        }
     }
 
     private int getViewBottomCoordinates(View view){
@@ -494,33 +501,33 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
 
         @Override
         public void onLoadFinished(Loader<ArrayList<YouTubeTrailer>> loader, ArrayList<YouTubeTrailer> trailerData) {
-            if (trailerData == null) {
-                recyclerView.setVisibility(View.GONE);
-                trailersProgressBar.setVisibility(View.VISIBLE);
-                emptyTrailerView.setVisibility(View.GONE);
-            } else if (trailerData.size() > 0) {
-                trailerAdapter = new TrailerAdapter(trailerData, new TrailerAdapter.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(String keyStr) {
-                        startActivity(YouTubeStandalonePlayer.createVideoIntent(getActivity(),
-                                Keys.YOUTUBE_API_KEY, keyStr, 0, true, true));
-                    }
-                });
-                trailerAdapter.setProgressBar(trailersProgressBar);
-                recyclerView.setAdapter(trailerAdapter);
-                recyclerView.setVisibility(View.VISIBLE);
-                trailersProgressBar.setVisibility(View.GONE);
-                emptyTrailerView.setVisibility(View.GONE);
-            } else if (trailerData.size() == 0) {
-                recyclerView.setVisibility(View.GONE);
-                trailersProgressBar.setVisibility(View.GONE);
-                emptyTrailerView.setVisibility(View.VISIBLE);
+            if(recyclerView != null) {
+                if (trailerData == null) {
+                    recyclerView.setVisibility(View.GONE);
+                    trailersProgressBar.setVisibility(View.VISIBLE);
+                    emptyTrailerView.setVisibility(View.GONE);
+                } else if (trailerData.size() > 0) {
+                    trailerAdapter = new TrailerAdapter(trailerData, new TrailerAdapter.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(String keyStr) {
+                            startActivity(YouTubeStandalonePlayer.createVideoIntent(getActivity(),
+                                    Keys.YOUTUBE_API_KEY, keyStr, 0, true, true));
+                        }
+                    });
+                    recyclerView.setAdapter(trailerAdapter);
+                    recyclerView.setVisibility(View.VISIBLE);
+                    trailersProgressBar.setVisibility(View.GONE);
+                    emptyTrailerView.setVisibility(View.GONE);
+                } else if (trailerData.size() == 0) {
+                    recyclerView.setVisibility(View.GONE);
+                    trailersProgressBar.setVisibility(View.GONE);
+                    emptyTrailerView.setVisibility(View.VISIBLE);
+                }
             }
         }
 
         @Override
-        public void onLoaderReset(Loader<ArrayList<YouTubeTrailer>> loader) {
-        }
+        public void onLoaderReset(Loader<ArrayList<YouTubeTrailer>> loader) {}
     };
 
     //anonymous class that implements LoaderCallbacks and loads reviews
@@ -537,7 +544,9 @@ public class DetailFragment extends Fragment implements FavoriteGridFragment.Swi
         @Override
         public void onLoadFinished(Loader<ArrayList<Review>> loader, final ArrayList<Review> reviewData) {
             reviewList = reviewData;
-            setReviewLayout(reviewData);
+            if(layoutReviews != null) {
+                setReviewLayout(reviewData);
+            }
         }
 
         @Override

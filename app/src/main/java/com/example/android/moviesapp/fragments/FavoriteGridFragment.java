@@ -52,6 +52,7 @@ public class FavoriteGridFragment extends Fragment
 
     @BindView(R.id.empty_view_image) ImageView emptyImage;
     @BindView(R.id.empty_view_message) TextView emptyText;
+    @BindView(R.id.empty_grid_view_layout) LinearLayout emptyFavoritesLayout;
 
     @BindInt(R.integer.grid_columns) int GRID_COLUMNS_NUM;
     private final int PRIMARY_LOADER_ID = 0;
@@ -176,13 +177,14 @@ public class FavoriteGridFragment extends Fragment
     }
 
     private void setEmptyGridViewVisible(boolean visible){
-        LinearLayout emptyFavoritesLayout = (LinearLayout) rootView.findViewById(R.id.empty_grid_view_layout);
-        if(visible) {
-            emptyFavoritesLayout.setVisibility(View.VISIBLE);
-            emptyImage.setImageDrawable(getResources().getDrawable(R.drawable.ic_empty_movie_grid));
-            emptyText.setText(getText(R.string.empty_favorite_movie_gridview));
-        } else{
-            emptyFavoritesLayout.setVisibility(View.GONE);
+        if(emptyFavoritesLayout != null) {
+            if (visible) {
+                emptyFavoritesLayout.setVisibility(View.VISIBLE);
+                emptyImage.setImageDrawable(getResources().getDrawable(R.drawable.ic_empty_movie_grid));
+                emptyText.setText(getText(R.string.empty_favorite_movie_gridview));
+            } else {
+                emptyFavoritesLayout.setVisibility(View.GONE);
+            }
         }
     }
 }

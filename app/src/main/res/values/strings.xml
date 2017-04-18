@@ -58,6 +58,7 @@
     <string name="removed_from_db">Movie was removed from Favorites</string>
     <string name="saved_to_db">Movie was added to Favorites</string>
     <string name="couldnt_save_to_db">Oops... Movie was not saved</string>
+    <string name="youtube_error_msg">Install or update Youtube application to watch trailers</string>
 
     <!-- SyncAdapter related -->
     <string name="sync_account_type">moviesapp.example.com</string>

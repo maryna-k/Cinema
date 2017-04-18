@@ -35,7 +35,6 @@
                     android:id="@+id/movie_grid_container"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-
                     tools:context="com.example.android.moviesapp.activities.MainActivity" />
             </LinearLayout>
 
@@ -51,6 +50,8 @@
                 <include
                     android:id="@+id/empty_movie_view_layout"
                     layout="@layout/empty_view"
+                    android:layout_height="match_parent"
+                    android:layout_width="match_parent"
                     android:gravity="center"
                     android:visibility="gone" />
 
