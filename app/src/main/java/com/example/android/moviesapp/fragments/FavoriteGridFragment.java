@@ -25,6 +25,7 @@ import com.example.android.moviesapp.adapters.CursorMovieAdapter;
 import com.example.android.moviesapp.adapters.MovieAdapter;
 import com.example.android.moviesapp.database.MovieContract;
 import com.example.android.moviesapp.models.Movie;
+import com.example.android.moviesapp.mvp.movieGrid.MainGridFragment;
 import com.example.android.moviesapp.sync.MovieSyncAdapter;
 import com.example.android.moviesapp.utilities.FragmentCallback;
 

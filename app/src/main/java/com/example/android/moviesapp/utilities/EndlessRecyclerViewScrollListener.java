@@ -8,7 +8,7 @@ import android.widget.Toast;
 import com.example.android.moviesapp.R;
 import com.example.android.moviesapp.rest.ApiConnection;
 
-import static com.example.android.moviesapp.fragments.MainGridFragment.setLoadMoreMovies;
+import static com.example.android.moviesapp.mvp.movieGrid.MainGridFragment.setLoadMoreMovies;
 
 /*Based on the interface from https://gist.github.com/nesquena/d09dc68ff07e845cc622 as a part of the
 tutorial Endless Scrolling with AdapterViews and RecyclerView
@@ -100,7 +100,7 @@ public abstract class EndlessRecyclerViewScrollListener extends RecyclerView.OnS
         this.loading = true;
     }
 
-    public static int setPageIndex(){
+    public static int getPageIndex(){
         return currentPage;
     }
 

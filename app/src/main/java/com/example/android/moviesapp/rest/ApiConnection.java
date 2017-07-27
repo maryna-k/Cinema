@@ -66,10 +66,10 @@ public class ApiConnection {
         String url;
         if (category.equals("Popular") || category.equals("Top Rated")) {
             url = buildMovieUrlHelper(searchCategories.get(category), "",
-                    "&page=" + EndlessRecyclerViewScrollListener.setPageIndex());
+                    "&page=" + EndlessRecyclerViewScrollListener.getPageIndex());
         } else {
             url = buildMovieUrlHelper("discover/movie", "&with_genres=" + searchCategories.get(category),
-                    "&page=" + EndlessRecyclerViewScrollListener.setPageIndex());
+                    "&page=" + EndlessRecyclerViewScrollListener.getPageIndex());
         }
         return url;
     }

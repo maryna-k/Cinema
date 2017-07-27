@@ -25,10 +25,10 @@ import android.widget.TextView;
 import com.example.android.moviesapp.R;
 import com.example.android.moviesapp.fragments.DetailFragment;
 import com.example.android.moviesapp.fragments.FavoriteGridFragment;
-import com.example.android.moviesapp.fragments.MainGridFragment;
 import com.example.android.moviesapp.fragments.ReviewDialogFragment;
 import com.example.android.moviesapp.models.Movie;
 import com.example.android.moviesapp.models.Review;
+import com.example.android.moviesapp.mvp.movieGrid.MainGridFragment;
 import com.example.android.moviesapp.sync.MovieSyncAdapter;
 import com.example.android.moviesapp.utilities.FragmentCallback;
 
